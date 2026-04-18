@@ -159,30 +159,39 @@ p { margin: 0 0 1em; color: var(--muted); }
   gap: 12px;
 }
 .brand-mark {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 50px; height: 50px;
+  display: block;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
+  object-fit: cover;
   background: var(--navy);
-  color: var(--gold);
-  font-family: var(--serif);
-  font-weight: 700;
-  font-size: 1.4rem;
-  letter-spacing: 0;
-  box-shadow: var(--shadow-sm);
   flex-shrink: 0;
-  font-style: italic;
+  box-shadow: var(--shadow-sm);
+  transition: transform .3s ease;
 }
-.brand-mark::before {
-  content: "";
-  position: absolute;
-  inset: 5px;
-  border: 1.5px solid rgba(245,239,220,.85);
+.brand:hover .brand-mark { transform: rotate(-6deg) scale(1.04); }
+
+.hero-logo {
+  display: block;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
+  object-fit: cover;
+  background: var(--navy);
+  margin-bottom: 28px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.45), 0 0 0 1px rgba(232,163,58,.25);
 }
-.brand-mark span { display: none; }
+
+.footer-logo {
+  display: block;
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--navy-2);
+  flex-shrink: 0;
+  box-shadow: 0 10px 24px rgba(0,0,0,.35);
+}
 .brand-text strong {
   display: block;
   font-family: var(--serif);
