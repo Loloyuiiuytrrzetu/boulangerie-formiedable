@@ -16,10 +16,10 @@
   <header class="site-header" id="header">
     <div class="container nav-wrap">
       <a href="#home" class="brand" aria-label="Accueil For'Mie'Dable">
-        <span class="brand-mark">F<span class="brand-apos">’</span>M<span class="brand-apos">’</span>D</span>
+        <span class="brand-mark" aria-hidden="true">F<span>’M’D</span></span>
         <span class="brand-text">
           <strong>For<span>’</span>Mie<span>’</span>Dable</strong>
-          <em>Boulangerie &middot; Pâtisserie</em>
+          <em>Artisan Boulanger &middot; Pâtissier</em>
         </span>
       </a>
 
@@ -41,7 +41,7 @@
   <section class="hero" id="home">
     <div class="hero-bg" aria-hidden="true"></div>
     <div class="container hero-inner">
-      <span class="eyebrow">Boulangerie &middot; Pâtisserie Artisanale &middot; Guadeloupe</span>
+      <span class="eyebrow">Boulangerie &middot; Pâtisserie Artisanale</span>
       <h1>
         L’art du pain,<br />
         la passion du goût.
@@ -68,10 +68,16 @@
 
   <section class="section about" id="about">
     <div class="container about-grid">
-      <div class="about-media" aria-hidden="true">
-        <div class="media-card media-1"></div>
-        <div class="media-card media-2"></div>
-        <div class="media-card media-3"></div>
+      <div class="about-media">
+        <div class="media-card media-1">
+          <img src="https://images.pexels.com/photos/10438814/pexels-photo-10438814.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Intérieur de la boulangerie" loading="lazy" />
+        </div>
+        <div class="media-card media-2">
+          <img src="https://images.pexels.com/photos/19803486/pexels-photo-19803486.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Viennoiseries en vitrine" loading="lazy" />
+        </div>
+        <div class="media-card media-3">
+          <img src="https://images.pexels.com/photos/7966375/pexels-photo-7966375.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Pâtissier au travail" loading="lazy" />
+        </div>
         <div class="media-stamp">
           <span>Depuis des années</span>
           <strong>Artisans Boulangers</strong>
@@ -123,52 +129,64 @@
       </div>
 
       <div class="product-grid">
-        <article class="product-card accent-1">
-          <div class="product-icon">
-            <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 38c4-14 20-22 24-22s20 8 24 22c-6 6-16 10-24 10S14 44 8 38Z" fill="currentColor" opacity=".15"/><path d="M8 38c4-14 20-22 24-22s20 8 24 22" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M20 30c2 6 4 10 4 14M32 26v18M44 30c-2 6-4 10-4 14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+        <article class="product-card">
+          <div class="product-image">
+            <img src="https://images.pexels.com/photos/8207393/pexels-photo-8207393.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Pain artisanal" loading="lazy" />
           </div>
-          <h3>Les Pains</h3>
-          <p>Baguette tradition, pain de campagne, seigle, céréales, pain au levain, pain de mie…</p>
+          <div class="product-body">
+            <h3>Les Pains</h3>
+            <p>Baguette tradition, pain de campagne, seigle, céréales, pain au levain, pain de mie…</p>
+          </div>
         </article>
 
-        <article class="product-card accent-2">
-          <div class="product-icon">
-            <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 44c8-4 14-20 22-20s14 16 22 20c-6 6-14 8-22 8s-16-2-22-8Z" fill="currentColor" opacity=".15"/><path d="M10 44c8-4 14-20 22-20s14 16 22 20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M20 42c2-6 6-10 12-10s10 4 12 10" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+        <article class="product-card">
+          <div class="product-image">
+            <img src="https://images.pexels.com/photos/19987146/pexels-photo-19987146.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Croissants feuilletés" loading="lazy" />
           </div>
-          <h3>Viennoiseries</h3>
-          <p>Croissants au beurre, pains au chocolat, brioches moelleuses, chaussons et feuilletés du matin.</p>
+          <div class="product-body">
+            <h3>Viennoiseries</h3>
+            <p>Croissants au beurre, pains au chocolat, brioches moelleuses, chaussons et feuilletés du matin.</p>
+          </div>
         </article>
 
-        <article class="product-card accent-3">
-          <div class="product-icon">
-            <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="12" y="22" width="40" height="22" rx="4" fill="currentColor" opacity=".15"/><path d="M12 28h40M20 22V14M32 22V10M44 22V14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/><rect x="12" y="22" width="40" height="22" rx="4" stroke="currentColor" stroke-width="2.5" fill="none"/></svg>
+        <article class="product-card">
+          <div class="product-image">
+            <img src="https://images.pexels.com/photos/31807952/pexels-photo-31807952.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Macarons colorés" loading="lazy" />
           </div>
-          <h3>Pâtisseries fines</h3>
-          <p>Tartelettes de saison, entremets, macarons, éclairs, flans et créations signature.</p>
+          <div class="product-body">
+            <h3>Pâtisseries fines</h3>
+            <p>Tartelettes de saison, entremets, macarons, éclairs, flans et créations signature.</p>
+          </div>
         </article>
 
-        <article class="product-card accent-4">
-          <div class="product-icon">
-            <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="20" fill="currentColor" opacity=".15"/><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2.5" fill="none"/><path d="M14 32h36M32 14v36" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        <article class="product-card">
+          <div class="product-image">
+            <img src="https://images.pexels.com/photos/839008/pexels-photo-839008.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Pizza artisanale" loading="lazy" />
           </div>
-          <h3>Pizzas &amp; Quiches</h3>
-          <p>Pizzas maison à la pâte aérienne, quiches, tartes salées et feuilletés gourmands.</p>
+          <div class="product-body">
+            <h3>Pizzas &amp; Quiches</h3>
+            <p>Pizzas maison à la pâte aérienne, quiches, tartes salées et feuilletés gourmands.</p>
+          </div>
         </article>
 
-        <article class="product-card accent-5">
-          <div class="product-icon">
-            <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 26h36l-4 22a4 4 0 0 1-4 4H22a4 4 0 0 1-4-4L14 26Z" fill="currentColor" opacity=".15"/><path d="M14 26h36l-4 22a4 4 0 0 1-4 4H22a4 4 0 0 1-4-4L14 26Z" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linejoin="round"/><path d="M20 20c2-4 6-6 12-6s10 2 12 6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+        <article class="product-card">
+          <div class="product-image">
+            <img src="https://images.pexels.com/photos/17498978/pexels-photo-17498978.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Sandwich baguette" loading="lazy" />
           </div>
-          <h3>Sandwichs &amp; Snacks</h3>
-          <p>Sandwichs baguette tradition, salades composées, bowls et salades de fruits frais.</p>
+          <div class="product-body">
+            <h3>Sandwichs &amp; Snacks</h3>
+            <p>Sandwichs baguette tradition, salades composées, bowls et salades de fruits frais.</p>
+          </div>
         </article>
 
-        <article class="product-card accent-6">
-          <div class="product-icon">
-            <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M16 24h28v14a14 14 0 0 1-28 0V24Z" fill="currentColor" opacity=".15"/><path d="M16 24h28v14a14 14 0 0 1-28 0V24Z" stroke="currentColor" stroke-width="2.5" fill="none"/><path d="M44 28h6a6 6 0 0 1 0 12h-6M24 14c0 2-2 2-2 4s2 2 2 4M32 14c0 2-2 2-2 4s2 2 2 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+        <article class="product-card">
+          <div class="product-image">
+            <img src="https://images.pexels.com/photos/1995010/pexels-photo-1995010.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Boissons au comptoir" loading="lazy" />
           </div>
-          <h3>Boissons à emporter</h3>
-          <p>Cafés, thés, chocolats chauds, jus frais et boissons glacées, pour accompagner votre pause.</p>
+          <div class="product-body">
+            <h3>Boissons à emporter</h3>
+            <p>Cafés, thés, chocolats chauds, jus frais et boissons glacées, pour accompagner votre pause.</p>
+          </div>
         </article>
       </div>
     </div>
@@ -379,7 +397,7 @@
   <footer class="site-footer">
     <div class="container footer-grid">
       <div class="footer-brand">
-        <span class="brand-mark">F<span class="brand-apos">’</span>M<span class="brand-apos">’</span>D</span>
+        <span class="brand-mark" aria-hidden="true">F<span>’M’D</span></span>
         <div>
           <strong>For’Mie’Dable</strong>
           <p>Boulangerie &middot; Pâtisserie artisanale<br />Le Gosier &middot; Jarry &middot; Guadeloupe</p>
