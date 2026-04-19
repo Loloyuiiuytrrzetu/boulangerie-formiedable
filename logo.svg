@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 140" role="img" aria-label="Maison de Rozières">
+  <defs>
+    <radialGradient id="plate" cx="50%" cy="55%" r="55%">
+      <stop offset="0%" stop-color="#f5d488"/>
+      <stop offset="60%" stop-color="#e6b24a"/>
+      <stop offset="100%" stop-color="#c98c28"/>
+    </radialGradient>
+    <radialGradient id="cherry" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ff6b72"/>
+      <stop offset="50%" stop-color="#d91e2a"/>
+      <stop offset="100%" stop-color="#8a0e16"/>
+    </radialGradient>
+    <linearGradient id="choc" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#6b3a1a"/>
+      <stop offset="100%" stop-color="#3a1d0a"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="100" cy="100" rx="85" ry="22" fill="url(#plate)"/>
+  <ellipse cx="100" cy="98" rx="72" ry="17" fill="none" stroke="#a66d18" stroke-width="1" opacity="0.5"/>
+  <ellipse cx="100" cy="98" rx="58" ry="13" fill="none" stroke="#a66d18" stroke-width="1" opacity="0.4"/>
+  <ellipse cx="100" cy="98" rx="40" ry="8" fill="none" stroke="#a66d18" stroke-width="1" opacity="0.3"/>
+  <g transform="translate(115 68)">
+    <path d="M0 18 L26 18 L26 32 L0 32 Z" fill="url(#choc)"/>
+    <path d="M0 18 L4 14 L30 14 L26 18 Z" fill="#8a4f26"/>
+    <path d="M26 18 L30 14 L30 28 L26 32 Z" fill="#4a2610"/>
+  </g>
+  <g transform="translate(128 52)">
+    <path d="M0 18 L22 18 L22 30 L0 30 Z" fill="url(#choc)"/>
+    <path d="M0 18 L4 14 L26 14 L22 18 Z" fill="#8a4f26"/>
+    <path d="M22 18 L26 14 L26 26 L22 30 Z" fill="#4a2610"/>
+  </g>
+  <path d="M80 20 Q82 40 86 58 Q88 64 90 68" fill="none" stroke="#5a1a0a" stroke-width="3" stroke-linecap="round"/>
+  <path d="M80 20 Q76 18 74 20" fill="none" stroke="#5a1a0a" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="82" cy="80" r="22" fill="url(#cherry)"/>
+  <ellipse cx="76" cy="72" rx="6" ry="4" fill="#ffb0b5" opacity="0.75"/>
+  <circle cx="72" cy="76" r="2" fill="#ffffff" opacity="0.85"/>
+</svg>
