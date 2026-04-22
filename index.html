@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Maison de Rozières — Boulangerie & Pâtisserie artisanale à Baie-Mahault, Guadeloupe. Pains, viennoiseries, tartes et pâtisseries faits maison." />
+  <title>Maison de Rozières — Boulangerie & Pâtisserie à Baie-Mahault</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header class="site-header" id="top">
+    <div class="container nav-wrap">
+      <a href="#top" class="brand" aria-label="Maison de Rozières - Accueil">
+        <img src="assets/logo.jpg" alt="Logo Maison de Rozières" class="brand-logo" />
+        <span class="brand-text">
+          <span class="brand-name">Maison de Rozières</span>
+          <span class="brand-tag">Boulangerie · Pâtisserie</span>
+        </span>
+      </a>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="nav" id="nav">
+        <a href="#apropos">À propos</a>
+        <a href="#specialites">Nos spécialités</a>
+        <a href="#horaires">Horaires</a>
+        <a href="#avis">Avis</a>
+        <a href="#contact" class="btn btn-ghost">Contact</a>
+        <a href="tel:+590590602399" class="btn btn-primary">Appeler</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-media" aria-hidden="true">
+      <img src="assets/pains.jpg" alt="" />
+      <div class="hero-overlay"></div>
+    </div>
+    <div class="container hero-content">
+      <span class="eyebrow">Guadeloupe · Baie-Mahault</span>
+      <h1>La boulangerie<br/><em>au cœur cerise.</em></h1>
+      <p class="lead">
+        🥖 Tradition boulangère &amp; savoir-faire local<br/>
+        🥐 Fait avec passion, servi avec le sourire
+      </p>
+      <div class="hero-actions">
+        <a href="#specialites" class="btn btn-primary btn-lg">Découvrir nos spécialités</a>
+        <a href="#contact" class="btn btn-outline btn-lg">Nous trouver</a>
+      </div>
+      <div class="hero-rating">
+        <span class="stars" aria-hidden="true">★★★★★</span>
+        <span><strong>5,0</strong> sur Google · 4 avis clients</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="apropos" class="section">
+    <div class="container split">
+      <div class="split-media">
+        <img src="assets/logo.jpg" alt="Logo de Maison de Rozières" />
+      </div>
+      <div class="split-body">
+        <span class="eyebrow cherry">Notre histoire</span>
+        <h2>Un savoir-faire <span class="accent">artisan</span>, au rythme de la Guadeloupe.</h2>
+        <p>
+          Nichée à Jardivillage Jabrun, Baie-Mahault, <strong>Maison de Rozières</strong>
+          est bien plus qu'une boulangerie : c'est un lieu où chaque pain, chaque viennoiserie
+          et chaque pâtisserie est préparé chaque matin, avec des produits soigneusement
+          sélectionnés et une exigence sans compromis.
+        </p>
+        <p>
+          Nos clients le disent : <em>« les meilleurs pain au chocolat de Guadeloupe »</em>,
+          des croissants <em>« vrais au beurre »</em>, une forêt noire <em>« exceptionnelle »</em>.
+          Poussez la porte — et laissez-vous tenter.
+        </p>
+        <ul class="feature-list">
+          <li><span class="dot"></span> Fabrication <strong>maison</strong> chaque jour</li>
+          <li><span class="dot"></span> Produits &amp; fournisseurs <strong>locaux</strong></li>
+          <li><span class="dot"></span> Accueil chaleureux, <strong>servi avec le sourire</strong></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="specialites" class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow cherry">La carte</span>
+        <h2>Nos spécialités <span class="accent">gourmandes</span></h2>
+        <p class="section-sub">
+          Des classiques de la boulangerie française aux douceurs sucrées, tout est pensé
+          pour éveiller vos papilles — du petit-déjeuner au goûter.
+        </p>
+      </div>
+
+      <div class="cards">
+        <article class="card">
+          <div class="card-media">
+            <img src="assets/pains.jpg" alt="Pain artisanal tranché sur une planche en bois" />
+          </div>
+          <div class="card-body">
+            <h3>Pains &amp; baguettes</h3>
+            <p>Baguette tradition, pain de campagne, pain complet — cuits au four chaque matin pour une croûte dorée et une mie aérée.</p>
+          </div>
+        </article>
+
+        <article class="card card-featured">
+          <div class="card-media">
+            <img src="assets/sandwichs.jpg" alt="Sandwich baguette garni de charcuterie" />
+          </div>
+          <div class="card-body">
+            <span class="badge">Le midi</span>
+            <h3>Sandwichs &amp; snacking</h3>
+            <p>Des sandwichs généreux préparés sur nos baguettes maison — parfaits pour la pause déjeuner.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-media">
+            <img src="assets/boissons.jpg" alt="Cafés latte et viennoiseries" />
+          </div>
+          <div class="card-body">
+            <h3>Cafés &amp; viennoiseries</h3>
+            <p>Croissants au beurre, pains au chocolat, chaussons aux pommes — à déguster avec un café serré, un latte ou un chocolat chaud.</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="pastries">
+        <div class="pastries-head">
+          <h3>Pâtisseries maison</h3>
+          <p>Tartes, forêt noire, entremets &amp; gâteaux — nos pâtissiers régalent petits et grands.</p>
+        </div>
+        <div class="pastries-grid">
+          <div class="chip">🍰 Tarte au citron meringuée</div>
+          <div class="chip">🍒 Forêt noire</div>
+          <div class="chip">🥐 Croissants au beurre</div>
+          <div class="chip">🍫 Pain au chocolat</div>
+          <div class="chip">🍎 Chausson aux pommes</div>
+          <div class="chip">🧁 Entremets du jour</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="horaires" class="section">
+    <div class="container split split-reverse">
+      <div class="split-body">
+        <span class="eyebrow cherry">On vous attend</span>
+        <h2>Horaires <span class="accent">d'ouverture</span></h2>
+        <p>La boulangerie vous ouvre ses portes 7 jours sur 7. Venez chercher votre pain frais, votre viennoiserie du matin ou le gâteau du dimanche.</p>
+
+        <ul class="hours">
+          <li><span>Lundi — Vendredi</span><strong>6h30 — 19h00</strong></li>
+          <li><span>Samedi</span><strong>7h00 — 18h00</strong></li>
+          <li><span>Dimanche</span><strong>7h00 — 13h00</strong></li>
+        </ul>
+
+        <div class="hours-cta">
+          <a href="tel:+590590602399" class="btn btn-primary">📞 +590 590 60 23 99</a>
+          <a href="https://maps.google.com/?q=Maison+de+Rozieres+Jardivillage+Jabrun+Baie-Mahault" target="_blank" rel="noopener" class="btn btn-outline">🧭 Itinéraire</a>
+        </div>
+      </div>
+
+      <div class="split-media hours-card">
+        <div class="clock" aria-hidden="true">
+          <div class="clock-face">
+            <span class="h-12">12</span><span class="h-3">3</span>
+            <span class="h-6">6</span><span class="h-9">9</span>
+            <div class="hand hand-h"></div>
+            <div class="hand hand-m"></div>
+            <div class="hand-center"></div>
+          </div>
+        </div>
+        <p class="hours-status" id="hoursStatus">Vérification des horaires…</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="avis" class="section section-dark">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow cherry light">Ils nous adorent</span>
+        <h2>Avis de nos clients</h2>
+        <p class="section-sub">Note moyenne <strong>5,0 / 5</strong> sur Google — merci à vous !</p>
+      </div>
+
+      <div class="reviews">
+        <article class="review">
+          <div class="stars">★★★★★</div>
+          <blockquote>
+            « Forêt noire 6 parts au top, la crème est exceptionnelle et réconfortante, cerises au kirsch généreusement présentes, la génoise bien !!!! Une belle découverte !!!! Continuez !!! »
+          </blockquote>
+          <footer>— Eurl FWI World Food</footer>
+        </article>
+
+        <article class="review">
+          <div class="stars">★★★★★</div>
+          <blockquote>
+            « Je n'ai jamais aimé les croissants jusqu'à ce que je goûte ceux de Maison de Rozières. Des vrais au beurre. J'ignorais que tous ceux que j'avais mangés avant n'étaient que… »
+          </blockquote>
+          <footer>— Brigitte Desgranges</footer>
+        </article>
+
+        <article class="review">
+          <div class="stars">★★★★★</div>
+          <blockquote>
+            « Les meilleurs pain au chocolat de Guadeloupe et que dire des tartes ! ❤️ »
+          </blockquote>
+          <footer>— Charly</footer>
+        </article>
+
+        <article class="review">
+          <div class="stars">★★★★★</div>
+          <blockquote>
+            « Très bonne expérience, je reviendrai tous les matins. »
+          </blockquote>
+          <footer>— Vyvy</footer>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="section">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow cherry">Nous trouver</span>
+        <h2>Passez nous voir</h2>
+      </div>
+
+      <div class="contact-grid">
+        <div class="contact-card">
+          <div class="contact-icon">📍</div>
+          <h3>Adresse</h3>
+          <p>Jardivillage Jabrun<br/>97122 Baie-Mahault<br/>Guadeloupe</p>
+        </div>
+        <div class="contact-card">
+          <div class="contact-icon">📞</div>
+          <h3>Téléphone</h3>
+          <p><a href="tel:+590590602399">+590 590 60 23 99</a></p>
+        </div>
+        <div class="contact-card">
+          <div class="contact-icon">🕒</div>
+          <h3>Ouvert aujourd'hui</h3>
+          <p id="todayHours">—</p>
+        </div>
+      </div>
+
+      <div class="map">
+        <iframe
+          title="Carte Maison de Rozières"
+          src="https://www.google.com/maps?q=Maison+de+Rozieres+Jardivillage+Jabrun+Baie-Mahault&output=embed"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <div class="brand brand-footer">
+          <img src="assets/logo.jpg" alt="" class="brand-logo" />
+          <span class="brand-text">
+            <span class="brand-name">Maison de Rozières</span>
+            <span class="brand-tag">Boulangerie · Pâtisserie</span>
+          </span>
+        </div>
+        <p class="muted">Fait avec passion en Guadeloupe. 🇫🇷</p>
+      </div>
+      <div>
+        <h4>Horaires</h4>
+        <ul class="footer-list">
+          <li>Lun–Ven : 6h30 – 19h</li>
+          <li>Samedi : 7h – 18h</li>
+          <li>Dimanche : 7h – 13h</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul class="footer-list">
+          <li>Jardivillage Jabrun, Baie-Mahault 97122</li>
+          <li><a href="tel:+590590602399">+590 590 60 23 99</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <small>© <span id="year"></span> Maison de Rozières — Tous droits réservés.</small>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
