@@ -13,6 +13,46 @@ export async function deconnexion() {
   redirect("/login");
 }
 
+// Récupère l'utilisateur connecté + son restaurant (garde-fou commun)
+async function restaurantCourant() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data: restaurant } = await supabase
+    .from("restaurants")
+    .select("id, slug")
+    .eq("owner_id", user.id)
+    .maybeSingle();
+
+  return { supabase, user, restaurant };
+}
+
+// Upload d'une image dans le bucket public "logos"
+async function uploaderImage(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  restaurantId: string,
+  fichier: File,
+  prefixe: string
+): Promise<{ url?: string; erreur?: string }> {
+  if (fichier.size > 4 * 1024 * 1024)
+    return { erreur: "L'image ne doit pas dépasser 4 Mo." };
+  if (!fichier.type.startsWith("image/"))
+    return { erreur: "Le fichier doit être une image." };
+
+  const extension = fichier.name.split(".").pop()?.toLowerCase() ?? "png";
+  const chemin = `${restaurantId}/${prefixe}-${Date.now()}.${extension}`;
+  const { error } = await supabase.storage
+    .from("logos")
+    .upload(chemin, fichier, { upsert: true, contentType: fichier.type });
+  if (error) return { erreur: "Échec de l'envoi de l'image." };
+
+  const { data } = supabase.storage.from("logos").getPublicUrl(chemin);
+  return { url: data.publicUrl };
+}
+
 // Création du commerce (premier passage sur le dashboard sans restaurant)
 export async function creerRestaurant(formData: FormData) {
   const supabase = await createClient();
@@ -24,7 +64,6 @@ export async function creerRestaurant(formData: FormData) {
   const nom = String(formData.get("nom") ?? "").trim();
   if (!nom) return { erreur: "Le nom du commerce est obligatoire." };
 
-  // Slug unique dérivé du nom (suffixe aléatoire en cas de collision)
   let slug = slugify(nom);
   const { data: existant } = await supabase
     .from("restaurants")
@@ -44,70 +83,175 @@ export async function creerRestaurant(formData: FormData) {
   return { ok: true };
 }
 
-// Mise à jour de la configuration — champs autorisés UNIQUEMENT :
-// nom, logo, couleur, icône de tampon, seuil, texte de récompense
+// --- Identité du commerce : nom, logo, image de fond, couleur ---
 export async function mettreAJourConfig(formData: FormData) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
-  const { data: restaurant } = await supabase
-    .from("restaurants")
-    .select("id, slug, logo_url")
-    .eq("owner_id", user.id)
-    .maybeSingle();
+  const { supabase, user, restaurant } = await restaurantCourant();
   if (!restaurant) return { erreur: "Aucun commerce associé à ce compte." };
 
   const nom = String(formData.get("nom") ?? "").trim();
   const couleur = String(formData.get("couleur") ?? "#7A1E2E");
-  const tamponIcone = String(formData.get("tampon_icone") ?? "cafe");
-  const nombreTampons = parseInt(String(formData.get("nombre_tampons_requis") ?? "10"), 10);
-  const texteRecompense = String(formData.get("texte_recompense") ?? "").trim();
 
   if (!nom) return { erreur: "Le nom du commerce est obligatoire." };
-  if (!/^#[0-9a-fA-F]{6}$/.test(couleur))
-    return { erreur: "Couleur invalide." };
-  if (!TAMPON_ICONES[tamponIcone]) return { erreur: "Icône de tampon invalide." };
-  if (!Number.isInteger(nombreTampons) || nombreTampons < 1 || nombreTampons > 30)
-    return { erreur: "Le nombre de tampons doit être entre 1 et 30." };
-  if (!texteRecompense) return { erreur: "Le texte de la récompense est obligatoire." };
+  if (!/^#[0-9a-fA-F]{6}$/.test(couleur)) return { erreur: "Couleur invalide." };
 
-  // Upload optionnel du logo dans le bucket public "logos"
-  let logoUrl: string | undefined;
+  const maj: Record<string, string> = { nom, couleur };
+
   const logo = formData.get("logo");
   if (logo instanceof File && logo.size > 0) {
-    if (logo.size > 4 * 1024 * 1024)
-      return { erreur: "Le logo ne doit pas dépasser 4 Mo." };
-    if (!logo.type.startsWith("image/"))
-      return { erreur: "Le logo doit être une image." };
+    const resultat = await uploaderImage(supabase, restaurant.id, logo, "logo");
+    if (resultat.erreur) return { erreur: resultat.erreur };
+    maj.logo_url = resultat.url!;
+  }
 
-    const extension = logo.name.split(".").pop()?.toLowerCase() ?? "png";
-    const chemin = `${restaurant.id}/logo-${Date.now()}.${extension}`;
-    const { error: erreurUpload } = await supabase.storage
-      .from("logos")
-      .upload(chemin, logo, { upsert: true, contentType: logo.type });
-    if (erreurUpload) return { erreur: "Échec de l'envoi du logo." };
-
-    const { data: publique } = supabase.storage.from("logos").getPublicUrl(chemin);
-    logoUrl = publique.publicUrl;
+  const fond = formData.get("fond");
+  if (fond instanceof File && fond.size > 0) {
+    const resultat = await uploaderImage(supabase, restaurant.id, fond, "fond");
+    if (resultat.erreur) return { erreur: resultat.erreur };
+    maj.fond_url = resultat.url!;
   }
 
   const { error } = await supabase
     .from("restaurants")
-    .update({
-      nom,
-      couleur,
-      tampon_icone: tamponIcone,
-      nombre_tampons_requis: nombreTampons,
-      texte_recompense: texteRecompense,
-      ...(logoUrl ? { logo_url: logoUrl } : {}),
-    })
+    .update(maj)
     .eq("id", restaurant.id)
     .eq("owner_id", user.id);
-
   if (error) return { erreur: "Échec de l'enregistrement." };
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/c/${restaurant.slug}`);
+  return { ok: true };
+}
+
+// --- Validation commune des champs d'une carte ---
+function validerCarte(formData: FormData) {
+  const titre = String(formData.get("titre") ?? "").trim();
+  const tamponIcone = String(formData.get("tampon_icone") ?? "cafe");
+  const nombreTampons = parseInt(String(formData.get("nombre_tampons_requis") ?? "10"), 10);
+  const texteBas = String(formData.get("texte_bas") ?? "").trim();
+  const dateExpiration = String(formData.get("date_expiration") ?? "").trim();
+
+  if (!titre) return { erreur: "Le titre de la carte est obligatoire." as const };
+  if (!TAMPON_ICONES[tamponIcone]) return { erreur: "Icône de tampon invalide." as const };
+  if (!Number.isInteger(nombreTampons) || nombreTampons < 1 || nombreTampons > 30)
+    return { erreur: "Le nombre de tampons doit être entre 1 et 30." as const };
+  if (dateExpiration && !/^\d{4}-\d{2}-\d{2}$/.test(dateExpiration))
+    return { erreur: "Date d'expiration invalide." as const };
+
+  return {
+    valeurs: {
+      titre,
+      tampon_icone: tamponIcone,
+      nombre_tampons_requis: nombreTampons,
+      texte_bas: texteBas || null,
+      date_expiration: dateExpiration || null,
+    },
+  };
+}
+
+// --- Créer une carte de fidélité ---
+export async function creerCarte(formData: FormData) {
+  const { supabase, restaurant } = await restaurantCourant();
+  if (!restaurant) return { erreur: "Aucun commerce associé à ce compte." };
+
+  const v = validerCarte(formData);
+  if ("erreur" in v) return { erreur: v.erreur };
+
+  const { error } = await supabase
+    .from("cartes")
+    .insert({ restaurant_id: restaurant.id, ...v.valeurs });
+  if (error) return { erreur: "Impossible de créer la carte." };
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/c/${restaurant.slug}`);
+  return { ok: true };
+}
+
+// --- Modifier une carte de fidélité ---
+export async function mettreAJourCarte(carteId: string, formData: FormData) {
+  const { supabase, restaurant } = await restaurantCourant();
+  if (!restaurant) return { erreur: "Aucun commerce associé à ce compte." };
+
+  const v = validerCarte(formData);
+  if ("erreur" in v) return { erreur: v.erreur };
+
+  const { error } = await supabase
+    .from("cartes")
+    .update(v.valeurs)
+    .eq("id", carteId)
+    .eq("restaurant_id", restaurant.id);
+  if (error) return { erreur: "Échec de l'enregistrement de la carte." };
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/c/${restaurant.slug}`);
+  return { ok: true };
+}
+
+// --- Supprimer une carte (et ses récompenses / progressions clients) ---
+export async function supprimerCarte(carteId: string) {
+  const { supabase, restaurant } = await restaurantCourant();
+  if (!restaurant) return { erreur: "Aucun commerce associé à ce compte." };
+
+  const { error } = await supabase
+    .from("cartes")
+    .delete()
+    .eq("id", carteId)
+    .eq("restaurant_id", restaurant.id);
+  if (error) return { erreur: "Échec de la suppression." };
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/c/${restaurant.slug}`);
+  return { ok: true };
+}
+
+// --- Ajouter une récompense à une carte (image optionnelle) ---
+export async function ajouterRecompense(carteId: string, formData: FormData) {
+  const { supabase, restaurant } = await restaurantCourant();
+  if (!restaurant) return { erreur: "Aucun commerce associé à ce compte." };
+
+  const texte = String(formData.get("texte") ?? "").trim();
+  if (!texte) return { erreur: "Le texte de la récompense est obligatoire." };
+
+  // vérifie que la carte appartient bien à ce restaurant
+  const { data: carte } = await supabase
+    .from("cartes")
+    .select("id")
+    .eq("id", carteId)
+    .eq("restaurant_id", restaurant.id)
+    .maybeSingle();
+  if (!carte) return { erreur: "Carte introuvable." };
+
+  let imageUrl: string | null = null;
+  const image = formData.get("image");
+  if (image instanceof File && image.size > 0) {
+    const resultat = await uploaderImage(supabase, restaurant.id, image, "recompense");
+    if (resultat.erreur) return { erreur: resultat.erreur };
+    imageUrl = resultat.url!;
+  }
+
+  const { error } = await supabase.from("recompenses").insert({
+    carte_id: carteId,
+    restaurant_id: restaurant.id,
+    texte,
+    image_url: imageUrl,
+  });
+  if (error) return { erreur: "Impossible d'ajouter la récompense." };
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/c/${restaurant.slug}`);
+  return { ok: true };
+}
+
+// --- Supprimer une récompense ---
+export async function supprimerRecompense(recompenseId: string) {
+  const { supabase, restaurant } = await restaurantCourant();
+  if (!restaurant) return { erreur: "Aucun commerce associé à ce compte." };
+
+  const { error } = await supabase
+    .from("recompenses")
+    .delete()
+    .eq("id", recompenseId)
+    .eq("restaurant_id", restaurant.id);
+  if (error) return { erreur: "Échec de la suppression." };
 
   revalidatePath("/dashboard");
   revalidatePath(`/c/${restaurant.slug}`);

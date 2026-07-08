@@ -2,15 +2,14 @@
 
 import { useState, useTransition } from "react";
 import { mettreAJourConfig } from "./actions";
-import { TAMPON_ICONES } from "@/lib/icons";
 import type { Restaurant } from "@/lib/types";
 
+// Identité du commerce : nom, logo, image de fond, couleur
 export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
   const [erreur, setErreur] = useState<string | null>(null);
   const [succes, setSucces] = useState(false);
   const [enCours, startTransition] = useTransition();
   const [couleur, setCouleur] = useState(restaurant.couleur);
-  const [icone, setIcone] = useState(restaurant.tampon_icone);
 
   function soumettre(formData: FormData) {
     setErreur(null);
@@ -24,12 +23,14 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
 
   const classesInput =
     "w-full rounded-lg border border-stone-300 px-3.5 py-2.5 outline-none transition focus:border-bordeaux-700 focus:ring-2 focus:ring-bordeaux-200";
+  const classesFichier =
+    "block w-full text-sm text-stone-500 file:mr-3 file:rounded-lg file:border-0 file:bg-bordeaux-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-bordeaux-800 hover:file:bg-bordeaux-100";
 
   return (
     <form action={soumettre} className="rounded-2xl border border-stone-200 bg-white p-6">
-      <h2 className="text-lg font-bold text-stone-900">Ma carte de fidélité</h2>
+      <h2 className="text-lg font-bold text-stone-900">Mon commerce</h2>
       <p className="mt-1 text-sm text-stone-500">
-        Personnalisez la page que vos clients voient en scannant le QR code.
+        L&apos;identité visuelle de votre page client.
       </p>
 
       <div className="mt-6 space-y-5">
@@ -47,27 +48,37 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
           />
         </div>
 
-        <div>
-          <label htmlFor="logo" className="mb-1.5 block text-sm font-medium text-stone-700">
-            Logo / photo de couverture
-          </label>
-          {restaurant.logo_url && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={restaurant.logo_url}
-              alt="Logo actuel"
-              className="mb-2 h-20 w-20 rounded-xl border border-stone-200 object-cover"
-            />
-          )}
-          <input
-            id="logo"
-            name="logo"
-            type="file"
-            accept="image/*"
-            className="block w-full text-sm text-stone-500 file:mr-3 file:rounded-lg file:border-0 file:bg-bordeaux-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-bordeaux-800 hover:file:bg-bordeaux-100"
-          />
-          <p className="mt-1 text-xs text-stone-400">Image, 4 Mo maximum.</p>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div>
+            <label htmlFor="logo" className="mb-1.5 block text-sm font-medium text-stone-700">
+              Logo
+            </label>
+            {restaurant.logo_url && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={restaurant.logo_url}
+                alt="Logo actuel"
+                className="mb-2 h-20 w-20 rounded-xl border border-stone-200 object-cover"
+              />
+            )}
+            <input id="logo" name="logo" type="file" accept="image/*" className={classesFichier} />
+          </div>
+          <div>
+            <label htmlFor="fond" className="mb-1.5 block text-sm font-medium text-stone-700">
+              Image de fond
+            </label>
+            {restaurant.fond_url && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={restaurant.fond_url}
+                alt="Image de fond actuelle"
+                className="mb-2 h-20 w-full rounded-xl border border-stone-200 object-cover"
+              />
+            )}
+            <input id="fond" name="fond" type="file" accept="image/*" className={classesFichier} />
+          </div>
         </div>
+        <p className="-mt-3 text-xs text-stone-400">Images, 4 Mo maximum chacune.</p>
 
         <div>
           <label htmlFor="couleur" className="mb-1.5 block text-sm font-medium text-stone-700">
@@ -82,71 +93,7 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
               onChange={(e) => setCouleur(e.target.value)}
               className="h-11 w-16 cursor-pointer rounded-lg border border-stone-300 bg-white p-1"
             />
-            <span className="text-sm font-mono text-stone-500">{couleur}</span>
-          </div>
-        </div>
-
-        <div>
-          <span className="mb-1.5 block text-sm font-medium text-stone-700">
-            Icône du tampon
-          </span>
-          <input type="hidden" name="tampon_icone" value={icone} />
-          <div className="grid grid-cols-6 gap-2">
-            {Object.entries(TAMPON_ICONES).map(([cle, { emoji, label }]) => (
-              <button
-                key={cle}
-                type="button"
-                title={label}
-                onClick={() => setIcone(cle)}
-                className={`flex h-12 items-center justify-center rounded-xl border text-2xl transition ${
-                  icone === cle
-                    ? "border-bordeaux-700 bg-bordeaux-50 ring-2 ring-bordeaux-200"
-                    : "border-stone-200 bg-white hover:border-stone-300"
-                }`}
-              >
-                {emoji}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid gap-5 sm:grid-cols-2">
-          <div>
-            <label
-              htmlFor="nombre_tampons_requis"
-              className="mb-1.5 block text-sm font-medium text-stone-700"
-            >
-              Tampons requis pour la récompense
-            </label>
-            <select
-              id="nombre_tampons_requis"
-              name="nombre_tampons_requis"
-              defaultValue={restaurant.nombre_tampons_requis}
-              className={classesInput}
-            >
-              {[5, 6, 8, 10, 12, 15].map((n) => (
-                <option key={n} value={n}>
-                  {n} tampons
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label
-              htmlFor="texte_recompense"
-              className="mb-1.5 block text-sm font-medium text-stone-700"
-            >
-              Récompense offerte
-            </label>
-            <input
-              id="texte_recompense"
-              name="texte_recompense"
-              required
-              maxLength={120}
-              defaultValue={restaurant.texte_recompense}
-              placeholder="Ex : 1 café offert"
-              className={classesInput}
-            />
+            <span className="font-mono text-sm text-stone-500">{couleur}</span>
           </div>
         </div>
       </div>
@@ -156,7 +103,7 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
       )}
       {succes && (
         <p className="mt-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
-          Configuration enregistrée ✓
+          Enregistré ✓
         </p>
       )}
 

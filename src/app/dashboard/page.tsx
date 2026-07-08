@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
 import QRCode from "qrcode";
 import { createClient } from "@/lib/supabase/server";
-import type { Restaurant } from "@/lib/types";
+import type { Carte, Recompense, Restaurant } from "@/lib/types";
 import { ConfigForm } from "./ConfigForm";
+import { CartesSection } from "./CartesSection";
 import { CreationForm } from "./CreationForm";
 import { BoutonDeconnexion } from "./BoutonDeconnexion";
 
@@ -27,16 +28,32 @@ export default async function Dashboard() {
     .eq("owner_id", user.id)
     .maybeSingle<Restaurant>();
 
-  // Statistiques simples du commerce
+  // Cartes, récompenses et statistiques du commerce
+  let cartes: Carte[] = [];
+  let recompenses: Recompense[] = [];
   let nbClients = 0;
   let nbTampons = 0;
   if (restaurant) {
-    const { data: clients } = await supabase
-      .from("clients_fidelite")
-      .select("tampons_total")
-      .eq("restaurant_id", restaurant.id);
-    nbClients = clients?.length ?? 0;
-    nbTampons = clients?.reduce((somme, c) => somme + c.tampons_total, 0) ?? 0;
+    const [resCartes, resRecompenses, resClients] = await Promise.all([
+      supabase
+        .from("cartes")
+        .select("*")
+        .eq("restaurant_id", restaurant.id)
+        .order("created_at", { ascending: true }),
+      supabase
+        .from("recompenses")
+        .select("*")
+        .eq("restaurant_id", restaurant.id)
+        .order("created_at", { ascending: true }),
+      supabase
+        .from("clients_fidelite")
+        .select("tampons_total")
+        .eq("restaurant_id", restaurant.id),
+    ]);
+    cartes = (resCartes.data as Carte[]) ?? [];
+    recompenses = (resRecompenses.data as Recompense[]) ?? [];
+    nbClients = resClients.data?.length ?? 0;
+    nbTampons = resClients.data?.reduce((somme, c) => somme + c.tampons_total, 0) ?? 0;
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -98,13 +115,16 @@ export default async function Dashboard() {
             </div>
 
             <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
-              <ConfigForm restaurant={restaurant} />
+              <div className="space-y-8">
+                <ConfigForm restaurant={restaurant} />
+                <CartesSection cartes={cartes} recompenses={recompenses} />
+              </div>
 
               <aside className="h-fit rounded-2xl border border-stone-200 bg-white p-6 text-center">
                 <h2 className="font-bold text-stone-900">Votre QR code</h2>
                 <p className="mt-1 text-sm text-stone-500">
                   Imprimez-le et affichez-le en caisse : vos clients le scannent
-                  pour ouvrir leur carte de fidélité.
+                  pour ouvrir leurs cartes de fidélité.
                 </p>
                 {qrDataUrl && (
                   // eslint-disable-next-line @next/next/no-img-element
