@@ -86,7 +86,8 @@ export async function inscrireClient(slug: string, formData: FormData) {
     path: "/",
   });
 
-  revalidatePath(`/c/${slug}`);
+  // Pas de revalidatePath ici : le composant affiche d'abord la proposition
+  // de notifications, puis rafraîchit lui-même la page (router.refresh()).
   return { ok: true };
 }
 

@@ -2,10 +2,11 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { inscrireClient, activerNotifications } from "./actions";
+import { inscrireClient } from "./actions";
 
 // Première visite : le client entre uniquement son numéro de téléphone.
-// L'activation des notifications est proposée ensuite, sans jamais bloquer.
+// Une fois la carte créée (cookie posé), la page se re-rend et affiche
+// la carte de fidélité, avec une bannière optionnelle pour les notifications.
 export function FormulaireInscription({
   slug,
   couleur,
@@ -15,61 +16,15 @@ export function FormulaireInscription({
 }) {
   const router = useRouter();
   const [erreur, setErreur] = useState<string | null>(null);
-  const [inscrit, setInscrit] = useState(false);
   const [enCours, startTransition] = useTransition();
 
   function soumettre(formData: FormData) {
     setErreur(null);
     startTransition(async () => {
       const resultat = await inscrireClient(slug, formData);
-      if (resultat?.erreur) {
-        setErreur(resultat.erreur);
-      } else {
-        setInscrit(true); // on propose d'abord les notifications
-      }
+      if (resultat?.erreur) setErreur(resultat.erreur);
+      else router.refresh();
     });
-  }
-
-  async function repondreNotifications(accepte: boolean) {
-    if (accepte && typeof Notification !== "undefined") {
-      try {
-        const permission = await Notification.requestPermission();
-        await activerNotifications(slug, permission === "granted");
-      } catch {
-        // le refus ou l'absence de support ne bloque jamais
-      }
-    }
-    router.refresh(); // affiche la carte de fidélité
-  }
-
-  if (inscrit) {
-    return (
-      <div className="rounded-3xl border border-stone-200 bg-white p-8 text-center shadow-xl">
-        <p className="text-4xl">🔔</p>
-        <h2 className="mt-3 text-lg font-bold text-stone-900">
-          Votre carte est créée !
-        </h2>
-        <p className="mt-2 text-sm text-stone-500">
-          Souhaitez-vous être averti(e) quand une récompense vous attend ?
-          C&apos;est facultatif.
-        </p>
-        <div className="mt-6 flex flex-col gap-2">
-          <button
-            onClick={() => repondreNotifications(true)}
-            className="rounded-xl px-4 py-3 font-semibold text-white transition hover:opacity-90"
-            style={{ backgroundColor: couleur }}
-          >
-            Activer les notifications
-          </button>
-          <button
-            onClick={() => repondreNotifications(false)}
-            className="rounded-xl px-4 py-3 text-sm font-medium text-stone-500 transition hover:bg-stone-50"
-          >
-            Plus tard
-          </button>
-        </div>
-      </div>
-    );
   }
 
   return (

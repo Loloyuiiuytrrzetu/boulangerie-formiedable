@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { ajouterTampon, reclamerRecompense } from "./actions";
+import { useEffect, useState, useTransition } from "react";
+import { activerNotifications, ajouterTampon, reclamerRecompense } from "./actions";
 import { iconeEmoji } from "@/lib/icons";
 
 type Props = {
@@ -26,6 +26,34 @@ export function CarteFidelite({ slug, restaurant, client }: Props) {
   const [erreur, setErreur] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [enCours, startTransition] = useTransition();
+
+  // Proposition (optionnelle, jamais bloquante) d'activer les notifications :
+  // affichée tant que le client n'a ni accepté ni cliqué « Plus tard ».
+  const cleRefus = `fidelio_notif_refus_${slug}`;
+  const [proposerNotifs, setProposerNotifs] = useState(false);
+  useEffect(() => {
+    setProposerNotifs(
+      !client.notifications_push_actif &&
+        typeof Notification !== "undefined" &&
+        Notification.permission !== "denied" &&
+        localStorage.getItem(cleRefus) !== "1"
+    );
+  }, [client.notifications_push_actif, cleRefus]);
+
+  async function accepterNotifs() {
+    setProposerNotifs(false);
+    try {
+      const permission = await Notification.requestPermission();
+      await activerNotifications(slug, permission === "granted");
+    } catch {
+      // ne bloque jamais le parcours
+    }
+  }
+
+  function refuserNotifs() {
+    localStorage.setItem(cleRefus, "1");
+    setProposerNotifs(false);
+  }
 
   const { couleur, nombre_tampons_requis: requis } = restaurant;
   const emoji = iconeEmoji(restaurant.tampon_icone);
@@ -56,6 +84,29 @@ export function CarteFidelite({ slug, restaurant, client }: Props) {
 
   return (
     <div className="rounded-3xl border border-stone-200 bg-white p-6 shadow-xl">
+      {proposerNotifs && (
+        <div className="mb-5 rounded-2xl bg-stone-50 px-4 py-3">
+          <p className="text-sm text-stone-600">
+            🔔 Être averti(e) quand une récompense vous attend ?
+          </p>
+          <div className="mt-2 flex gap-2">
+            <button
+              onClick={accepterNotifs}
+              className="rounded-lg px-3 py-1.5 text-xs font-semibold text-white"
+              style={{ backgroundColor: couleur }}
+            >
+              Activer les notifications
+            </button>
+            <button
+              onClick={refuserNotifs}
+              className="rounded-lg px-3 py-1.5 text-xs font-medium text-stone-500 hover:bg-stone-100"
+            >
+              Plus tard
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-baseline justify-between">
         <h2 className="font-bold text-stone-900">Mes tampons</h2>
         <span className="text-sm font-semibold" style={{ color: couleur }}>
