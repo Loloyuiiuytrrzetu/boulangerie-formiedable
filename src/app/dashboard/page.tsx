@@ -1,0 +1,131 @@
+import { redirect } from "next/navigation";
+import QRCode from "qrcode";
+import { createClient } from "@/lib/supabase/server";
+import type { Restaurant } from "@/lib/types";
+import { ConfigForm } from "./ConfigForm";
+import { CreationForm } from "./CreationForm";
+import { BoutonDeconnexion } from "./BoutonDeconnexion";
+
+export default async function Dashboard() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  // Un super admin est redirigé vers son propre espace
+  const { data: profil } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+  if (profil?.role === "super_admin") redirect("/super-admin");
+
+  const { data: restaurant } = await supabase
+    .from("restaurants")
+    .select("*")
+    .eq("owner_id", user.id)
+    .maybeSingle<Restaurant>();
+
+  // Statistiques simples du commerce
+  let nbClients = 0;
+  let nbTampons = 0;
+  if (restaurant) {
+    const { data: clients } = await supabase
+      .from("clients_fidelite")
+      .select("tampons_total")
+      .eq("restaurant_id", restaurant.id);
+    nbClients = clients?.length ?? 0;
+    nbTampons = clients?.reduce((somme, c) => somme + c.tampons_total, 0) ?? 0;
+  }
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const urlPublique = restaurant ? `${siteUrl}/c/${restaurant.slug}` : null;
+  const qrDataUrl = urlPublique
+    ? await QRCode.toDataURL(urlPublique, {
+        width: 480,
+        margin: 2,
+        color: { dark: "#380b15", light: "#ffffff" },
+      })
+    : null;
+
+  return (
+    <main className="min-h-screen bg-stone-50">
+      <header className="border-b border-stone-200 bg-white">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-bordeaux-800 text-lg text-white">✦</span>
+            <div>
+              <p className="font-bold text-bordeaux-800">Fidélio</p>
+              <p className="text-xs text-stone-500">{user.email}</p>
+            </div>
+          </div>
+          <BoutonDeconnexion />
+        </div>
+      </header>
+
+      <div className="mx-auto max-w-5xl px-6 py-8">
+        {!restaurant ? (
+          <CreationForm />
+        ) : (
+          <>
+            {!restaurant.actif && (
+              <p className="mb-6 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                Votre commerce est actuellement <strong>désactivé</strong> : la page
+                client n&apos;est plus accessible. Contactez l&apos;équipe Fidélio.
+              </p>
+            )}
+
+            <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
+              <div className="rounded-2xl border border-stone-200 bg-white p-5">
+                <p className="text-sm text-stone-500">Clients fidélité</p>
+                <p className="mt-1 text-3xl font-bold text-bordeaux-800">{nbClients}</p>
+              </div>
+              <div className="rounded-2xl border border-stone-200 bg-white p-5">
+                <p className="text-sm text-stone-500">Tampons distribués</p>
+                <p className="mt-1 text-3xl font-bold text-bordeaux-800">{nbTampons}</p>
+              </div>
+              <div className="col-span-2 rounded-2xl border border-stone-200 bg-white p-5 sm:col-span-1">
+                <p className="text-sm text-stone-500">Votre page client</p>
+                <a
+                  href={urlPublique!}
+                  target="_blank"
+                  className="mt-1 block truncate text-sm font-semibold text-bordeaux-700 underline"
+                >
+                  /c/{restaurant.slug}
+                </a>
+              </div>
+            </div>
+
+            <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
+              <ConfigForm restaurant={restaurant} />
+
+              <aside className="h-fit rounded-2xl border border-stone-200 bg-white p-6 text-center">
+                <h2 className="font-bold text-stone-900">Votre QR code</h2>
+                <p className="mt-1 text-sm text-stone-500">
+                  Imprimez-le et affichez-le en caisse : vos clients le scannent
+                  pour ouvrir leur carte de fidélité.
+                </p>
+                {qrDataUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={qrDataUrl}
+                    alt={`QR code vers ${urlPublique}`}
+                    className="mx-auto mt-4 w-56 rounded-xl border border-stone-100"
+                  />
+                )}
+                <a
+                  href={qrDataUrl!}
+                  download={`qrcode-${restaurant.slug}.png`}
+                  className="mt-4 inline-block rounded-lg bg-bordeaux-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-bordeaux-700"
+                >
+                  Télécharger le QR code
+                </a>
+              </aside>
+            </div>
+          </>
+        )}
+      </div>
+    </main>
+  );
+}

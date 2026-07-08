@@ -1,0 +1,124 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { slugify } from "@/lib/utils";
+
+// Garde-fou commun : chaque action vérifie côté serveur que l'appelant
+// est bien connecté ET possède le rôle super_admin avant d'utiliser
+// la clé service_role.
+async function exigerSuperAdmin() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data: profil } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+  if (profil?.role !== "super_admin") redirect("/dashboard");
+}
+
+// --- Créer un compte restaurateur + son commerce ---
+export async function creerRestaurateur(formData: FormData) {
+  await exigerSuperAdmin();
+
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const motDePasse = String(formData.get("mot_de_passe") ?? "");
+  const nomCommerce = String(formData.get("nom_commerce") ?? "").trim();
+
+  if (!email || !motDePasse || !nomCommerce)
+    return { erreur: "Tous les champs sont obligatoires." };
+  if (motDePasse.length < 8)
+    return { erreur: "Le mot de passe doit contenir au moins 8 caractères." };
+
+  const admin = createAdminClient();
+
+  const { data: nouvelUtilisateur, error: erreurAuth } =
+    await admin.auth.admin.createUser({
+      email,
+      password: motDePasse,
+      email_confirm: true,
+      app_metadata: { role: "restaurateur" },
+    });
+  if (erreurAuth || !nouvelUtilisateur.user)
+    return { erreur: `Création du compte impossible : ${erreurAuth?.message}` };
+
+  // Slug unique pour la page publique
+  let slug = slugify(nomCommerce);
+  const { data: existant } = await admin
+    .from("restaurants")
+    .select("id")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (existant) slug = `${slug}-${Math.random().toString(36).slice(2, 6)}`;
+
+  const { error: erreurResto } = await admin.from("restaurants").insert({
+    owner_id: nouvelUtilisateur.user.id,
+    nom: nomCommerce,
+    slug,
+  });
+  if (erreurResto)
+    return { erreur: "Compte créé mais échec de la création du commerce." };
+
+  revalidatePath("/super-admin");
+  return { ok: true };
+}
+
+// --- Modifier le mot de passe d'un restaurateur (support) ---
+export async function changerMotDePasse(formData: FormData) {
+  await exigerSuperAdmin();
+
+  const ownerId = String(formData.get("owner_id") ?? "");
+  const motDePasse = String(formData.get("mot_de_passe") ?? "");
+  if (!ownerId || motDePasse.length < 8)
+    return { erreur: "Mot de passe trop court (8 caractères minimum)." };
+
+  const admin = createAdminClient();
+  const { error } = await admin.auth.admin.updateUserById(ownerId, {
+    password: motDePasse,
+  });
+  if (error) return { erreur: "Échec de la mise à jour du mot de passe." };
+  return { ok: true };
+}
+
+// --- Activer / désactiver un commerce (coupe l'accès à la page client) ---
+export async function basculerActif(restaurantId: string, actif: boolean) {
+  await exigerSuperAdmin();
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("restaurants")
+    .update({ actif })
+    .eq("id", restaurantId);
+  if (error) return { erreur: "Échec de la mise à jour." };
+
+  revalidatePath("/super-admin");
+  return { ok: true };
+}
+
+// --- Supprimer définitivement un restaurant (et son compte) ---
+export async function supprimerRestaurant(restaurantId: string) {
+  await exigerSuperAdmin();
+
+  const admin = createAdminClient();
+  const { data: restaurant } = await admin
+    .from("restaurants")
+    .select("owner_id")
+    .eq("id", restaurantId)
+    .maybeSingle();
+  if (!restaurant) return { erreur: "Restaurant introuvable." };
+
+  // Supprimer le compte auth supprime en cascade le profil,
+  // le restaurant et toutes ses fiches clients.
+  const { error } = await admin.auth.admin.deleteUser(restaurant.owner_id);
+  if (error) return { erreur: "Échec de la suppression." };
+
+  revalidatePath("/super-admin");
+  return { ok: true };
+}

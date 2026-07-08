@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  /* Couleur principale : rouge bordeaux, fond blanc */
+  --color-bordeaux-50: #fdf2f4;
+  --color-bordeaux-100: #fbe3e7;
+  --color-bordeaux-200: #f6ccd3;
+  --color-bordeaux-300: #efa4b1;
+  --color-bordeaux-400: #e57288;
+  --color-bordeaux-500: #d54463;
+  --color-bordeaux-600: #b92a4c;
+  --color-bordeaux-700: #9b1f3f;
+  --color-bordeaux-800: #7a1e2e;
+  --color-bordeaux-900: #641b2c;
+  --color-bordeaux-950: #380b15;
+}
+
+body {
+  background-color: #ffffff;
+  color: #1c1917;
+}
