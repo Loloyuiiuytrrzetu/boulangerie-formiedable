@@ -1,15 +1,17 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { mettreAJourConfig } from "./actions";
+import { SelecteurCouleur } from "./SelecteurCouleur";
 import type { Restaurant } from "@/lib/types";
 
-// Identité du commerce : nom, logo, image de fond, couleur
+// Identité du commerce : nom, logo, image de fond, couleurs
 export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
+  const router = useRouter();
   const [erreur, setErreur] = useState<string | null>(null);
   const [succes, setSucces] = useState(false);
   const [enCours, startTransition] = useTransition();
-  const [couleur, setCouleur] = useState(restaurant.couleur);
 
   function soumettre(formData: FormData) {
     setErreur(null);
@@ -17,7 +19,10 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
     startTransition(async () => {
       const resultat = await mettreAJourConfig(formData);
       if (resultat?.erreur) setErreur(resultat.erreur);
-      else setSucces(true);
+      else {
+        setSucces(true);
+        router.refresh(); // recharger avec les nouvelles images
+      }
     });
   }
 
@@ -26,14 +31,19 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
   const classesFichier =
     "block w-full text-sm text-stone-500 file:mr-3 file:rounded-lg file:border-0 file:bg-bordeaux-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-bordeaux-800 hover:file:bg-bordeaux-100";
 
+  // key sur restaurant.id : force la ré-initialisation quand les données changent
   return (
-    <form action={soumettre} className="rounded-2xl border border-stone-200 bg-white p-6">
+    <form
+      key={restaurant.id}
+      action={soumettre}
+      className="rounded-2xl border border-stone-200 bg-white p-6"
+    >
       <h2 className="text-lg font-bold text-stone-900">Mon commerce</h2>
       <p className="mt-1 text-sm text-stone-500">
         L&apos;identité visuelle de votre page client.
       </p>
 
-      <div className="mt-6 space-y-5">
+      <div className="mt-6 space-y-6">
         <div>
           <label htmlFor="nom" className="mb-1.5 block text-sm font-medium text-stone-700">
             Nom du commerce
@@ -78,24 +88,24 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
             <input id="fond" name="fond" type="file" accept="image/*" className={classesFichier} />
           </div>
         </div>
-        <p className="-mt-3 text-xs text-stone-400">Images, 4 Mo maximum chacune.</p>
+        <p className="-mt-3 text-xs text-stone-400">
+          Images, 4 Mo maximum chacune. Si une image de fond est chargée, elle
+          remplace la couleur principale sur votre page.
+        </p>
 
-        <div>
-          <label htmlFor="couleur" className="mb-1.5 block text-sm font-medium text-stone-700">
-            Couleur principale de votre page
-          </label>
-          <div className="flex items-center gap-3">
-            <input
-              id="couleur"
-              name="couleur"
-              type="color"
-              value={couleur}
-              onChange={(e) => setCouleur(e.target.value)}
-              className="h-11 w-16 cursor-pointer rounded-lg border border-stone-300 bg-white p-1"
-            />
-            <span className="font-mono text-sm text-stone-500">{couleur}</span>
-          </div>
-        </div>
+        <SelecteurCouleur
+          name="couleur"
+          initial={restaurant.couleur}
+          label="Couleur principale"
+          description="Utilisée pour vos tampons, boutons et détails."
+        />
+
+        <SelecteurCouleur
+          name="couleur_qr"
+          initial={restaurant.couleur_qr ?? "#380B15"}
+          label="Couleur de votre QR code"
+          description="La couleur des carrés du QR code affiché en caisse."
+        />
       </div>
 
       {erreur && (

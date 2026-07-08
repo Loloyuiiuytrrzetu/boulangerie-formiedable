@@ -6,6 +6,7 @@ export type Restaurant = {
   logo_url: string | null;
   fond_url: string | null;
   couleur: string;
+  couleur_qr: string;
   tampon_icone: string;
   nombre_tampons_requis: number;
   texte_recompense: string;

@@ -62,7 +62,7 @@ export default async function Dashboard() {
     ? await QRCode.toDataURL(urlPublique, {
         width: 480,
         margin: 2,
-        color: { dark: "#380b15", light: "#ffffff" },
+        color: { dark: restaurant?.couleur_qr ?? "#380b15", light: "#ffffff" },
       })
     : null;
 

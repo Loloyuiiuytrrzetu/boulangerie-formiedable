@@ -90,11 +90,14 @@ export async function mettreAJourConfig(formData: FormData) {
 
   const nom = String(formData.get("nom") ?? "").trim();
   const couleur = String(formData.get("couleur") ?? "#7A1E2E");
+  const couleurQr = String(formData.get("couleur_qr") ?? "#380b15");
 
   if (!nom) return { erreur: "Le nom du commerce est obligatoire." };
   if (!/^#[0-9a-fA-F]{6}$/.test(couleur)) return { erreur: "Couleur invalide." };
+  if (!/^#[0-9a-fA-F]{6}$/.test(couleurQr))
+    return { erreur: "Couleur du QR code invalide." };
 
-  const maj: Record<string, string> = { nom, couleur };
+  const maj: Record<string, string> = { nom, couleur, couleur_qr: couleurQr };
 
   const logo = formData.get("logo");
   if (logo instanceof File && logo.size > 0) {
@@ -132,8 +135,8 @@ function validerCarte(formData: FormData) {
 
   if (!titre) return { erreur: "Le titre de la carte est obligatoire." as const };
   if (!TAMPON_ICONES[tamponIcone]) return { erreur: "Icône de tampon invalide." as const };
-  if (!Number.isInteger(nombreTampons) || nombreTampons < 1 || nombreTampons > 30)
-    return { erreur: "Le nombre de tampons doit être entre 1 et 30." as const };
+  if (!Number.isInteger(nombreTampons) || nombreTampons < 1 || nombreTampons > 20)
+    return { erreur: "Le nombre de tampons doit être entre 1 et 20." as const };
   if (dateExpiration && !/^\d{4}-\d{2}-\d{2}$/.test(dateExpiration))
     return { erreur: "Date d'expiration invalide." as const };
 
@@ -235,6 +238,50 @@ export async function ajouterRecompense(carteId: string, formData: FormData) {
     image_url: imageUrl,
   });
   if (error) return { erreur: "Impossible d'ajouter la récompense." };
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/c/${restaurant.slug}`);
+  return { ok: true };
+}
+
+// --- Ajouter / remplacer l'image d'une récompense existante ---
+export async function mettreAJourImageRecompense(
+  recompenseId: string,
+  formData: FormData
+) {
+  const { supabase, restaurant } = await restaurantCourant();
+  if (!restaurant) return { erreur: "Aucun commerce associé à ce compte." };
+
+  const image = formData.get("image");
+  if (!(image instanceof File) || image.size === 0)
+    return { erreur: "Choisissez une image." };
+
+  const resultat = await uploaderImage(supabase, restaurant.id, image, "recompense");
+  if (resultat.erreur) return { erreur: resultat.erreur };
+
+  const { error } = await supabase
+    .from("recompenses")
+    .update({ image_url: resultat.url })
+    .eq("id", recompenseId)
+    .eq("restaurant_id", restaurant.id);
+  if (error) return { erreur: "Échec de la mise à jour de l'image." };
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/c/${restaurant.slug}`);
+  return { ok: true };
+}
+
+// --- Retirer l'image d'une récompense ---
+export async function retirerImageRecompense(recompenseId: string) {
+  const { supabase, restaurant } = await restaurantCourant();
+  if (!restaurant) return { erreur: "Aucun commerce associé à ce compte." };
+
+  const { error } = await supabase
+    .from("recompenses")
+    .update({ image_url: null })
+    .eq("id", recompenseId)
+    .eq("restaurant_id", restaurant.id);
+  if (error) return { erreur: "Échec de la mise à jour." };
 
   revalidatePath("/dashboard");
   revalidatePath(`/c/${restaurant.slug}`);

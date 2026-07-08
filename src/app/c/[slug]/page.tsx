@@ -106,18 +106,22 @@ export default async function PageCommerce({
 
   return (
     <main className="min-h-screen bg-white">
-      {/* Bandeau aux couleurs du commerce, avec image de fond optionnelle */}
+      {/* Bandeau : image de fond en priorité, sinon couleur pleine */}
       <header
         className="relative overflow-hidden px-6 pb-16 pt-10 text-center text-white"
-        style={{ backgroundColor: restaurant.couleur }}
+        style={restaurant.fond_url ? undefined : { backgroundColor: restaurant.couleur }}
       >
         {restaurant.fond_url && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={restaurant.fond_url}
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover opacity-30"
-          />
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={restaurant.fond_url}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            {/* léger voile pour garantir la lisibilité du nom en blanc */}
+            <div className="absolute inset-0 bg-black/25" />
+          </>
         )}
         <div className="relative">
           {restaurant.logo_url ? (

@@ -103,13 +103,50 @@ function BlocCarte({
         })}
       </div>
 
-      {/* Récompense(s) visée(s) */}
-      {recompenses.length > 0 && (
+      {/* Récompense(s) visée(s) : au choix, jamais cumulées */}
+      {recompenses.length === 1 && (
         <div
           className="mt-5 rounded-2xl px-4 py-3 text-center text-sm font-medium"
           style={{ backgroundColor: `${couleur}14`, color: couleur }}
         >
-          🎁 {recompenses.map((r) => r.texte).join(" + ")}
+          🎁 {recompenses[0].texte}
+        </div>
+      )}
+      {recompenses.length > 1 && (
+        <div className="mt-5">
+          <p
+            className="mb-2 rounded-2xl px-4 py-2 text-center text-sm font-medium"
+            style={{ backgroundColor: `${couleur}14`, color: couleur }}
+          >
+            🎁 Au choix parmi {recompenses.length} récompenses
+          </p>
+          {/* Carrousel horizontal : glissement gauche/droite avec snap */}
+          <div className="-mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-1 pb-2">
+            {recompenses.map((r) => (
+              <div
+                key={r.id}
+                className="w-40 shrink-0 snap-start overflow-hidden rounded-2xl border border-stone-200 bg-white"
+              >
+                {r.image_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={r.image_url} alt={r.texte} className="h-20 w-full object-cover" />
+                ) : (
+                  <div
+                    className="flex h-20 w-full items-center justify-center text-3xl"
+                    style={{ backgroundColor: `${couleur}14` }}
+                  >
+                    🎁
+                  </div>
+                )}
+                <p className="p-2 text-center text-xs font-semibold text-stone-900">
+                  {r.texte}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-xs text-stone-400">
+            ← Glissez pour voir toutes les récompenses →
+          </p>
         </div>
       )}
 

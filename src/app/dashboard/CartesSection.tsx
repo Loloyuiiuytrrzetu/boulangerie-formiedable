@@ -1,10 +1,13 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import {
   ajouterRecompense,
   creerCarte,
   mettreAJourCarte,
+  mettreAJourImageRecompense,
+  retirerImageRecompense,
   supprimerCarte,
   supprimerRecompense,
 } from "./actions";
@@ -59,13 +62,13 @@ function ChampsCarte({ carte }: { carte?: Carte }) {
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className="mb-1.5 block text-sm font-medium text-stone-700">
-            Nombre de tampons
+            Nombre de tampons <span className="text-stone-400">(1 à 20)</span>
           </label>
           <input
             name="nombre_tampons_requis"
             type="number"
             min={1}
-            max={30}
+            max={20}
             required
             defaultValue={carte?.nombre_tampons_requis ?? 10}
             className={classesInput}
@@ -81,6 +84,9 @@ function ChampsCarte({ carte }: { carte?: Carte }) {
             defaultValue={carte?.date_expiration ?? ""}
             className={classesInput}
           />
+          <p className="mt-1 text-xs text-stone-400">
+            Vide = pas d&apos;expiration. La carte disparaît toute seule le lendemain.
+          </p>
         </div>
       </div>
 
@@ -100,6 +106,103 @@ function ChampsCarte({ carte }: { carte?: Carte }) {
   );
 }
 
+// --- Ligne d'une récompense existante avec bouton image ---
+function LigneRecompense({ recompense }: { recompense: Recompense }) {
+  const router = useRouter();
+  const formImage = useRef<HTMLFormElement>(null);
+  const [enCours, startTransition] = useTransition();
+  const [erreur, setErreur] = useState<string | null>(null);
+
+  function changerImage(formData: FormData) {
+    setErreur(null);
+    startTransition(async () => {
+      const r = await mettreAJourImageRecompense(recompense.id, formData);
+      if (r?.erreur) setErreur(r.erreur);
+      else {
+        formImage.current?.reset();
+        router.refresh();
+      }
+    });
+  }
+
+  function retirerImage() {
+    startTransition(async () => {
+      const r = await retirerImageRecompense(recompense.id);
+      if (r?.erreur) setErreur(r.erreur);
+      else router.refresh();
+    });
+  }
+
+  function retirer() {
+    startTransition(async () => {
+      const r = await supprimerRecompense(recompense.id);
+      if (r?.erreur) setErreur(r.erreur);
+      else router.refresh();
+    });
+  }
+
+  return (
+    <li className="rounded-lg border border-stone-200 bg-white p-3">
+      <div className="flex items-center gap-3">
+        {recompense.image_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={recompense.image_url}
+            alt=""
+            className="h-14 w-14 shrink-0 rounded-lg border border-stone-100 object-cover"
+          />
+        ) : (
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-bordeaux-50 text-2xl">
+            🎁
+          </span>
+        )}
+        <span className="min-w-0 flex-1 truncate text-sm font-medium text-stone-800">
+          {recompense.texte}
+        </span>
+        <button
+          type="button"
+          onClick={retirer}
+          disabled={enCours}
+          className="shrink-0 rounded-lg px-2 py-1 text-xs font-medium text-red-600 transition hover:bg-red-50"
+        >
+          Retirer
+        </button>
+      </div>
+
+      <form
+        ref={formImage}
+        action={changerImage}
+        className="mt-2 flex flex-wrap items-center gap-2"
+      >
+        <input
+          name="image"
+          type="file"
+          accept="image/*"
+          className="block flex-1 text-xs text-stone-500 file:mr-2 file:rounded-lg file:border-0 file:bg-white file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-bordeaux-800"
+        />
+        <button
+          type="submit"
+          disabled={enCours}
+          className="rounded-lg bg-bordeaux-800 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-bordeaux-700 disabled:opacity-60"
+        >
+          {recompense.image_url ? "Remplacer l'image" : "Ajouter une image"}
+        </button>
+        {recompense.image_url && (
+          <button
+            type="button"
+            onClick={retirerImage}
+            disabled={enCours}
+            className="rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-600 transition hover:bg-stone-100"
+          >
+            Retirer l&apos;image
+          </button>
+        )}
+      </form>
+      {erreur && <p className="mt-2 text-xs text-red-600">{erreur}</p>}
+    </li>
+  );
+}
+
 // --- Une carte existante : édition, récompenses, suppression ---
 function BlocCarte({
   carte,
@@ -108,6 +211,7 @@ function BlocCarte({
   carte: Carte;
   recompenses: Recompense[];
 }) {
+  const router = useRouter();
   const [ouvert, setOuvert] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
   const [succes, setSucces] = useState(false);
@@ -120,7 +224,10 @@ function BlocCarte({
     startTransition(async () => {
       const r = await mettreAJourCarte(carte.id, formData);
       if (r?.erreur) setErreur(r.erreur);
-      else setSucces(true);
+      else {
+        setSucces(true);
+        router.refresh();
+      }
     });
   }
 
@@ -134,6 +241,7 @@ function BlocCarte({
     startTransition(async () => {
       const r = await supprimerCarte(carte.id);
       if (r?.erreur) setErreur(r.erreur);
+      else router.refresh();
     });
   }
 
@@ -142,14 +250,10 @@ function BlocCarte({
     startTransition(async () => {
       const r = await ajouterRecompense(carte.id, formData);
       if (r?.erreur) setErreur(r.erreur);
-      else formRecompense.current?.reset();
-    });
-  }
-
-  function retirerRecompense(id: string) {
-    startTransition(async () => {
-      const r = await supprimerRecompense(id);
-      if (r?.erreur) setErreur(r.erreur);
+      else {
+        formRecompense.current?.reset();
+        router.refresh();
+      }
     });
   }
 
@@ -182,7 +286,7 @@ function BlocCarte({
 
       {ouvert && (
         <div className="border-t border-stone-100 px-5 py-5">
-          <form action={enregistrer}>
+          <form key={carte.id + carte.tampon_icone} action={enregistrer}>
             <ChampsCarte carte={carte} />
             <div className="mt-4 flex items-center gap-3">
               <button
@@ -209,6 +313,10 @@ function BlocCarte({
             <h4 className="text-sm font-bold text-stone-900">
               🎁 Récompenses de cette carte
             </h4>
+            <p className="mt-0.5 text-xs text-stone-500">
+              Si plusieurs récompenses, le client choisit celle qu&apos;il veut
+              (ce n&apos;est pas cumulé).
+            </p>
 
             {recompenses.length === 0 ? (
               <p className="mt-2 text-sm text-stone-500">
@@ -217,36 +325,7 @@ function BlocCarte({
             ) : (
               <ul className="mt-3 space-y-2">
                 {recompenses.map((r) => (
-                  <li
-                    key={r.id}
-                    className="flex items-center justify-between gap-3 rounded-lg border border-stone-200 bg-white px-3 py-2"
-                  >
-                    <div className="flex min-w-0 items-center gap-3">
-                      {r.image_url ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={r.image_url}
-                          alt=""
-                          className="h-10 w-10 shrink-0 rounded-lg border border-stone-100 object-cover"
-                        />
-                      ) : (
-                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-bordeaux-50 text-lg">
-                          🎁
-                        </span>
-                      )}
-                      <span className="truncate text-sm font-medium text-stone-800">
-                        {r.texte}
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => retirerRecompense(r.id)}
-                      disabled={enCours}
-                      className="shrink-0 rounded-lg px-2 py-1 text-xs font-medium text-red-600 transition hover:bg-red-50"
-                    >
-                      Retirer
-                    </button>
-                  </li>
+                  <LigneRecompense key={r.id} recompense={r} />
                 ))}
               </ul>
             )}
@@ -274,7 +353,9 @@ function BlocCarte({
                   Ajouter
                 </button>
               </div>
-              <p className="text-xs text-stone-400">Image optionnelle (4 Mo max).</p>
+              <p className="text-xs text-stone-400">
+                Image optionnelle (4 Mo max) — vous pourrez la changer plus tard.
+              </p>
             </form>
           </div>
 
@@ -295,6 +376,7 @@ export function CartesSection({
   cartes: Carte[];
   recompenses: Recompense[];
 }) {
+  const router = useRouter();
   const [creation, setCreation] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
   const [enCours, startTransition] = useTransition();
@@ -304,7 +386,10 @@ export function CartesSection({
     startTransition(async () => {
       const r = await creerCarte(formData);
       if (r?.erreur) setErreur(r.erreur);
-      else setCreation(false);
+      else {
+        setCreation(false);
+        router.refresh();
+      }
     });
   }
 
