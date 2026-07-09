@@ -2,7 +2,14 @@ import { redirect } from "next/navigation";
 import QRCode from "qrcode";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import type { Carte, Recompense, Restaurant, Section, SousCompte } from "@/lib/types";
+import type {
+  Carte,
+  Recompense,
+  Restaurant,
+  Section,
+  SousCompte,
+  TamponHistorique,
+} from "@/lib/types";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ConfigForm } from "./ConfigForm";
 import { CartesSection } from "./CartesSection";
@@ -10,6 +17,7 @@ import { SectionsSection } from "./SectionsSection";
 import { CreationForm } from "./CreationForm";
 import { BoutonDeconnexion } from "./BoutonDeconnexion";
 import { SousCompteSection } from "./SousCompteSection";
+import { GraphiquesTampons } from "./GraphiquesTampons";
 
 export default async function Dashboard() {
   const supabase = await createClient();
@@ -37,6 +45,7 @@ export default async function Dashboard() {
   let recompenses: Recompense[] = [];
   let sections: Section[] = [];
   let sousCompte: SousCompte | null = null;
+  let historique: TamponHistorique[] = [];
   let nbClients = 0;
   let nbTampons = 0;
   if (restaurant) {
@@ -66,6 +75,14 @@ export default async function Dashboard() {
         .eq("restaurant_id", restaurant.id)
         .order("ordre", { ascending: true }),
     ]);
+    // Historique des tampons (tout, pour permettre la navigation entre années)
+    const { data: resHistorique } = await supabase
+      .from("tampons_historique")
+      .select("*")
+      .eq("restaurant_id", restaurant.id)
+      .order("date_attribution", { ascending: true });
+    historique = (resHistorique as TamponHistorique[]) ?? [];
+
     cartes = (resCartes.data as Carte[]) ?? [];
     recompenses = (resRecompenses.data as Recompense[]) ?? [];
     nbClients = resClients.data?.length ?? 0;
@@ -175,6 +192,10 @@ export default async function Dashboard() {
                     <span>→</span>
                   </Link>
                 </div>
+                <GraphiquesTampons
+                  historique={historique}
+                  couleur={restaurant.couleur}
+                />
                 <ConfigForm restaurant={restaurant} />
                 <CartesSection cartes={cartes} recompenses={recompenses} />
                 <SectionsSection sections={sections} />

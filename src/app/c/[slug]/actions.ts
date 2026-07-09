@@ -182,6 +182,15 @@ export async function ajouterTampon(slug: string, carteId: string) {
     })
     .eq("id", client.id);
 
+  // Journal d'historique pour les graphiques du dashboard
+  await admin.from("tampons_historique").insert({
+    restaurant_id: restaurant.id,
+    carte_id: carte.id,
+    client_id: client.id,
+    nombre: 1,
+    date_attribution: aujourdHui,
+  });
+
   revalidatePath(`/c/${slug}`);
   return { ok: true };
 }

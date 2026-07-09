@@ -579,7 +579,17 @@ export async function attribuerTampons(formData: FormData) {
     })
     .eq("id", client.id);
 
+  // Journal d'historique pour les graphiques
+  await admin.from("tampons_historique").insert({
+    restaurant_id: restaurant.id,
+    carte_id: carte.id,
+    client_id: client.id,
+    nombre,
+    date_attribution: aujourdHui,
+  });
+
   revalidatePath("/dashboard/scanner");
+  revalidatePath("/dashboard");
   revalidatePath(`/c/${restaurant.slug}`);
   return {
     ok: true as const,

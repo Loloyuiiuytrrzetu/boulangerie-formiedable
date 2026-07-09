@@ -78,6 +78,16 @@ export type SousCompte = {
   created_at: string;
 };
 
+export type TamponHistorique = {
+  id: string;
+  restaurant_id: string;
+  carte_id: string | null;
+  client_id: string | null;
+  nombre: number;
+  date_attribution: string; // YYYY-MM-DD
+  created_at: string;
+};
+
 export type Section = {
   id: string;
   restaurant_id: string;
