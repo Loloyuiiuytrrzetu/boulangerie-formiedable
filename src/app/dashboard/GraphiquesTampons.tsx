@@ -29,12 +29,16 @@ function Courbe({
   height?: number;
 }) {
   const largeur = 900;
-  const max = Math.max(1, ...valeurs);
+  const maxBrut = Math.max(1, ...valeurs);
+  // Arrondit le max au multiple supérieur "propre" (1,2,5,10,20,50,100…)
+  const puissance = Math.pow(10, Math.floor(Math.log10(maxBrut)));
+  const bases = [1, 2, 5, 10];
+  const max = bases.map((b) => b * puissance).find((v) => v >= maxBrut) ?? maxBrut;
   const paddingBas = 30;
   const paddingHaut = 24;
-  const paddingLat = 20;
+  const paddingLat = 50; // plus d'espace à gauche pour l'axe Y
 
-  const zoneLargeur = largeur - 2 * paddingLat;
+  const zoneLargeur = largeur - paddingLat - 20;
   const points = valeurs.map((v, i) => {
     const x =
       paddingLat + (i / Math.max(1, labels.length - 1)) * zoneLargeur;
@@ -55,18 +59,30 @@ function Courbe({
         preserveAspectRatio="xMidYMid meet"
       >
         {/* Grille */}
-        {[0, 1, 2, 3].map((i) => {
-          const y = paddingHaut + (i / 3) * (height - paddingBas - paddingHaut);
+        {[0, 1, 2, 3, 4].map((i) => {
+          const y = paddingHaut + (i / 4) * (height - paddingBas - paddingHaut);
+          const valeur = Math.round(max - (i / 4) * max);
           return (
-            <line
-              key={i}
-              x1={paddingLat}
-              x2={largeur - paddingLat}
-              y1={y}
-              y2={y}
-              stroke="#e7e5e4"
-              strokeDasharray="4 4"
-            />
+            <g key={i}>
+              <line
+                x1={paddingLat}
+                x2={largeur - 10}
+                y1={y}
+                y2={y}
+                stroke="#e7e5e4"
+                strokeDasharray="4 4"
+              />
+              <text
+                x={paddingLat - 8}
+                y={y + 4}
+                textAnchor="end"
+                fontSize={11}
+                fill="#78716c"
+                fontWeight={500}
+              >
+                {valeur}
+              </text>
+            </g>
           );
         })}
         {/* Zone sous la courbe */}
