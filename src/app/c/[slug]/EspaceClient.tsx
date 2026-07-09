@@ -15,6 +15,7 @@ export type CarteAffichee = {
   id: string;
   titre: string;
   tampon_icone: string;
+  tampon_image_url: string | null;
   nombre_tampons_requis: number;
   texte_bas: string | null;
   date_expiration: string | null;
@@ -187,14 +188,28 @@ function BlocCarte({
           return (
             <div
               key={i}
-              className="flex aspect-square items-center justify-center rounded-2xl border-2 text-2xl transition"
+              className="flex aspect-square items-center justify-center overflow-hidden rounded-2xl border-2 text-2xl transition"
               style={
                 rempli
-                  ? { backgroundColor: couleur, borderColor: couleur }
+                  ? {
+                      backgroundColor: carte.tampon_image_url ? "#ffffff" : couleur,
+                      borderColor: couleur,
+                    }
                   : { borderColor: "#e7e5e4", borderStyle: "dashed" }
               }
             >
-              <span className={rempli ? "" : "opacity-20 grayscale"}>{emoji}</span>
+              {carte.tampon_image_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={carte.tampon_image_url}
+                  alt=""
+                  className={`h-4/5 w-4/5 object-contain transition ${
+                    rempli ? "" : "opacity-20 grayscale"
+                  }`}
+                />
+              ) : (
+                <span className={rempli ? "" : "opacity-20 grayscale"}>{emoji}</span>
+              )}
             </div>
           );
         })}

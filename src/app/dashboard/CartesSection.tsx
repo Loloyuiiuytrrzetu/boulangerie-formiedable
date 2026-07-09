@@ -8,6 +8,7 @@ import {
   mettreAJourCarte,
   mettreAJourImageRecompense,
   retirerImageRecompense,
+  retirerImageTampon,
   supprimerCarte,
   supprimerRecompense,
 } from "./actions";
@@ -38,24 +39,57 @@ function ChampsCarte({ carte }: { carte?: Carte }) {
       </div>
 
       <div>
-        <span className="mb-1.5 block text-sm font-medium text-stone-700">Icône du tampon</span>
+        <span className="mb-1.5 block text-sm font-medium text-stone-700">
+          Icône du tampon
+        </span>
         <input type="hidden" name="tampon_icone" value={icone} />
-        <div className="grid grid-cols-6 gap-2">
-          {Object.entries(TAMPON_ICONES).map(([cle, { emoji, label }]) => (
-            <button
-              key={cle}
-              type="button"
-              title={label}
-              onClick={() => setIcone(cle)}
-              className={`flex h-11 items-center justify-center rounded-xl border text-xl transition ${
-                icone === cle
-                  ? "border-bordeaux-700 bg-bordeaux-50 ring-2 ring-bordeaux-200"
-                  : "border-stone-200 bg-white hover:border-stone-300"
-              }`}
-            >
-              {emoji}
-            </button>
-          ))}
+        {/* Palette d'icônes prédéfinies (scrollable) */}
+        <div className="max-h-56 overflow-y-auto rounded-xl border border-stone-200 bg-stone-50 p-2">
+          <div className="grid grid-cols-6 gap-2 sm:grid-cols-8">
+            {Object.entries(TAMPON_ICONES).map(([cle, { emoji, label }]) => (
+              <button
+                key={cle}
+                type="button"
+                title={label}
+                onClick={() => setIcone(cle)}
+                className={`flex h-11 items-center justify-center rounded-xl border text-xl transition ${
+                  icone === cle
+                    ? "border-bordeaux-700 bg-bordeaux-50 ring-2 ring-bordeaux-200"
+                    : "border-stone-200 bg-white hover:border-stone-300"
+                }`}
+              >
+                {emoji}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Image personnalisée (remplace l'icône si présente) */}
+        <div className="mt-3 rounded-xl border border-dashed border-stone-300 bg-white p-3">
+          <p className="text-xs font-semibold text-stone-700">
+            Ou importez votre propre image de tampon
+          </p>
+          <p className="mt-0.5 text-xs text-stone-400">
+            Elle apparaîtra en gris pâle quand la case est vide, en couleur
+            quand le tampon est obtenu. Fond transparent (PNG) recommandé.
+          </p>
+          {carte?.tampon_image_url && (
+            <div className="mt-2 flex items-center gap-3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={carte.tampon_image_url}
+                alt="Tampon actuel"
+                className="h-14 w-14 rounded-lg border border-stone-200 object-cover"
+              />
+              <span className="text-xs text-stone-500">Image active</span>
+            </div>
+          )}
+          <input
+            name="tampon_image"
+            type="file"
+            accept="image/*"
+            className="mt-2 block w-full text-xs text-stone-500 file:mr-2 file:rounded-lg file:border-0 file:bg-bordeaux-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-bordeaux-800 hover:file:bg-bordeaux-100"
+          />
         </div>
       </div>
 
@@ -246,6 +280,15 @@ function BlocCarte({
     });
   }
 
+  function retirerTampon() {
+    if (!window.confirm("Retirer l'image de tampon ? Vous reviendrez à l'icône choisie.")) return;
+    startTransition(async () => {
+      const r = await retirerImageTampon(carte.id);
+      if (r?.erreur) setErreur(r.erreur);
+      else router.refresh();
+    });
+  }
+
   function nouvelleRecompense(formData: FormData) {
     setErreur(null);
     startTransition(async () => {
@@ -297,6 +340,16 @@ function BlocCarte({
               >
                 Enregistrer la carte
               </button>
+              {carte.tampon_image_url && (
+                <button
+                  type="button"
+                  onClick={retirerTampon}
+                  disabled={enCours}
+                  className="rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-stone-600 transition hover:bg-stone-100 disabled:opacity-60"
+                >
+                  Retirer l&apos;image
+                </button>
+              )}
               <button
                 type="button"
                 onClick={supprimer}

@@ -22,6 +22,7 @@ export type Carte = {
   restaurant_id: string;
   titre: string;
   tampon_icone: string;
+  tampon_image_url: string | null;
   nombre_tampons_requis: number;
   texte_bas: string | null;
   date_expiration: string | null;

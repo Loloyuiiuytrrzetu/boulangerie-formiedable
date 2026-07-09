@@ -200,9 +200,22 @@ export async function creerCarte(formData: FormData) {
   const v = validerCarte(formData);
   if ("erreur" in v) return { erreur: v.erreur };
 
+  // Image de tampon personnalisée (optionnelle)
+  let tamponImageUrl: string | null = null;
+  const image = formData.get("tampon_image");
+  if (image instanceof File && image.size > 0) {
+    const r = await uploaderImage(supabase, restaurant.id, image, "tampon");
+    if (r.erreur) return { erreur: r.erreur };
+    tamponImageUrl = r.url!;
+  }
+
   const { error } = await supabase
     .from("cartes")
-    .insert({ restaurant_id: restaurant.id, ...v.valeurs });
+    .insert({
+      restaurant_id: restaurant.id,
+      ...v.valeurs,
+      tampon_image_url: tamponImageUrl,
+    });
   if (error) return { erreur: "Impossible de créer la carte." };
 
   revalidatePath("/dashboard");
@@ -218,12 +231,39 @@ export async function mettreAJourCarte(carteId: string, formData: FormData) {
   const v = validerCarte(formData);
   if ("erreur" in v) return { erreur: v.erreur };
 
+  const maj: Record<string, unknown> = { ...v.valeurs };
+
+  // Nouvelle image de tampon si fournie
+  const image = formData.get("tampon_image");
+  if (image instanceof File && image.size > 0) {
+    const r = await uploaderImage(supabase, restaurant.id, image, "tampon");
+    if (r.erreur) return { erreur: r.erreur };
+    maj.tampon_image_url = r.url;
+  }
+
   const { error } = await supabase
     .from("cartes")
-    .update(v.valeurs)
+    .update(maj)
     .eq("id", carteId)
     .eq("restaurant_id", restaurant.id);
   if (error) return { erreur: "Échec de l'enregistrement de la carte." };
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/c/${restaurant.slug}`);
+  return { ok: true };
+}
+
+// --- Retirer l'image de tampon d'une carte (retour aux emojis) ---
+export async function retirerImageTampon(carteId: string) {
+  const { supabase, restaurant } = await restaurantCourant();
+  if (!restaurant) return { erreur: "Aucun commerce associé à ce compte." };
+
+  const { error } = await supabase
+    .from("cartes")
+    .update({ tampon_image_url: null })
+    .eq("id", carteId)
+    .eq("restaurant_id", restaurant.id);
+  if (error) return { erreur: "Échec de la mise à jour." };
 
   revalidatePath("/dashboard");
   revalidatePath(`/c/${restaurant.slug}`);
