@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { TAMPON_ICONES, iconeEmoji } from "@/lib/icons";
+import { regionDe } from "@/lib/timezones";
 import type { ClientFidelite, Restaurant } from "@/lib/types";
 import { MotDePasseForm } from "./MotDePasseForm";
 
@@ -53,6 +54,7 @@ export default async function DetailRestaurant({
   const config: [string, React.ReactNode][] = [
     ["Nom", restaurant.nom],
     ["Slug / URL publique", <code key="slug">/c/{restaurant.slug}</code>],
+    ["Région / fuseau horaire", regionDe(restaurant.timezone ?? "Europe/Paris")],
     ["Email du restaurateur", proprietaire?.user?.email ?? "—"],
     [
       "Couleur",

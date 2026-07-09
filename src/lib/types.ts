@@ -7,6 +7,7 @@ export type Restaurant = {
   fond_url: string | null;
   couleur: string;
   couleur_qr: string;
+  timezone: string;
   tampon_par_carte: boolean;
   animation_recompense: "confettis" | "coeurs" | "etoiles" | "feux";
   tampon_icone: string;

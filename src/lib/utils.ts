@@ -1,14 +1,19 @@
 import { randomBytes } from "crypto";
 
-// Date du jour (AAAA-MM-JJ) en heure de Paris — sert à limiter
-// le client à 1 tampon par jour, quel que soit le fuseau du serveur.
-export function dateDuJourParis(): string {
+// Date du jour (AAAA-MM-JJ) dans le fuseau horaire donné.
+// Sert à calculer "aujourd'hui" côté commerce, où qu'il soit.
+export function dateDuJour(timezone: string = "Europe/Paris"): string {
   return new Intl.DateTimeFormat("fr-CA", {
-    timeZone: "Europe/Paris",
+    timeZone: timezone,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
   }).format(new Date());
+}
+
+// Ancien nom conservé pour compatibilité (mappé sur le nouveau)
+export function dateDuJourParis(): string {
+  return dateDuJour("Europe/Paris");
 }
 
 // Génère un token opaque pour le cookie de reconnaissance du client

@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { TAMPON_ICONES } from "@/lib/icons";
-import { dateDuJourParis, slugify } from "@/lib/utils";
+import { dateDuJour, slugify } from "@/lib/utils";
 import type { CarteClient } from "@/lib/types";
 
 // Déconnexion manuelle du restaurateur
@@ -349,7 +349,7 @@ async function restaurantDuRestaurateur() {
   if (!user) redirect("/login");
   const { data: restaurant } = await supabase
     .from("restaurants")
-    .select("id, nom, slug")
+    .select("id, nom, slug, timezone")
     .eq("owner_id", user.id)
     .maybeSingle();
   return { supabase, user, restaurant };
@@ -452,7 +452,7 @@ async function restaurantAcces() {
   // restaurateur ?
   const { data: r1 } = await supabase
     .from("restaurants")
-    .select("id, nom, slug")
+    .select("id, nom, slug, timezone")
     .eq("owner_id", user.id)
     .maybeSingle();
   if (r1) return { user, restaurant: r1 };
@@ -469,7 +469,7 @@ async function restaurantAcces() {
 
   const { data: r2 } = await admin
     .from("restaurants")
-    .select("id, nom, slug")
+    .select("id, nom, slug, timezone")
     .eq("id", sc.restaurant_id)
     .maybeSingle();
   return { user, restaurant: r2 };
@@ -509,7 +509,9 @@ export async function attribuerTampons(formData: FormData) {
     .maybeSingle();
   if (!carte) return { erreur: "Cette carte n'existe plus." };
 
-  const aujourdHui = dateDuJourParis();
+  const aujourdHui = dateDuJour(
+    (restaurant as { timezone?: string }).timezone ?? "Europe/Paris"
+  );
   if (carte.date_expiration && carte.date_expiration < aujourdHui)
     return { erreur: "Cette carte a expiré." };
 

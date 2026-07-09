@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { creerRestaurateur } from "./actions";
+import { TIMEZONES } from "@/lib/timezones";
 
 export function CreerRestaurateurForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -46,6 +47,29 @@ export function CreerRestaurateurForm() {
           </label>
           <input id="email" name="email" type="email" required className={classesInput} placeholder="contact@cafedesarts.fr" />
         </div>
+        <div>
+          <label htmlFor="timezone" className="mb-1.5 block text-sm font-medium text-stone-700">
+            Région du commerce
+          </label>
+          <select
+            id="timezone"
+            name="timezone"
+            required
+            defaultValue="Europe/Paris"
+            className={classesInput}
+          >
+            {TIMEZONES.map((t) => (
+              <option key={t.timezone} value={t.timezone}>
+                {t.region}
+              </option>
+            ))}
+          </select>
+          <p className="mt-1 text-xs text-stone-400">
+            Détermine le fuseau horaire — un « tampon du jour » sera calculé
+            selon l&apos;heure locale du commerce, pour des chiffres exacts.
+          </p>
+        </div>
+
         <div>
           <label htmlFor="mot_de_passe" className="mb-1.5 block text-sm font-medium text-stone-700">
             Mot de passe initial

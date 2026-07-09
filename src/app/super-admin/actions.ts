@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { slugify } from "@/lib/utils";
+import { TIMEZONES_VALIDES } from "@/lib/timezones";
 
 // Garde-fou commun : chaque action vérifie côté serveur que l'appelant
 // est bien connecté ET possède le rôle super_admin avant d'utiliser
@@ -31,11 +32,14 @@ export async function creerRestaurateur(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const motDePasse = String(formData.get("mot_de_passe") ?? "");
   const nomCommerce = String(formData.get("nom_commerce") ?? "").trim();
+  const timezone = String(formData.get("timezone") ?? "Europe/Paris");
 
   if (!email || !motDePasse || !nomCommerce)
     return { erreur: "Tous les champs sont obligatoires." };
   if (motDePasse.length < 8)
     return { erreur: "Le mot de passe doit contenir au moins 8 caractères." };
+  if (!TIMEZONES_VALIDES.has(timezone))
+    return { erreur: "Région / fuseau horaire invalide." };
 
   const admin = createAdminClient();
 
@@ -62,6 +66,7 @@ export async function creerRestaurateur(formData: FormData) {
     owner_id: nouvelUtilisateur.user.id,
     nom: nomCommerce,
     slug,
+    timezone,
   });
   if (erreurResto)
     return { erreur: "Compte créé mais échec de la création du commerce." };

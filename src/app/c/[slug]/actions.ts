@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { dateDuJourParis, genererToken, normaliserTelephone } from "@/lib/utils";
+import { dateDuJour, genererToken, normaliserTelephone } from "@/lib/utils";
 import type { Carte, CarteClient, ClientFidelite, Recompense, Restaurant } from "@/lib/types";
 
 // Toutes ces actions concernent des clients NON authentifiés :
@@ -108,7 +108,7 @@ async function contexteCarte(slug: string, carteId: string) {
     .maybeSingle<Carte>();
   if (!carte) return { erreur: "Cette carte n'existe plus." as const };
 
-  const aujourdHui = dateDuJourParis();
+  const aujourdHui = dateDuJour(restaurant.timezone ?? "Europe/Paris");
   if (carte.date_expiration && carte.date_expiration < aujourdHui)
     return { erreur: "Cette carte a expiré." as const };
 
