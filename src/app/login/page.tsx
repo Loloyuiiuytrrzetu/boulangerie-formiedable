@@ -61,7 +61,13 @@ function FormulaireLogin() {
             Connectez-vous pour gérer votre carte de fidélité.
           </p>
 
-          <form onSubmit={seConnecter} className="mt-6 space-y-4">
+          <form
+            onSubmit={seConnecter}
+            method="post"
+            action="#"
+            name="login"
+            className="mt-6 space-y-4"
+          >
             <div>
               <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-stone-700">
                 Email

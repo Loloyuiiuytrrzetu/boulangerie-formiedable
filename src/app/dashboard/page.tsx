@@ -3,6 +3,7 @@ import QRCode from "qrcode";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import type { Carte, Recompense, Restaurant, Section, SousCompte } from "@/lib/types";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { ConfigForm } from "./ConfigForm";
 import { CartesSection } from "./CartesSection";
 import { SectionsSection } from "./SectionsSection";
@@ -71,6 +72,35 @@ export default async function Dashboard() {
     nbTampons = resClients.data?.reduce((somme, c) => somme + c.tampons_total, 0) ?? 0;
     sousCompte = resSc.data ?? null;
     sections = (resSections.data as Section[]) ?? [];
+
+    // Auto-réparation si aucune section (migration incomplète)
+    if (sections.length === 0) {
+      const admin = createAdminClient();
+      await admin.from("sections").insert([
+        {
+          restaurant_id: restaurant.id,
+          type: "cartes",
+          titre: "Cartes de fidélité",
+          ordre: 0,
+          supprimable: false,
+        },
+        {
+          restaurant_id: restaurant.id,
+          type: "info",
+          titre: "Info",
+          texte:
+            "Présentez ce QR code au commerçant à chaque passage pour recevoir vos tampons.",
+          ordre: 100,
+          supprimable: false,
+        },
+      ]);
+      const { data: refetch } = await admin
+        .from("sections")
+        .select("*")
+        .eq("restaurant_id", restaurant.id)
+        .order("ordre", { ascending: true });
+      sections = (refetch as Section[]) ?? [];
+    }
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";

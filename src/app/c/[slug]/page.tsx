@@ -63,13 +63,44 @@ export default async function PageCommerce({
   }
 
   // Toujours charger les sections (même quand pas de client) — inscription simple
-  const { data: sectionsData } = await admin
+  let { data: sectionsData } = await admin
     .from("sections")
     .select("*")
     .eq("restaurant_id", restaurant.id)
     .order("ordre", { ascending: true })
     .returns<Section[]>();
-  const sections = sectionsData ?? [];
+  let sections = sectionsData ?? [];
+
+  // Auto-réparation : si aucune section (migration incomplète, ancien
+  // restaurant…), on crée les 2 sections par défaut à la volée
+  if (sections.length === 0) {
+    await admin.from("sections").insert([
+      {
+        restaurant_id: restaurant.id,
+        type: "cartes",
+        titre: "Cartes de fidélité",
+        ordre: 0,
+        supprimable: false,
+      },
+      {
+        restaurant_id: restaurant.id,
+        type: "info",
+        titre: "Info",
+        texte:
+          "Présentez ce QR code au commerçant à chaque passage pour recevoir vos tampons.",
+        ordre: 100,
+        supprimable: false,
+      },
+    ]);
+    const { data: refetch } = await admin
+      .from("sections")
+      .select("*")
+      .eq("restaurant_id", restaurant.id)
+      .order("ordre", { ascending: true })
+      .returns<Section[]>();
+    sectionsData = refetch;
+    sections = sectionsData ?? [];
+  }
 
   let cartesAffichees: CarteAffichee[] = [];
   let recompenses: Recompense[] = [];
