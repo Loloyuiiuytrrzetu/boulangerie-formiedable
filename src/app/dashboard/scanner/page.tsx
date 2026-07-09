@@ -106,12 +106,14 @@ export default async function Scanner({
       <div className="mx-auto max-w-xl px-4 py-6 sm:px-6 sm:py-8">
         <div className="rounded-3xl border border-stone-200 bg-white p-5 shadow-lg sm:p-6">
           <h1 className="text-xl font-bold text-stone-900">
-            {clientPrecharge ? "Client identifié ✓" : "Attribuer des tampons"}
+            {clientPrecharge
+              ? "Client identifié ✓"
+              : "Scanner le QR code du client"}
           </h1>
           <p className="mt-1 text-sm text-stone-500">
             {clientPrecharge
-              ? "Le numéro du client est pré-rempli — choisissez la carte et le nombre de tampons."
-              : "Scannez le QR code du client depuis la section Info de sa page, ou entrez son numéro à la main."}
+              ? "Choisissez la carte et le nombre de tampons à attribuer."
+              : "Demandez au client d'ouvrir son onglet Info sur sa page Walletiz, puis scannez son QR code personnel."}
           </p>
 
           <ScannerForm
