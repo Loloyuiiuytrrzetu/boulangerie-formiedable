@@ -20,6 +20,7 @@ import { BoutonDeconnexion } from "./BoutonDeconnexion";
 import { SousCompteSection } from "./SousCompteSection";
 import { GraphiquesTampons } from "./GraphiquesTampons";
 import { BandeauImpersonation } from "./BandeauImpersonation";
+import { NavigationSidebar } from "./NavigationSidebar";
 
 export default async function Dashboard() {
   const effectif = await utilisateurEffectif();
@@ -153,7 +154,7 @@ export default async function Dashboard() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-5xl px-6 py-8">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         {!restaurant ? (
           <CreationForm />
         ) : (
@@ -165,29 +166,33 @@ export default async function Dashboard() {
               </p>
             )}
 
-            <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
-              <div className="rounded-2xl border border-stone-200 bg-white p-5">
-                <p className="text-sm text-stone-500">Clients fidélisés</p>
-                <p className="mt-1 text-3xl font-bold text-bordeaux-800">{nbClients}</p>
-              </div>
-              <div className="rounded-2xl border border-stone-200 bg-white p-5">
-                <p className="text-sm text-stone-500">Tampons distribués aujourd&apos;hui</p>
-                <p className="mt-1 text-3xl font-bold text-bordeaux-800">{nbTampons}</p>
-              </div>
-              <div className="col-span-2 rounded-2xl border border-stone-200 bg-white p-5 sm:col-span-1">
-                <p className="text-sm text-stone-500">Votre page client</p>
-                <a
-                  href={urlPublique!}
-                  target="_blank"
-                  className="mt-1 block truncate text-sm font-semibold text-bordeaux-700 underline"
-                >
-                  /c/{restaurant.slug}
-                </a>
-              </div>
-            </div>
+            <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
+              <NavigationSidebar />
 
-            <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
               <div className="space-y-8">
+                <div className="mb-2 grid grid-cols-2 gap-4 sm:grid-cols-3">
+                  <div className="rounded-2xl border border-stone-200 bg-white p-5">
+                    <p className="text-sm text-stone-500">Clients fidélisés</p>
+                    <p className="mt-1 text-3xl font-bold text-bordeaux-800">{nbClients}</p>
+                  </div>
+                  <div className="rounded-2xl border border-stone-200 bg-white p-5">
+                    <p className="text-sm text-stone-500">
+                      Tampons distribués aujourd&apos;hui
+                    </p>
+                    <p className="mt-1 text-3xl font-bold text-bordeaux-800">{nbTampons}</p>
+                  </div>
+                  <div className="col-span-2 rounded-2xl border border-stone-200 bg-white p-5 sm:col-span-1">
+                    <p className="text-sm text-stone-500">Votre page client</p>
+                    <a
+                      href={urlPublique!}
+                      target="_blank"
+                      className="mt-1 block truncate text-sm font-semibold text-bordeaux-700 underline"
+                    >
+                      /c/{restaurant.slug}
+                    </a>
+                  </div>
+                </div>
+
                 <div className="rounded-2xl border border-stone-200 bg-white p-4">
                   <Link
                     href="/dashboard/scanner"
@@ -197,17 +202,30 @@ export default async function Dashboard() {
                     <span>→</span>
                   </Link>
                 </div>
-                <GraphiquesTampons
-                  historique={historique}
-                  couleur={restaurant.couleur}
-                />
-                <ConfigForm restaurant={restaurant} />
-                <CartesSection cartes={cartes} recompenses={recompenses} />
-                <SectionsSection sections={sections} />
-                <SousCompteSection sousCompte={sousCompte} />
-              </div>
 
-              <aside className="h-fit rounded-2xl border border-stone-200 bg-white p-6 text-center">
+                <div id="graphiques">
+                  <GraphiquesTampons
+                    historique={historique}
+                    couleur={restaurant.couleur}
+                  />
+                </div>
+                <div id="commerce">
+                  <ConfigForm restaurant={restaurant} />
+                </div>
+                <div id="cartes">
+                  <CartesSection cartes={cartes} recompenses={recompenses} />
+                </div>
+                <div id="sections-page">
+                  <SectionsSection sections={sections} />
+                </div>
+                <div id="souscompte">
+                  <SousCompteSection sousCompte={sousCompte} />
+                </div>
+
+                <aside
+                  id="qr-code"
+                  className="h-fit rounded-2xl border border-stone-200 bg-white p-6 text-center"
+                >
                 <h2 className="font-bold text-stone-900">Votre QR code</h2>
                 <p className="mt-1 text-sm text-stone-500">
                   Imprimez-le et affichez-le en caisse : vos clients le scannent
@@ -229,6 +247,7 @@ export default async function Dashboard() {
                   Télécharger le QR code
                 </a>
               </aside>
+              </div>
             </div>
           </>
         )}

@@ -24,3 +24,13 @@ body {
   overflow-x: hidden;
   max-width: 100%;
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Marge de défilement pour les ancres afin que la section visée
+   ne soit pas collée en haut de l'écran. */
+[id] {
+  scroll-margin-top: 1rem;
+}
