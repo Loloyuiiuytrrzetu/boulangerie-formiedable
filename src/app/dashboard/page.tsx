@@ -11,6 +11,7 @@ import type {
 } from "@/lib/types";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { utilisateurEffectif } from "@/lib/impersonate";
+import { dateDuJour } from "@/lib/utils";
 import { ConfigForm } from "./ConfigForm";
 import { CartesSection } from "./CartesSection";
 import { SectionsSection } from "./SectionsSection";
@@ -83,7 +84,13 @@ export default async function Dashboard() {
     cartes = (resCartes.data as Carte[]) ?? [];
     recompenses = (resRecompenses.data as Recompense[]) ?? [];
     nbClients = resClients.data?.length ?? 0;
-    nbTampons = resClients.data?.reduce((somme, c) => somme + c.tampons_total, 0) ?? 0;
+    // Tampons distribués aujourd'hui uniquement, selon le fuseau horaire du
+    // commerce. Chaque jour à minuit local, ce compteur repart de zéro tout
+    // seul — sans opération de maintenance, c'est un filtre à la lecture.
+    const aujourdHui = dateDuJour(restaurant.timezone ?? "Europe/Paris");
+    nbTampons = historique
+      .filter((h) => h.date_attribution === aujourdHui)
+      .reduce((somme, h) => somme + h.nombre, 0);
     sousCompte = resSc.data ?? null;
     sections = (resSections.data as Section[]) ?? [];
 
@@ -160,11 +167,11 @@ export default async function Dashboard() {
 
             <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
               <div className="rounded-2xl border border-stone-200 bg-white p-5">
-                <p className="text-sm text-stone-500">Clients fidélité</p>
+                <p className="text-sm text-stone-500">Clients fidélisés</p>
                 <p className="mt-1 text-3xl font-bold text-bordeaux-800">{nbClients}</p>
               </div>
               <div className="rounded-2xl border border-stone-200 bg-white p-5">
-                <p className="text-sm text-stone-500">Tampons distribués</p>
+                <p className="text-sm text-stone-500">Tampons distribués aujourd&apos;hui</p>
                 <p className="mt-1 text-3xl font-bold text-bordeaux-800">{nbTampons}</p>
               </div>
               <div className="col-span-2 rounded-2xl border border-stone-200 bg-white p-5 sm:col-span-1">
