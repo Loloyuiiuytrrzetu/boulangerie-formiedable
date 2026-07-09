@@ -164,7 +164,7 @@ export default async function Dashboard() {
               </div>
             </div>
 
-            <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
+            <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
               <div className="space-y-8">
                 <div className="rounded-2xl border border-stone-200 bg-white p-4">
                   <Link

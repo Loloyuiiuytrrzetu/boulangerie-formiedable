@@ -177,7 +177,7 @@ export default async function PageCommerce({
   return (
     <main className="min-h-screen bg-white">
       <header
-        className="relative overflow-hidden px-6 pb-24 pt-10 text-center text-white sm:pb-32"
+        className="relative flex h-[38vh] max-h-[360px] min-h-[240px] items-center justify-center overflow-hidden px-6 text-center text-white"
         style={restaurant.fond_url ? undefined : { backgroundColor: restaurant.couleur }}
       >
         {restaurant.fond_url && (
@@ -188,7 +188,7 @@ export default async function PageCommerce({
               alt=""
               className="absolute inset-0 h-full w-full object-cover"
             />
-            <div className="absolute inset-0 bg-black/30" />
+            <div className="absolute inset-0 bg-black/40" />
           </>
         )}
         <div className="relative">
@@ -197,20 +197,20 @@ export default async function PageCommerce({
             <img
               src={restaurant.logo_url}
               alt={`Logo de ${restaurant.nom}`}
-              className="mx-auto h-24 w-24 rounded-2xl border-4 border-white/30 object-cover shadow-lg"
+              className="mx-auto h-20 w-20 rounded-2xl border-4 border-white/30 object-cover shadow-lg sm:h-24 sm:w-24"
             />
           ) : (
-            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-2xl border-4 border-white/30 bg-white/10 text-4xl shadow-lg">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl border-4 border-white/30 bg-white/10 text-4xl shadow-lg sm:h-24 sm:w-24">
               🏪
             </div>
           )}
-          <h1 className="mt-4 text-2xl font-extrabold sm:text-3xl">
+          <h1 className="mt-3 text-2xl font-extrabold drop-shadow-md sm:text-3xl">
             {restaurant.nom}
           </h1>
         </div>
       </header>
 
-      <div className="mx-auto -mt-16 max-w-2xl px-4 pb-16 sm:-mt-20 sm:px-6">
+      <div className="mx-auto max-w-2xl px-4 py-6 pb-16 sm:px-6 sm:py-8">
         {client ? (
           <EspaceClient
             slug={slug}
