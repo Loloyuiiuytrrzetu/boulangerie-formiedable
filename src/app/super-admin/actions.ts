@@ -127,3 +127,37 @@ export async function supprimerRestaurant(restaurantId: string) {
   revalidatePath("/super-admin");
   return { ok: true };
 }
+
+// --- Démarrer une session "voir le commerce" pour le super admin ---
+// Pose un cookie httpOnly qui autorise le super admin à naviguer dans
+// le dashboard du restaurateur cible sans mot de passe.
+export async function voirCommerce(restaurantId: string) {
+  await exigerSuperAdmin();
+
+  const admin = createAdminClient();
+  const { data: restaurant } = await admin
+    .from("restaurants")
+    .select("owner_id, nom")
+    .eq("id", restaurantId)
+    .maybeSingle();
+  if (!restaurant) return { erreur: "Restaurant introuvable." };
+
+  const { cookies } = await import("next/headers");
+  const store = await cookies();
+  store.set("walletiz_impersonate", restaurant.owner_id, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 60 * 60 * 4, // 4h
+    path: "/",
+  });
+  store.set("walletiz_impersonate_nom", restaurant.nom, {
+    httpOnly: false,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 60 * 60 * 4,
+    path: "/",
+  });
+
+  redirect("/dashboard");
+}

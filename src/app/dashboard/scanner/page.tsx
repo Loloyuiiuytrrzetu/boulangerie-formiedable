@@ -61,15 +61,15 @@ export default async function Scanner({
   // Si un token client est passé (venant d'un scan de QR), on pré-charge
   // ses infos pour éviter d'avoir à retaper son téléphone.
   const { c: tokenClient } = await searchParams;
-  let clientPrecharge: { telephone: string } | null = null;
+  let clientPrecharge: { telephone: string; identite: string | null } | null = null;
   if (tokenClient) {
     const { data: cli } = await admin
       .from("clients_fidelite")
-      .select("numero_telephone, restaurant_id")
+      .select("numero_telephone, identite, restaurant_id")
       .eq("token_public", tokenClient)
       .maybeSingle();
     if (cli && cli.restaurant_id === restaurant.id) {
-      clientPrecharge = { telephone: cli.numero_telephone };
+      clientPrecharge = { telephone: cli.numero_telephone, identite: cli.identite };
     }
   }
 
@@ -119,6 +119,7 @@ export default async function Scanner({
           <ScannerForm
             cartes={cartes ?? []}
             telephonePrecharge={clientPrecharge?.telephone ?? ""}
+            identitePrecharge={clientPrecharge?.identite ?? null}
           />
         </div>
       </div>

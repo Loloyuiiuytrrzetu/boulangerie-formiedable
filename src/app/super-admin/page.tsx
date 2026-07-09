@@ -71,25 +71,6 @@ export default async function SuperAdmin() {
       </header>
 
       <div className="mx-auto max-w-6xl px-6 py-8">
-        <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl border border-stone-200 bg-white p-5">
-            <p className="text-sm text-stone-500">Restaurants inscrits</p>
-            <p className="mt-1 text-3xl font-bold text-bordeaux-800">{lignes.length}</p>
-          </div>
-          <div className="rounded-2xl border border-stone-200 bg-white p-5">
-            <p className="text-sm text-stone-500">Clients fidélité</p>
-            <p className="mt-1 text-3xl font-bold text-bordeaux-800">
-              {lignes.reduce((s, r) => s + r.nb_clients, 0)}
-            </p>
-          </div>
-          <div className="rounded-2xl border border-stone-200 bg-white p-5">
-            <p className="text-sm text-stone-500">Tampons distribués</p>
-            <p className="mt-1 text-3xl font-bold text-bordeaux-800">
-              {lignes.reduce((s, r) => s + r.nb_tampons, 0)}
-            </p>
-          </div>
-        </div>
-
         <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
           <section className="rounded-2xl border border-stone-200 bg-white">
             <h2 className="border-b border-stone-100 px-6 py-4 font-bold text-stone-900">

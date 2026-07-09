@@ -53,6 +53,7 @@ export type ClientFidelite = {
   id: string;
   restaurant_id: string;
   numero_telephone: string;
+  identite: string | null;
   tampons_actuels: number;
   tampons_total: number;
   recompenses_reclamees: number;

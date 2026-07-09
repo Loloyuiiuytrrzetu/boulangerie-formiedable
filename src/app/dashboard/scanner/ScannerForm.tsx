@@ -13,9 +13,11 @@ import { ScannerCamera } from "./ScannerCamera";
 export function ScannerForm({
   cartes,
   telephonePrecharge = "",
+  identitePrecharge = null,
 }: {
   cartes: Carte[];
   telephonePrecharge?: string;
+  identitePrecharge?: string | null;
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const [erreur, setErreur] = useState<string | null>(null);
@@ -56,6 +58,11 @@ export function ScannerForm({
         <input type="hidden" name="telephone" value={telephonePrecharge} />
         <div className="rounded-xl bg-green-50 px-4 py-3 text-sm">
           <p className="font-semibold text-green-800">✅ Client identifié</p>
+          {identitePrecharge && (
+            <p className="mt-0.5 text-sm font-semibold text-green-900">
+              {identitePrecharge}
+            </p>
+          )}
           <p className="mt-0.5 font-mono text-xs text-green-700">
             {telephonePrecharge}
           </p>

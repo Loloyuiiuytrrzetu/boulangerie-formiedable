@@ -77,6 +77,16 @@ export async function middleware(request: NextRequest) {
       url.search = "";
       return NextResponse.redirect(url);
     }
+    // Super admin sur /dashboard uniquement en mode impersonation
+    if (
+      profil?.role === "super_admin" &&
+      !request.cookies.get("walletiz_impersonate")
+    ) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/super-admin";
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
   }
 
   return response;

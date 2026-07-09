@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useTransition } from "react";
-import { basculerActif, supprimerRestaurant } from "./actions";
+import { basculerActif, supprimerRestaurant, voirCommerce } from "./actions";
 import type { RestaurantAvecStats } from "./page";
 
 export function LigneRestaurant({ restaurant }: { restaurant: RestaurantAvecStats }) {
@@ -70,6 +70,18 @@ export function LigneRestaurant({ restaurant }: { restaurant: RestaurantAvecStat
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
+          <form
+            action={async () => {
+              await voirCommerce(restaurant.id);
+            }}
+          >
+            <button
+              type="submit"
+              className="rounded-lg bg-bordeaux-800 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-bordeaux-700"
+            >
+              👁️ Voir le commerce
+            </button>
+          </form>
           <Link
             href={`/super-admin/${restaurant.id}`}
             className="rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-600 transition hover:bg-stone-100"

@@ -56,6 +56,26 @@ export function FormulaireInscription({
           />
         </div>
 
+        <div>
+          <label
+            htmlFor="identite"
+            className="mb-1.5 block text-sm font-medium text-stone-700"
+          >
+            Nom et prénom
+          </label>
+          <input
+            id="identite"
+            name="identite"
+            type="text"
+            required
+            autoComplete="name"
+            maxLength={80}
+            placeholder="Nom Prénom (ou juste l'un des deux)"
+            className="w-full rounded-xl border border-stone-300 px-4 py-3 outline-none transition focus:ring-2"
+            style={{ caretColor: couleur }}
+          />
+        </div>
+
         {erreur && (
           <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{erreur}</p>
         )}

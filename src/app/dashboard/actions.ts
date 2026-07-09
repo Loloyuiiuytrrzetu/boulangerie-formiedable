@@ -7,6 +7,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { TAMPON_ICONES } from "@/lib/icons";
 import { dateDuJour, slugify } from "@/lib/utils";
 import type { CarteClient } from "@/lib/types";
+import { utilisateurEffectif } from "@/lib/impersonate";
 
 // Déconnexion manuelle du restaurateur
 export async function deconnexion() {
@@ -15,21 +16,28 @@ export async function deconnexion() {
   redirect("/login");
 }
 
-// Récupère l'utilisateur connecté + son restaurant (garde-fou commun)
+// Récupère l'utilisateur connecté + son restaurant.
+// Supporte l'impersonation super admin : les writes utilisent alors le
+// client admin (service_role) avec l'owner_id du restaurateur ciblé.
 async function restaurantCourant() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const effectif = await utilisateurEffectif();
+  if (!effectif) redirect("/login");
+
+  const supabase = effectif.impersonation
+    ? createAdminClient()
+    : await createClient();
 
   const { data: restaurant } = await supabase
     .from("restaurants")
     .select("id, slug")
-    .eq("owner_id", user.id)
+    .eq("owner_id", effectif.userId)
     .maybeSingle();
 
-  return { supabase, user, restaurant };
+  return {
+    supabase,
+    user: { id: effectif.userId, email: effectif.email },
+    restaurant,
+  };
 }
 
 // Upload d'une image dans le bucket public "logos"
@@ -728,4 +736,12 @@ export async function changerMotDePasseSousCompte(formData: FormData) {
   });
   if (error) return { erreur: "Échec de la mise à jour." };
   return { ok: true };
+}
+
+// --- Quitter la session "voir le commerce" (super admin) ---
+export async function quitterImpersonation() {
+  const { cookies } = await import("next/headers");
+  const store = await cookies();
+  store.delete("walletiz_impersonate");
+  store.delete("walletiz_impersonate_nom");
 }

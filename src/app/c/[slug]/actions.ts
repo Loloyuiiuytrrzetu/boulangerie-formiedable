@@ -55,6 +55,8 @@ export async function inscrireClient(slug: string, formData: FormData) {
   const telephone = normaliserTelephone(String(formData.get("telephone") ?? ""));
   if (!telephone)
     return { erreur: "Numéro de téléphone invalide (format attendu : 06 12 34 56 78)." };
+  const identite = String(formData.get("identite") ?? "").trim().slice(0, 80);
+  if (!identite) return { erreur: "Entrez au moins un nom ou un prénom." };
 
   const admin = createAdminClient();
 
@@ -73,6 +75,7 @@ export async function inscrireClient(slug: string, formData: FormData) {
     const { error } = await admin.from("clients_fidelite").insert({
       restaurant_id: restaurant.id,
       numero_telephone: telephone,
+      identite,
       token_cookie: token,
     });
     if (error) return { erreur: "Impossible de créer votre carte. Réessayez." };

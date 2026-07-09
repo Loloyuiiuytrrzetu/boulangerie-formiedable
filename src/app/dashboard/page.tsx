@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import QRCode from "qrcode";
-import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import type {
   Carte,
@@ -11,6 +10,7 @@ import type {
   TamponHistorique,
 } from "@/lib/types";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { utilisateurEffectif } from "@/lib/impersonate";
 import { ConfigForm } from "./ConfigForm";
 import { CartesSection } from "./CartesSection";
 import { SectionsSection } from "./SectionsSection";
@@ -18,26 +18,23 @@ import { CreationForm } from "./CreationForm";
 import { BoutonDeconnexion } from "./BoutonDeconnexion";
 import { SousCompteSection } from "./SousCompteSection";
 import { GraphiquesTampons } from "./GraphiquesTampons";
+import { BandeauImpersonation } from "./BandeauImpersonation";
 
 export default async function Dashboard() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const effectif = await utilisateurEffectif();
+  if (!effectif) redirect("/login");
+  // Un super admin non-en-impersonation est renvoyé vers son espace
+  if (effectif.role === "super_admin") redirect("/super-admin");
 
-  // Un super admin est redirigé vers son propre espace
-  const { data: profil } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-  if (profil?.role === "super_admin") redirect("/super-admin");
+  // Utilise systématiquement le client admin dans les queries : ça permet
+  // aussi bien au restaurateur qu'au super admin en impersonation d'avoir
+  // le même comportement. La sécurité est faite au niveau du helper.
+  const supabase = createAdminClient();
 
   const { data: restaurant } = await supabase
     .from("restaurants")
     .select("*")
-    .eq("owner_id", user.id)
+    .eq("owner_id", effectif.userId)
     .maybeSingle<Restaurant>();
 
   // Cartes, récompenses et statistiques du commerce
@@ -135,13 +132,14 @@ export default async function Dashboard() {
 
   return (
     <main className="min-h-screen bg-stone-50">
+      {effectif.impersonation && <BandeauImpersonation />}
       <header className="border-b border-stone-200 bg-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-bordeaux-800 text-lg text-white">✦</span>
             <div>
               <p className="font-bold text-bordeaux-800">Walletiz</p>
-              <p className="text-xs text-stone-500">{user.email}</p>
+              <p className="text-xs text-stone-500">{effectif.email}</p>
             </div>
           </div>
           <BoutonDeconnexion />
