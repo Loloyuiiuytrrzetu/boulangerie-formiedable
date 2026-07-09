@@ -33,12 +33,22 @@ export function LigneRestaurant({ restaurant }: { restaurant: RestaurantAvecStat
     <li className="px-6 py-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <span
-              className="inline-block h-3 w-3 shrink-0 rounded-full"
-              style={{ backgroundColor: restaurant.couleur }}
-              title={`Couleur : ${restaurant.couleur}`}
-            />
+          <div className="flex items-center gap-3">
+            {restaurant.logo_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={restaurant.logo_url}
+                alt=""
+                className="h-10 w-10 shrink-0 rounded-lg border border-stone-200 object-cover"
+              />
+            ) : (
+              <span
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-stone-200 text-lg"
+                style={{ backgroundColor: `${restaurant.couleur}22`, color: restaurant.couleur }}
+              >
+                {restaurant.nom.charAt(0).toUpperCase()}
+              </span>
+            )}
             <Link
               href={`/super-admin/${restaurant.id}`}
               className="truncate font-semibold text-stone-900 hover:text-bordeaux-700 hover:underline"

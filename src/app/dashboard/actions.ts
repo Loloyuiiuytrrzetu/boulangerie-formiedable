@@ -121,7 +121,7 @@ export async function mettreAJourConfig(formData: FormData) {
   if (!/^#[0-9a-fA-F]{6}$/.test(couleur)) return { erreur: "Couleur invalide." };
   if (!/^#[0-9a-fA-F]{6}$/.test(couleurQr))
     return { erreur: "Couleur du QR code invalide." };
-  if (!["aucune", "confettis", "coeurs", "etoiles", "feux"].includes(animation))
+  if (!["aucune", "etoiles", "ondes", "rayons", "vague"].includes(animation))
     return { erreur: "Animation invalide." };
 
   const maj: Record<string, string | boolean> = {

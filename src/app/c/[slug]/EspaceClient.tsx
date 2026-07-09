@@ -389,6 +389,7 @@ export function EspaceClient({
       {animationEnCours && (
         <AnimationRecompense
           type={animationEnCours}
+          couleur={couleur}
           onEnd={() => setAnimationEnCours(null)}
         />
       )}

@@ -21,20 +21,23 @@ function Courbe({
   labels,
   valeurs,
   couleur = TRAIT,
-  height = 180,
+  height = 220,
 }: {
   labels: string[];
   valeurs: number[];
   couleur?: string;
   height?: number;
 }) {
-  const largeur = 100 * labels.length;
+  const largeur = 900;
   const max = Math.max(1, ...valeurs);
   const paddingBas = 30;
-  const paddingHaut = 20;
+  const paddingHaut = 24;
+  const paddingLat = 20;
 
+  const zoneLargeur = largeur - 2 * paddingLat;
   const points = valeurs.map((v, i) => {
-    const x = (i / Math.max(1, labels.length - 1)) * largeur;
+    const x =
+      paddingLat + (i / Math.max(1, labels.length - 1)) * zoneLargeur;
     const y =
       paddingHaut +
       (1 - v / max) * (height - paddingBas - paddingHaut);
@@ -45,12 +48,11 @@ function Courbe({
     .join(" ");
 
   return (
-    <div className="w-full overflow-x-auto">
+    <div className="w-full">
       <svg
         viewBox={`0 0 ${largeur} ${height}`}
-        className="min-w-full"
-        preserveAspectRatio="none"
-        style={{ height }}
+        className="w-full"
+        preserveAspectRatio="xMidYMid meet"
       >
         {/* Grille */}
         {[0, 1, 2, 3].map((i) => {
@@ -58,8 +60,8 @@ function Courbe({
           return (
             <line
               key={i}
-              x1={0}
-              x2={largeur}
+              x1={paddingLat}
+              x2={largeur - paddingLat}
               y1={y}
               y2={y}
               stroke="#e7e5e4"
@@ -69,9 +71,9 @@ function Courbe({
         })}
         {/* Zone sous la courbe */}
         <path
-          d={`${path} L ${points[points.length - 1]?.x ?? 0} ${height - paddingBas} L 0 ${height - paddingBas} Z`}
+          d={`${path} L ${points[points.length - 1]?.x ?? 0} ${height - paddingBas} L ${paddingLat} ${height - paddingBas} Z`}
           fill={couleur}
-          opacity={0.1}
+          opacity={0.12}
         />
         {/* Courbe */}
         <path d={path} fill="none" stroke={couleur} strokeWidth={2.5} />
@@ -162,7 +164,7 @@ export function GraphiquesTampons({
   const totalAnnee = mois.valeurs.reduce((s, v) => s + v, 0);
 
   return (
-    <section className="grid gap-4 lg:grid-cols-2">
+    <section className="space-y-4">
       {/* Graphique semaine */}
       <div className="rounded-2xl border border-stone-200 bg-white p-5">
         <div className="mb-2 flex items-baseline justify-between">

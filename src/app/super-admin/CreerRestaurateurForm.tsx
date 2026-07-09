@@ -2,7 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { creerRestaurateur } from "./actions";
-import { TIMEZONES } from "@/lib/timezones";
+import { TIMEZONES_PAR_GROUPE } from "@/lib/timezones";
 
 export function CreerRestaurateurForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -58,10 +58,14 @@ export function CreerRestaurateurForm() {
             defaultValue="Europe/Paris"
             className={classesInput}
           >
-            {TIMEZONES.map((t) => (
-              <option key={t.timezone} value={t.timezone}>
-                {t.region}
-              </option>
+            {Object.entries(TIMEZONES_PAR_GROUPE).map(([groupe, liste]) => (
+              <optgroup key={groupe} label={groupe}>
+                {liste.map((t) => (
+                  <option key={t.timezone} value={t.timezone}>
+                    {t.region}
+                  </option>
+                ))}
+              </optgroup>
             ))}
           </select>
           <p className="mt-1 text-xs text-stone-400">

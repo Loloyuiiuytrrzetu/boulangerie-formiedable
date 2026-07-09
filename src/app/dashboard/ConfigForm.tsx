@@ -140,16 +140,16 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
           <select
             id="animation_recompense"
             name="animation_recompense"
-            defaultValue={restaurant.animation_recompense ?? "confettis"}
+            defaultValue={restaurant.animation_recompense ?? "etoiles"}
             className="w-full rounded-lg border border-stone-300 px-3.5 py-2.5 outline-none transition focus:border-bordeaux-700 focus:ring-2 focus:ring-bordeaux-200"
           >
             <option value="aucune">Aucune animation</option>
-            <option value="confettis">🎉 Pluie de confettis</option>
-            <option value="coeurs">💖 Cœurs qui montent</option>
-            <option value="etoiles">✨ Étoiles filantes</option>
-            <option value="feux">🎆 Feux d&apos;artifice</option>
+            <option value="etoiles">Étoiles scintillantes</option>
+            <option value="ondes">Ondes lumineuses</option>
+            <option value="rayons">Rayons éclatants</option>
+            <option value="vague">Vague colorée</option>
           </select>
-          <ApercuAnimation selectId="animation_recompense" />
+          <ApercuAnimation selectId="animation_recompense" couleur={restaurant.couleur} />
         </div>
       </div>
 
