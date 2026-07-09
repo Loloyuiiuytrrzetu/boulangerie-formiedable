@@ -39,16 +39,47 @@ function CarrouselRecompenses({
   recompenses: RecompenseAffichee[];
   couleur: string;
 }) {
+  // Une seule récompense : grande carte centrée
+  if (recompenses.length === 1) {
+    const r = recompenses[0];
+    return (
+      <div className="mt-5">
+        <p
+          className="mb-2 rounded-2xl px-4 py-2 text-center text-sm font-medium"
+          style={{ backgroundColor: `${couleur}14`, color: couleur }}
+        >
+          🎁 Votre récompense
+        </p>
+        <div className="mx-auto max-w-xs overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+          {r.image_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={r.image_url}
+              alt={r.texte}
+              className="h-40 w-full object-cover sm:h-48"
+            />
+          ) : (
+            <div
+              className="flex h-40 w-full items-center justify-center text-5xl sm:h-48"
+              style={{ backgroundColor: `${couleur}14` }}
+            >
+              🎁
+            </div>
+          )}
+          <p className="p-3 text-center text-sm font-bold text-stone-900">{r.texte}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Plusieurs récompenses : carrousel horizontal (choix)
   return (
     <div className="mt-5">
       <p
         className="mb-2 rounded-2xl px-4 py-2 text-center text-sm font-medium"
         style={{ backgroundColor: `${couleur}14`, color: couleur }}
       >
-        🎁{" "}
-        {recompenses.length === 1
-          ? "Récompense"
-          : `Au choix parmi ${recompenses.length} récompenses`}
+        🎁 Au choix parmi {recompenses.length} récompenses
       </p>
       <div className="-mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-1 pb-2">
         {recompenses.map((r) => (
@@ -73,11 +104,9 @@ function CarrouselRecompenses({
           </div>
         ))}
       </div>
-      {recompenses.length > 1 && (
-        <p className="text-center text-xs text-stone-400">
-          ← Glissez pour voir toutes les récompenses →
-        </p>
-      )}
+      <p className="text-center text-xs text-stone-400">
+        ← Glissez pour voir toutes les récompenses →
+      </p>
     </div>
   );
 }
