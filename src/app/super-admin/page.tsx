@@ -62,7 +62,7 @@ export default async function SuperAdmin() {
           <div className="flex items-center gap-3">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-bordeaux-950 text-lg text-white">⚙️</span>
             <div>
-              <p className="font-bold text-bordeaux-800">Fidélio — Super admin</p>
+              <p className="font-bold text-bordeaux-800">Walletiz — Super admin</p>
               <p className="text-xs text-stone-500">{user.email}</p>
             </div>
           </div>

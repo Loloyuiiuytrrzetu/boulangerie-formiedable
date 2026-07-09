@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Fidélio — Carte de fidélité digitale",
+  title: "Walletiz — Carte de fidélité digitale",
   description:
     "La carte de fidélité digitale des petits commerces : un QR code, zéro application à installer.",
 };

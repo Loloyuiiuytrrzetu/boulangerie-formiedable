@@ -3,8 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { TAMPON_ICONES } from "@/lib/icons";
-import { slugify } from "@/lib/utils";
+import { dateDuJourParis, slugify } from "@/lib/utils";
+import type { CarteClient } from "@/lib/types";
 
 // Déconnexion manuelle du restaurateur
 export async function deconnexion() {
@@ -91,13 +93,23 @@ export async function mettreAJourConfig(formData: FormData) {
   const nom = String(formData.get("nom") ?? "").trim();
   const couleur = String(formData.get("couleur") ?? "#7A1E2E");
   const couleurQr = String(formData.get("couleur_qr") ?? "#380b15");
+  const tamponParCarte = formData.get("tampon_par_carte") === "on";
+  const animation = String(formData.get("animation_recompense") ?? "confettis");
 
   if (!nom) return { erreur: "Le nom du commerce est obligatoire." };
   if (!/^#[0-9a-fA-F]{6}$/.test(couleur)) return { erreur: "Couleur invalide." };
   if (!/^#[0-9a-fA-F]{6}$/.test(couleurQr))
     return { erreur: "Couleur du QR code invalide." };
+  if (!["confettis", "coeurs", "etoiles", "feux"].includes(animation))
+    return { erreur: "Animation invalide." };
 
-  const maj: Record<string, string> = { nom, couleur, couleur_qr: couleurQr };
+  const maj: Record<string, string | boolean> = {
+    nom,
+    couleur,
+    couleur_qr: couleurQr,
+    tampon_par_carte: tamponParCarte,
+    animation_recompense: animation,
+  };
 
   const logo = formData.get("logo");
   if (logo instanceof File && logo.size > 0) {
@@ -303,4 +315,256 @@ export async function supprimerRecompense(recompenseId: string) {
   revalidatePath("/dashboard");
   revalidatePath(`/c/${restaurant.slug}`);
   return { ok: true };
+}
+
+// ============================================================
+// SOUS-COMPTE (1 par restaurateur)
+// ============================================================
+
+// Retourne le restaurant du restaurateur courant
+async function restaurantDuRestaurateur() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+  const { data: restaurant } = await supabase
+    .from("restaurants")
+    .select("id, nom, slug")
+    .eq("owner_id", user.id)
+    .maybeSingle();
+  return { supabase, user, restaurant };
+}
+
+export async function creerSousCompte(formData: FormData) {
+  const { restaurant } = await restaurantDuRestaurateur();
+  if (!restaurant) return { erreur: "Aucun commerce associé à ce compte." };
+
+  const motDePasse = String(formData.get("mot_de_passe") ?? "");
+  if (motDePasse.length < 8)
+    return { erreur: "Mot de passe trop court (8 caractères minimum)." };
+
+  const admin = createAdminClient();
+
+  // 1 seul sous-compte par restaurant
+  const { data: existant } = await admin
+    .from("sous_comptes")
+    .select("id")
+    .eq("restaurant_id", restaurant.id)
+    .maybeSingle();
+  if (existant) return { erreur: "Un sous-compte existe déjà pour ce commerce." };
+
+  const email = `souscompte-${restaurant.slug}@walletiz.local`;
+  const nom = `Sous compte ${restaurant.nom}`;
+
+  const { data: nouvel, error: erreurAuth } = await admin.auth.admin.createUser({
+    email,
+    password: motDePasse,
+    email_confirm: true,
+    app_metadata: { role: "sous_compte" },
+  });
+  if (erreurAuth || !nouvel.user)
+    return { erreur: `Création du compte impossible : ${erreurAuth?.message}` };
+
+  await admin
+    .from("profiles")
+    .upsert({ id: nouvel.user.id, role: "sous_compte" });
+
+  const { error } = await admin.from("sous_comptes").insert({
+    user_id: nouvel.user.id,
+    restaurant_id: restaurant.id,
+    nom,
+    email,
+    actif: true,
+  });
+  if (error) {
+    await admin.auth.admin.deleteUser(nouvel.user.id);
+    return { erreur: "Impossible d'enregistrer le sous-compte." };
+  }
+
+  revalidatePath("/dashboard");
+  return { ok: true as const, email, motDePasse };
+}
+
+export async function supprimerSousCompte() {
+  const { restaurant } = await restaurantDuRestaurateur();
+  if (!restaurant) return { erreur: "Aucun commerce associé à ce compte." };
+
+  const admin = createAdminClient();
+  const { data: sc } = await admin
+    .from("sous_comptes")
+    .select("user_id")
+    .eq("restaurant_id", restaurant.id)
+    .maybeSingle();
+  if (!sc) return { erreur: "Aucun sous-compte à supprimer." };
+
+  await admin.auth.admin.deleteUser(sc.user_id); // cascade -> table sous_comptes
+
+  revalidatePath("/dashboard");
+  return { ok: true };
+}
+
+export async function basculerSousCompte(actif: boolean) {
+  const { restaurant } = await restaurantDuRestaurateur();
+  if (!restaurant) return { erreur: "Aucun commerce associé à ce compte." };
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("sous_comptes")
+    .update({ actif })
+    .eq("restaurant_id", restaurant.id);
+  if (error) return { erreur: "Échec de la mise à jour." };
+
+  revalidatePath("/dashboard");
+  return { ok: true };
+}
+
+// ============================================================
+// SCANNER : le restaurateur ou le sous-compte attribuent
+// manuellement N tampons à un client identifié par son téléphone
+// ============================================================
+
+// Trouve le restaurant lié à l'utilisateur actuel (restaurateur OU sous-compte)
+async function restaurantAcces() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  // restaurateur ?
+  const { data: r1 } = await supabase
+    .from("restaurants")
+    .select("id, nom, slug")
+    .eq("owner_id", user.id)
+    .maybeSingle();
+  if (r1) return { user, restaurant: r1 };
+
+  // sous-compte ?
+  const admin = createAdminClient();
+  const { data: sc } = await admin
+    .from("sous_comptes")
+    .select("restaurant_id")
+    .eq("user_id", user.id)
+    .eq("actif", true)
+    .maybeSingle();
+  if (!sc) return { user, restaurant: null };
+
+  const { data: r2 } = await admin
+    .from("restaurants")
+    .select("id, nom, slug")
+    .eq("id", sc.restaurant_id)
+    .maybeSingle();
+  return { user, restaurant: r2 };
+}
+
+export async function attribuerTampons(formData: FormData) {
+  const { restaurant } = await restaurantAcces();
+  if (!restaurant) return { erreur: "Accès non autorisé." };
+
+  const telephoneBrut = String(formData.get("telephone") ?? "").trim();
+  const carteId = String(formData.get("carte_id") ?? "");
+  const nombre = parseInt(String(formData.get("nombre") ?? "1"), 10);
+
+  if (!telephoneBrut) return { erreur: "Entrez un numéro de téléphone." };
+  if (!Number.isInteger(nombre) || nombre < 1 || nombre > 20)
+    return { erreur: "Nombre de tampons entre 1 et 20." };
+  if (!carteId) return { erreur: "Choisissez une carte." };
+
+  // Normalisation FR (mais on accepte aussi une correspondance approchée)
+  const propre = telephoneBrut.replace(/[\s.\-()]/g, "");
+  const admin = createAdminClient();
+
+  const { data: client } = await admin
+    .from("clients_fidelite")
+    .select("*")
+    .eq("restaurant_id", restaurant.id)
+    .eq("numero_telephone", propre.startsWith("+33") ? "0" + propre.slice(3) : propre)
+    .maybeSingle();
+  if (!client) return { erreur: "Aucun client trouvé avec ce numéro." };
+
+  const { data: carte } = await admin
+    .from("cartes")
+    .select("*")
+    .eq("id", carteId)
+    .eq("restaurant_id", restaurant.id)
+    .eq("actif", true)
+    .maybeSingle();
+  if (!carte) return { erreur: "Cette carte n'existe plus." };
+
+  const aujourdHui = dateDuJourParis();
+  if (carte.date_expiration && carte.date_expiration < aujourdHui)
+    return { erreur: "Cette carte a expiré." };
+
+  const { data: progression } = await admin
+    .from("cartes_clients")
+    .select("*")
+    .eq("carte_id", carte.id)
+    .eq("client_id", client.id)
+    .maybeSingle<CarteClient>();
+
+  const actuels = progression?.tampons_actuels ?? 0;
+  const requis = carte.nombre_tampons_requis;
+  let nouveauxActuels = actuels + nombre;
+  let recompensesCreees = 0;
+
+  // Si dépassement, chaque tranche de "requis" crédite 1 récompense automatique
+  while (nouveauxActuels >= requis) {
+    nouveauxActuels -= requis;
+    recompensesCreees += 1;
+  }
+
+  // Récompense par défaut = 1re récompense de la carte (ou texte "Récompense")
+  const { data: recompenses } = await admin
+    .from("recompenses")
+    .select("id, texte, image_url")
+    .eq("carte_id", carte.id)
+    .order("created_at", { ascending: true });
+  const recompenseParDefaut = recompenses?.[0];
+
+  if (progression) {
+    await admin
+      .from("cartes_clients")
+      .update({
+        tampons_actuels: nouveauxActuels,
+        tampons_total: progression.tampons_total + nombre,
+        recompenses_reclamees: progression.recompenses_reclamees + recompensesCreees,
+        date_dernier_tampon: aujourdHui,
+      })
+      .eq("id", progression.id);
+  } else {
+    await admin.from("cartes_clients").insert({
+      carte_id: carte.id,
+      client_id: client.id,
+      tampons_actuels: nouveauxActuels,
+      tampons_total: nombre,
+      recompenses_reclamees: recompensesCreees,
+      date_dernier_tampon: aujourdHui,
+    });
+  }
+
+  for (let i = 0; i < recompensesCreees; i++) {
+    await admin.from("recompenses_gagnees").insert({
+      carte_id: carte.id,
+      client_id: client.id,
+      recompense_id: recompenseParDefaut?.id ?? null,
+      texte_recompense: recompenseParDefaut?.texte ?? "Récompense",
+      image_url: recompenseParDefaut?.image_url ?? null,
+    });
+  }
+
+  await admin
+    .from("clients_fidelite")
+    .update({
+      tampons_total: client.tampons_total + nombre,
+      recompenses_reclamees: client.recompenses_reclamees + recompensesCreees,
+      date_dernier_tampon: aujourdHui,
+    })
+    .eq("id", client.id);
+
+  revalidatePath("/dashboard/scanner");
+  revalidatePath(`/c/${restaurant.slug}`);
+  return {
+    ok: true as const,
+    tampons: nombre,
+    nouveaux_actuels: nouveauxActuels,
+    requis,
+    recompenses_creees: recompensesCreees,
+  };
 }

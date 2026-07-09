@@ -7,6 +7,8 @@ export type Restaurant = {
   fond_url: string | null;
   couleur: string;
   couleur_qr: string;
+  tampon_par_carte: boolean;
+  animation_recompense: "confettis" | "coeurs" | "etoiles" | "feux";
   tampon_icone: string;
   nombre_tampons_requis: number;
   texte_recompense: string;
@@ -61,6 +63,27 @@ export type ClientFidelite = {
 
 export type Profile = {
   id: string;
-  role: "restaurateur" | "super_admin";
+  role: "restaurateur" | "super_admin" | "sous_compte";
   created_at: string;
+};
+
+export type SousCompte = {
+  id: string;
+  user_id: string;
+  restaurant_id: string;
+  nom: string;
+  email: string;
+  actif: boolean;
+  created_at: string;
+};
+
+export type RecompenseGagnee = {
+  id: string;
+  carte_id: string;
+  client_id: string;
+  recompense_id: string | null;
+  texte_recompense: string;
+  image_url: string | null;
+  date_gagnee: string;
+  date_utilisee: string | null;
 };

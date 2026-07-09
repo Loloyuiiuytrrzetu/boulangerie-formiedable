@@ -8,7 +8,7 @@ export default function Accueil() {
           ✦
         </div>
         <h1 className="text-4xl font-extrabold tracking-tight text-bordeaux-800">
-          Fidélio
+          Walletiz
         </h1>
         <p className="mt-4 text-lg text-stone-600">
           La carte de fidélité digitale des petits commerces.

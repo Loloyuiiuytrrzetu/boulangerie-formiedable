@@ -106,6 +106,48 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
           label="Couleur de votre QR code"
           description="La couleur des carrés du QR code affiché en caisse."
         />
+
+        <div className="rounded-xl border border-stone-200 bg-stone-50 p-4">
+          <p className="mb-2 text-sm font-medium text-stone-700">
+            Tampon accordé
+          </p>
+          <label className="flex items-start gap-3">
+            <input
+              type="checkbox"
+              name="tampon_par_carte"
+              defaultChecked={restaurant.tampon_par_carte !== false}
+              className="mt-0.5 h-4 w-4 shrink-0 accent-bordeaux-800"
+            />
+            <span className="text-sm text-stone-600">
+              <strong>1 tampon par carte de fidélité</strong> à chaque visite.
+              Décochez pour <strong>1 seul tampon toutes cartes confondues</strong> par
+              jour (le client choisit sur quelle carte).
+            </span>
+          </label>
+        </div>
+
+        <div>
+          <label
+            htmlFor="animation_recompense"
+            className="mb-1.5 block text-sm font-medium text-stone-700"
+          >
+            Animation à la récompense
+          </label>
+          <p className="mb-2 text-xs text-stone-400">
+            L&apos;effet qui s&apos;affiche quand le client choisit sa récompense.
+          </p>
+          <select
+            id="animation_recompense"
+            name="animation_recompense"
+            defaultValue={restaurant.animation_recompense ?? "confettis"}
+            className="w-full rounded-lg border border-stone-300 px-3.5 py-2.5 outline-none transition focus:border-bordeaux-700 focus:ring-2 focus:ring-bordeaux-200"
+          >
+            <option value="confettis">🎉 Pluie de confettis</option>
+            <option value="coeurs">💖 Cœurs qui montent</option>
+            <option value="etoiles">✨ Étoiles filantes</option>
+            <option value="feux">🎆 Feux d&apos;artifice</option>
+          </select>
+        </div>
       </div>
 
       {erreur && (

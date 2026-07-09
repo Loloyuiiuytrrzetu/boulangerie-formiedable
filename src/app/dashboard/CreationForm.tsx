@@ -16,7 +16,7 @@ export function CreationForm() {
 
   return (
     <div className="mx-auto max-w-md rounded-2xl border border-stone-200 bg-white p-8">
-      <h1 className="text-xl font-bold text-stone-900">Bienvenue sur Fidélio 👋</h1>
+      <h1 className="text-xl font-bold text-stone-900">Bienvenue sur Walletiz 👋</h1>
       <p className="mt-2 text-sm text-stone-500">
         Commençons par créer la fiche de votre commerce. Vous pourrez ensuite
         personnaliser votre carte de fidélité et imprimer votre QR code.

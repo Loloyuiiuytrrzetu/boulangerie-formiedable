@@ -1,11 +1,13 @@
 import { redirect } from "next/navigation";
 import QRCode from "qrcode";
 import { createClient } from "@/lib/supabase/server";
-import type { Carte, Recompense, Restaurant } from "@/lib/types";
+import Link from "next/link";
+import type { Carte, Recompense, Restaurant, SousCompte } from "@/lib/types";
 import { ConfigForm } from "./ConfigForm";
 import { CartesSection } from "./CartesSection";
 import { CreationForm } from "./CreationForm";
 import { BoutonDeconnexion } from "./BoutonDeconnexion";
+import { SousCompteSection } from "./SousCompteSection";
 
 export default async function Dashboard() {
   const supabase = await createClient();
@@ -31,10 +33,11 @@ export default async function Dashboard() {
   // Cartes, récompenses et statistiques du commerce
   let cartes: Carte[] = [];
   let recompenses: Recompense[] = [];
+  let sousCompte: SousCompte | null = null;
   let nbClients = 0;
   let nbTampons = 0;
   if (restaurant) {
-    const [resCartes, resRecompenses, resClients] = await Promise.all([
+    const [resCartes, resRecompenses, resClients, resSc] = await Promise.all([
       supabase
         .from("cartes")
         .select("*")
@@ -49,17 +52,26 @@ export default async function Dashboard() {
         .from("clients_fidelite")
         .select("tampons_total")
         .eq("restaurant_id", restaurant.id),
+      supabase
+        .from("sous_comptes")
+        .select("*")
+        .eq("restaurant_id", restaurant.id)
+        .maybeSingle<SousCompte>(),
     ]);
     cartes = (resCartes.data as Carte[]) ?? [];
     recompenses = (resRecompenses.data as Recompense[]) ?? [];
     nbClients = resClients.data?.length ?? 0;
     nbTampons = resClients.data?.reduce((somme, c) => somme + c.tampons_total, 0) ?? 0;
+    sousCompte = resSc.data ?? null;
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const urlPublique = restaurant ? `${siteUrl}/c/${restaurant.slug}` : null;
-  const qrDataUrl = urlPublique
-    ? await QRCode.toDataURL(urlPublique, {
+  // Le QR code pointe vers /scan/[slug] : cette route pose un cookie de
+  // "scan valide 15 min" avant de rediriger vers la page client.
+  const urlScan = restaurant ? `${siteUrl}/scan/${restaurant.slug}` : null;
+  const qrDataUrl = urlScan
+    ? await QRCode.toDataURL(urlScan, {
         width: 480,
         margin: 2,
         color: { dark: restaurant?.couleur_qr ?? "#380b15", light: "#ffffff" },
@@ -73,7 +85,7 @@ export default async function Dashboard() {
           <div className="flex items-center gap-3">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-bordeaux-800 text-lg text-white">✦</span>
             <div>
-              <p className="font-bold text-bordeaux-800">Fidélio</p>
+              <p className="font-bold text-bordeaux-800">Walletiz</p>
               <p className="text-xs text-stone-500">{user.email}</p>
             </div>
           </div>
@@ -89,7 +101,7 @@ export default async function Dashboard() {
             {!restaurant.actif && (
               <p className="mb-6 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
                 Votre commerce est actuellement <strong>désactivé</strong> : la page
-                client n&apos;est plus accessible. Contactez l&apos;équipe Fidélio.
+                client n&apos;est plus accessible. Contactez l&apos;équipe Walletiz.
               </p>
             )}
 
@@ -116,8 +128,18 @@ export default async function Dashboard() {
 
             <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
               <div className="space-y-8">
+                <div className="rounded-2xl border border-stone-200 bg-white p-4">
+                  <Link
+                    href="/dashboard/scanner"
+                    className="flex items-center justify-between rounded-xl bg-bordeaux-800 px-4 py-3 font-semibold text-white transition hover:bg-bordeaux-700"
+                  >
+                    <span>🎯 Attribuer des tampons à un client</span>
+                    <span>→</span>
+                  </Link>
+                </div>
                 <ConfigForm restaurant={restaurant} />
                 <CartesSection cartes={cartes} recompenses={recompenses} />
+                <SousCompteSection sousCompte={sousCompte} />
               </div>
 
               <aside className="h-fit rounded-2xl border border-stone-200 bg-white p-6 text-center">

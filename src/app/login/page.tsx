@@ -40,6 +40,8 @@ function FormulaireLogin() {
     const redirect = searchParams.get("redirect");
     if (profil?.role === "super_admin") {
       router.push(redirect?.startsWith("/super-admin") ? redirect : "/super-admin");
+    } else if (profil?.role === "sous_compte") {
+      router.push("/dashboard/scanner");
     } else {
       router.push(redirect?.startsWith("/dashboard") ? redirect : "/dashboard");
     }
@@ -50,7 +52,7 @@ function FormulaireLogin() {
     <main className="flex min-h-screen items-center justify-center bg-white px-6">
       <div className="w-full max-w-sm">
         <Link href="/" className="mb-8 block text-center">
-          <span className="text-3xl font-extrabold text-bordeaux-800">Fidélio</span>
+          <span className="text-3xl font-extrabold text-bordeaux-800">Walletiz</span>
         </Link>
 
         <div className="rounded-2xl border border-stone-200 bg-white p-8 shadow-sm">
@@ -106,7 +108,7 @@ function FormulaireLogin() {
         </div>
 
         <p className="mt-6 text-center text-xs text-stone-400">
-          Pas encore de compte ? Contactez l&apos;équipe Fidélio pour rejoindre la plateforme.
+          Pas encore de compte ? Contactez l&apos;équipe Walletiz pour rejoindre la plateforme.
         </p>
       </div>
     </main>

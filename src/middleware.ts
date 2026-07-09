@@ -46,12 +46,37 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Utilisateur déjà connecté sur /login -> direction le dashboard
+  // Utilisateur connecté sur /login : redirection selon rôle
   if (pathname === "/login" && user) {
     const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
+    const { data: profil } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+    url.pathname =
+      profil?.role === "super_admin"
+        ? "/super-admin"
+        : profil?.role === "sous_compte"
+          ? "/dashboard/scanner"
+          : "/dashboard";
     url.search = "";
     return NextResponse.redirect(url);
+  }
+
+  // Sous-compte : accès UNIQUEMENT à /dashboard/scanner (et /login pour se déconnecter)
+  if (user && pathname.startsWith("/dashboard") && pathname !== "/dashboard/scanner") {
+    const { data: profil } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+    if (profil?.role === "sous_compte") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/dashboard/scanner";
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
   }
 
   return response;

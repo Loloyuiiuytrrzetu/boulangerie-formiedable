@@ -1,7 +1,14 @@
 import { cookies } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { dateDuJourParis } from "@/lib/utils";
-import type { Carte, CarteClient, ClientFidelite, Recompense, Restaurant } from "@/lib/types";
+import type {
+  Carte,
+  CarteClient,
+  ClientFidelite,
+  Recompense,
+  RecompenseGagnee,
+  Restaurant,
+} from "@/lib/types";
 import { EspaceClient, type CarteAffichee } from "./EspaceClient";
 import { FormulaireInscription } from "./FormulaireInscription";
 
@@ -38,9 +45,9 @@ export default async function PageCommerce({
     );
   }
 
-  // Reconnaissance automatique via le cookie posé à l'inscription
   const cookieStore = await cookies();
   const token = cookieStore.get(`fid_${restaurant.id}`)?.value;
+  const scanRecent = Boolean(cookieStore.get(`scan_${restaurant.id}`)?.value);
 
   let client: ClientFidelite | null = null;
   if (token) {
@@ -53,12 +60,12 @@ export default async function PageCommerce({
     client = data;
   }
 
-  // Cartes actives, récompenses et progression du client
   let cartesAffichees: CarteAffichee[] = [];
   let recompenses: Recompense[] = [];
+  let recompensesEnAttente: RecompenseGagnee[] = [];
   if (client) {
     const aujourdHui = dateDuJourParis();
-    const [resCartes, resRecompenses, resProgressions] = await Promise.all([
+    const [resCartes, resRecompenses, resProgressions, resGagnees] = await Promise.all([
       admin
         .from("cartes")
         .select("*")
@@ -74,11 +81,18 @@ export default async function PageCommerce({
         .from("cartes_clients")
         .select("*")
         .eq("client_id", client.id),
+      admin
+        .from("recompenses_gagnees")
+        .select("*")
+        .eq("client_id", client.id)
+        .is("date_utilisee", null)
+        .order("date_gagnee", { ascending: false }),
     ]);
 
     const cartes = (resCartes.data as Carte[]) ?? [];
     recompenses = (resRecompenses.data as Recompense[]) ?? [];
     const progressions = (resProgressions.data as CarteClient[]) ?? [];
+    recompensesEnAttente = (resGagnees.data as RecompenseGagnee[]) ?? [];
 
     cartesAffichees = cartes
       // une carte expirée sans tampon accumulé est masquée
@@ -106,7 +120,6 @@ export default async function PageCommerce({
 
   return (
     <main className="min-h-screen bg-white">
-      {/* Bandeau : image de fond en priorité, sinon couleur pleine */}
       <header
         className="relative overflow-hidden px-6 pb-16 pt-10 text-center text-white"
         style={restaurant.fond_url ? undefined : { backgroundColor: restaurant.couleur }}
@@ -119,7 +132,6 @@ export default async function PageCommerce({
               alt=""
               className="absolute inset-0 h-full w-full object-cover"
             />
-            {/* léger voile pour garantir la lisibilité du nom en blanc */}
             <div className="absolute inset-0 bg-black/25" />
           </>
         )}
@@ -146,6 +158,7 @@ export default async function PageCommerce({
           <EspaceClient
             slug={slug}
             couleur={restaurant.couleur}
+            animation={restaurant.animation_recompense ?? "confettis"}
             cartes={cartesAffichees}
             recompenses={recompenses.map((r) => ({
               id: r.id,
@@ -153,7 +166,9 @@ export default async function PageCommerce({
               texte: r.texte,
               image_url: r.image_url,
             }))}
+            recompensesEnAttente={recompensesEnAttente}
             notificationsActives={client.notifications_push_actif}
+            scanRecent={scanRecent}
           />
         ) : (
           <FormulaireInscription slug={slug} couleur={restaurant.couleur} />
