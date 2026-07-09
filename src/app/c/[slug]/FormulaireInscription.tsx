@@ -30,12 +30,8 @@ export function FormulaireInscription({
   return (
     <div className="rounded-3xl border border-stone-200 bg-white p-8 shadow-xl">
       <h2 className="text-lg font-bold text-stone-900">Bienvenue ! 👋</h2>
-      <p className="mt-2 text-sm text-stone-500">
-        Entrez votre numéro de téléphone pour créer votre carte de fidélité.
-        Rien à installer, rien d&apos;autre à remplir.
-      </p>
 
-      <form action={soumettre} className="mt-6 space-y-4">
+      <form action={soumettre} className="mt-5 space-y-4">
         <div>
           <label
             htmlFor="telephone"
@@ -89,10 +85,6 @@ export function FormulaireInscription({
           {enCours ? "Création…" : "Créer ma carte de fidélité"}
         </button>
       </form>
-
-      <p className="mt-4 text-center text-xs text-stone-400">
-        Votre numéro sert uniquement à retrouver votre carte. Aucune publicité.
-      </p>
     </div>
   );
 }
