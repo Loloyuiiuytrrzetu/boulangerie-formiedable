@@ -85,7 +85,8 @@ function ChampsCarte({ carte }: { carte?: Carte }) {
             className={classesInput}
           />
           <p className="mt-1 text-xs text-stone-400">
-            Vide = pas d&apos;expiration. La carte disparaît toute seule le lendemain.
+            Laissez vide pour une carte permanente. Si vous mettez une date,
+            la carte disparaîtra automatiquement le lendemain de cette date.
           </p>
         </div>
       </div>
