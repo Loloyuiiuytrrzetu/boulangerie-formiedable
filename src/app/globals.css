@@ -15,7 +15,12 @@
   --color-bordeaux-950: #380b15;
 }
 
+html,
 body {
   background-color: #ffffff;
   color: #1c1917;
+  /* Empêche tout défilement horizontal — l'utilisateur ne doit
+     jamais avoir de barre de scroll en bas de son navigateur. */
+  overflow-x: hidden;
+  max-width: 100%;
 }

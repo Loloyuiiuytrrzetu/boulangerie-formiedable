@@ -293,7 +293,40 @@ export function EspaceClient({
   scanRecent: boolean;
   qrClientDataUrl: string | null;
 }) {
-  const [ongletActif, setOngletActif] = useState<string>(sections[0]?.id ?? "");
+  // Fallback : si la table sections est vide (migration incomplète),
+  // on affiche quand même les 2 onglets par défaut pour ne jamais avoir
+  // une page vide côté client.
+  const sectionsAffichees: Section[] =
+    sections.length > 0
+      ? sections
+      : [
+          {
+            id: "default-cartes",
+            restaurant_id: "",
+            type: "cartes",
+            titre: "Cartes de fidélité",
+            texte: null,
+            lien_url: null,
+            lien_libelle: null,
+            ordre: 0,
+            supprimable: false,
+            created_at: "",
+          },
+          {
+            id: "default-info",
+            restaurant_id: "",
+            type: "info",
+            titre: "Info",
+            texte:
+              "Présentez ce QR code au commerçant à chaque passage pour recevoir vos tampons.",
+            lien_url: null,
+            lien_libelle: null,
+            ordre: 100,
+            supprimable: false,
+            created_at: "",
+          },
+        ];
+  const [ongletActif, setOngletActif] = useState<string>(sectionsAffichees[0].id);
   const cleRefus = `walletiz_notif_refus_${slug}`;
   const [proposerNotifs, setProposerNotifs] = useState(false);
   const [animationEnCours, setAnimationEnCours] = useState<string | null>(null);
@@ -319,7 +352,8 @@ export function EspaceClient({
     setProposerNotifs(false);
   }
 
-  const sectionActive = sections.find((s) => s.id === ongletActif) ?? sections[0];
+  const sectionActive =
+    sectionsAffichees.find((s) => s.id === ongletActif) ?? sectionsAffichees[0];
 
   return (
     <div className="space-y-6">
@@ -333,7 +367,7 @@ export function EspaceClient({
       {/* Onglets style pilules — carrousel horizontal si trop d'onglets */}
       <div className="rounded-2xl bg-white p-2 shadow-lg">
         <div className="flex gap-1.5 overflow-x-auto pb-1 sm:justify-center">
-          {sections.map((s) => {
+          {sectionsAffichees.map((s) => {
             const actif = s.id === (sectionActive?.id ?? "");
             return (
               <button
