@@ -11,9 +11,12 @@ function parseDate(s: string) {
   return new Date(s + "T00:00:00");
 }
 
-// Formate un nombre pour l'axe (petits nombres uniquement)
+// Formate un nombre pour l'axe / les points :
+//   0-999      : "42"
+//   1 000+     : "6 000"  (séparateur milliers)
+const nfFr = new Intl.NumberFormat("fr-FR");
 function formatNb(n: number) {
-  return n.toString();
+  return nfFr.format(n);
 }
 
 // Composant SVG générique — courbe + points + valeurs
@@ -35,8 +38,9 @@ function Courbe({
   const bases = [1, 2, 5, 10];
   const max = bases.map((b) => b * puissance).find((v) => v >= maxBrut) ?? maxBrut;
   const paddingBas = 30;
-  const paddingHaut = 24;
-  const paddingLat = 50; // plus d'espace à gauche pour l'axe Y
+  const paddingHaut = 28;
+  // paddingLat adaptatif : "10 000" prend plus de place que "50"
+  const paddingLat = formatNb(max).length > 4 ? 70 : 50;
 
   const zoneLargeur = largeur - paddingLat - 20;
   const points = valeurs.map((v, i) => {
@@ -80,7 +84,7 @@ function Courbe({
                 fill="#78716c"
                 fontWeight={500}
               >
-                {valeur}
+                {formatNb(valeur)}
               </text>
             </g>
           );
