@@ -1,9 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { creerSousCompte, supprimerSousCompte, basculerSousCompte } from "./actions";
+import {
+  changerMotDePasseSousCompte,
+  creerSousCompte,
+  supprimerSousCompte,
+  basculerSousCompte,
+} from "./actions";
 import type { SousCompte } from "@/lib/types";
 
 export function SousCompteSection({ sousCompte }: { sousCompte: SousCompte | null }) {
@@ -68,33 +73,15 @@ export function SousCompteSection({ sousCompte }: { sousCompte: SousCompte | nul
       )}
 
       {sousCompte ? (
-        <div className="mt-4 rounded-xl border border-stone-200 bg-stone-50 p-4">
-          <p className="font-semibold text-stone-900">{sousCompte.nom}</p>
-          <p className="mt-0.5 font-mono text-xs text-stone-500">{sousCompte.email}</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <Link
-              href="/dashboard/scanner"
-              className="rounded-lg bg-bordeaux-800 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-bordeaux-700"
-            >
-              🎯 Ouvrir l&apos;espace scan
-            </Link>
-            <button
-              onClick={basculer}
-              disabled={enCours}
-              className="rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-600 transition hover:bg-white disabled:opacity-60"
-            >
-              {sousCompte.actif ? "Désactiver" : "Réactiver"}
-            </button>
-            <button
-              onClick={supprimer}
-              disabled={enCours}
-              className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-60"
-            >
-              Supprimer
-            </button>
-          </div>
-        </div>
+        <BlocSousCompteExistant
+          sousCompte={sousCompte}
+          onBasculer={basculer}
+          onSupprimer={supprimer}
+          enCours={enCours}
+        />
       ) : creation ? (
+        // Formulaire de création
+
         <form action={creer} className="mt-4 space-y-3">
           <label className="block text-sm font-medium text-stone-700">
             Mot de passe initial
@@ -141,5 +128,104 @@ export function SousCompteSection({ sousCompte }: { sousCompte: SousCompte | nul
         <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{erreur}</p>
       )}
     </section>
+  );
+}
+
+function BlocSousCompteExistant({
+  sousCompte,
+  onBasculer,
+  onSupprimer,
+  enCours,
+}: {
+  sousCompte: SousCompte;
+  onBasculer: () => void;
+  onSupprimer: () => void;
+  enCours: boolean;
+}) {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [changeMdp, setChangeMdp] = useState(false);
+  const [erreur, setErreur] = useState<string | null>(null);
+  const [succes, setSucces] = useState(false);
+  const [pending, startTr] = useTransition();
+
+  function envoyer(formData: FormData) {
+    setErreur(null); setSucces(false);
+    startTr(async () => {
+      const r = await changerMotDePasseSousCompte(formData);
+      if (r?.erreur) setErreur(r.erreur);
+      else {
+        setSucces(true);
+        formRef.current?.reset();
+        setTimeout(() => setChangeMdp(false), 1500);
+      }
+    });
+  }
+
+  return (
+    <div className="mt-4 rounded-xl border border-stone-200 bg-stone-50 p-4">
+      <p className="font-semibold text-stone-900">{sousCompte.nom}</p>
+      <p className="mt-0.5 font-mono text-xs text-stone-500 break-all">{sousCompte.email}</p>
+      {!sousCompte.actif && (
+        <p className="mt-1 text-xs font-semibold text-amber-700">
+          ⚠️ Compte désactivé
+        </p>
+      )}
+
+      <div className="mt-3 flex flex-wrap gap-2">
+        <Link
+          href="/dashboard/scanner"
+          className="rounded-lg bg-bordeaux-800 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-bordeaux-700"
+        >
+          🎯 Ouvrir l&apos;espace scan
+        </Link>
+        <button
+          onClick={() => setChangeMdp(!changeMdp)}
+          disabled={enCours || pending}
+          className="rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-600 transition hover:bg-white disabled:opacity-60"
+        >
+          🔑 Changer le mot de passe
+        </button>
+        <button
+          onClick={onBasculer}
+          disabled={enCours || pending}
+          className="rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-600 transition hover:bg-white disabled:opacity-60"
+        >
+          {sousCompte.actif ? "Désactiver" : "Réactiver"}
+        </button>
+        <button
+          onClick={onSupprimer}
+          disabled={enCours || pending}
+          className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-60"
+        >
+          Supprimer
+        </button>
+      </div>
+
+      {changeMdp && (
+        <form ref={formRef} action={envoyer} className="mt-3 flex flex-wrap gap-2">
+          <input
+            name="mot_de_passe"
+            type="text"
+            required
+            minLength={8}
+            placeholder="Nouveau mot de passe (8 car. min)"
+            className="flex-1 min-w-0 rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none transition focus:border-bordeaux-700 focus:ring-2 focus:ring-bordeaux-200"
+          />
+          <button
+            type="submit"
+            disabled={pending}
+            className="rounded-lg bg-bordeaux-800 px-3 py-2 text-sm font-semibold text-white transition hover:bg-bordeaux-700 disabled:opacity-60"
+          >
+            {pending ? "Mise à jour…" : "Enregistrer"}
+          </button>
+        </form>
+      )}
+      {erreur && <p className="mt-2 text-xs text-red-600">{erreur}</p>}
+      {succes && <p className="mt-2 text-xs text-green-600">Mot de passe changé ✓</p>}
+
+      <p className="mt-3 text-xs text-stone-500">
+        Cette personne se connecte sur /login avec l&apos;email ci-dessus et son mot de passe.
+      </p>
+    </div>
   );
 }

@@ -9,7 +9,7 @@ import {
 } from "./actions";
 import { AnimationRecompense } from "./Animation";
 import { iconeEmoji } from "@/lib/icons";
-import type { RecompenseGagnee } from "@/lib/types";
+import type { RecompenseGagnee, Section } from "@/lib/types";
 
 export type CarteAffichee = {
   id: string;
@@ -30,6 +30,57 @@ export type RecompenseAffichee = {
   texte: string;
   image_url: string | null;
 };
+
+// --- Petit carrousel de récompenses (utilisé pour 1 ou plusieurs) ---
+function CarrouselRecompenses({
+  recompenses,
+  couleur,
+}: {
+  recompenses: RecompenseAffichee[];
+  couleur: string;
+}) {
+  return (
+    <div className="mt-5">
+      <p
+        className="mb-2 rounded-2xl px-4 py-2 text-center text-sm font-medium"
+        style={{ backgroundColor: `${couleur}14`, color: couleur }}
+      >
+        🎁{" "}
+        {recompenses.length === 1
+          ? "Récompense"
+          : `Au choix parmi ${recompenses.length} récompenses`}
+      </p>
+      <div className="-mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-1 pb-2">
+        {recompenses.map((r) => (
+          <div
+            key={r.id}
+            className="w-40 shrink-0 snap-start overflow-hidden rounded-2xl border border-stone-200 bg-white sm:w-44"
+          >
+            {r.image_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={r.image_url} alt={r.texte} className="h-24 w-full object-cover" />
+            ) : (
+              <div
+                className="flex h-24 w-full items-center justify-center text-3xl"
+                style={{ backgroundColor: `${couleur}14` }}
+              >
+                🎁
+              </div>
+            )}
+            <p className="p-2 text-center text-xs font-semibold text-stone-900">
+              {r.texte}
+            </p>
+          </div>
+        ))}
+      </div>
+      {recompenses.length > 1 && (
+        <p className="text-center text-xs text-stone-400">
+          ← Glissez pour voir toutes les récompenses →
+        </p>
+      )}
+    </div>
+  );
+}
 
 // --- Une carte de fidélité ---
 function BlocCarte({
@@ -82,7 +133,7 @@ function BlocCarte({
   }
 
   return (
-    <div className="rounded-3xl border border-stone-200 bg-white p-6 shadow-xl">
+    <div className="rounded-3xl border border-stone-200 bg-white p-5 shadow-xl sm:p-6">
       <div className="flex items-baseline justify-between gap-3">
         <h3 className="font-bold text-stone-900">{carte.titre}</h3>
         <span className="shrink-0 text-sm font-semibold" style={{ color: couleur }}>
@@ -120,48 +171,8 @@ function BlocCarte({
         })}
       </div>
 
-      {/* Récompense(s) : au choix, jamais cumulées */}
-      {recompenses.length === 1 && (
-        <div
-          className="mt-5 rounded-2xl px-4 py-3 text-center text-sm font-medium"
-          style={{ backgroundColor: `${couleur}14`, color: couleur }}
-        >
-          🎁 {recompenses[0].texte}
-        </div>
-      )}
-      {recompenses.length > 1 && (
-        <div className="mt-5">
-          <p
-            className="mb-2 rounded-2xl px-4 py-2 text-center text-sm font-medium"
-            style={{ backgroundColor: `${couleur}14`, color: couleur }}
-          >
-            🎁 Au choix parmi {recompenses.length} récompenses
-          </p>
-          <div className="-mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-1 pb-2">
-            {recompenses.map((r) => (
-              <div
-                key={r.id}
-                className="w-40 shrink-0 snap-start overflow-hidden rounded-2xl border border-stone-200 bg-white"
-              >
-                {r.image_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={r.image_url} alt={r.texte} className="h-20 w-full object-cover" />
-                ) : (
-                  <div
-                    className="flex h-20 w-full items-center justify-center text-3xl"
-                    style={{ backgroundColor: `${couleur}14` }}
-                  >
-                    🎁
-                  </div>
-                )}
-                <p className="p-2 text-center text-xs font-semibold text-stone-900">{r.texte}</p>
-              </div>
-            ))}
-          </div>
-          <p className="text-center text-xs text-stone-400">
-            ← Glissez pour voir toutes les récompenses →
-          </p>
-        </div>
+      {recompenses.length > 0 && (
+        <CarrouselRecompenses recompenses={recompenses} couleur={couleur} />
       )}
 
       {erreur && (
@@ -258,26 +269,31 @@ function BlocCarte({
   );
 }
 
-// --- Espace client ---
+// --- Espace client complet avec onglets ---
 export function EspaceClient({
   slug,
   couleur,
   animation,
+  sections,
   cartes,
   recompenses,
   recompensesEnAttente,
   notificationsActives,
   scanRecent,
+  qrClientDataUrl,
 }: {
   slug: string;
   couleur: string;
   animation: string;
+  sections: Section[];
   cartes: CarteAffichee[];
   recompenses: RecompenseAffichee[];
   recompensesEnAttente: RecompenseGagnee[];
   notificationsActives: boolean;
   scanRecent: boolean;
+  qrClientDataUrl: string | null;
 }) {
+  const [ongletActif, setOngletActif] = useState<string>(sections[0]?.id ?? "");
   const cleRefus = `walletiz_notif_refus_${slug}`;
   const [proposerNotifs, setProposerNotifs] = useState(false);
   const [animationEnCours, setAnimationEnCours] = useState<string | null>(null);
@@ -298,20 +314,43 @@ export function EspaceClient({
       await activerNotifications(slug, permission === "granted");
     } catch {}
   }
-
   function refuserNotifs() {
     localStorage.setItem(cleRefus, "1");
     setProposerNotifs(false);
   }
 
+  const sectionActive = sections.find((s) => s.id === ongletActif) ?? sections[0];
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {animationEnCours && (
         <AnimationRecompense
           type={animationEnCours}
           onEnd={() => setAnimationEnCours(null)}
         />
       )}
+
+      {/* Onglets style pilules — carrousel horizontal si trop d'onglets */}
+      <div className="rounded-2xl bg-white p-2 shadow-lg">
+        <div className="flex gap-1.5 overflow-x-auto pb-1 sm:justify-center">
+          {sections.map((s) => {
+            const actif = s.id === (sectionActive?.id ?? "");
+            return (
+              <button
+                key={s.id}
+                onClick={() => setOngletActif(s.id)}
+                className="shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition"
+                style={{
+                  backgroundColor: actif ? couleur : "transparent",
+                  color: actif ? "#fff" : "#57534E",
+                }}
+              >
+                {s.titre}
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       {proposerNotifs && (
         <div className="rounded-2xl border border-stone-200 bg-white px-4 py-3 shadow-lg">
@@ -336,13 +375,7 @@ export function EspaceClient({
         </div>
       )}
 
-      {!scanRecent && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm text-amber-800">
-          📷 Pour prendre un tampon, scannez le QR code affiché en caisse.
-        </div>
-      )}
-
-      {/* ----- Récompenses en attente ----- */}
+      {/* Récompenses en attente : toujours visibles, indépendantes de l'onglet */}
       {recompensesEnAttente.length > 0 && (
         <section className="space-y-3">
           <h2 className="px-1 text-lg font-extrabold text-stone-900">
@@ -356,14 +389,55 @@ export function EspaceClient({
         </section>
       )}
 
-      {/* ----- Cartes de fidélité ----- */}
+      {/* Contenu de l'onglet actif */}
+      {sectionActive && (
+        <ContenuSection
+          section={sectionActive}
+          slug={slug}
+          couleur={couleur}
+          animation={animation}
+          cartes={cartes}
+          recompenses={recompenses}
+          scanRecent={scanRecent}
+          qrClientDataUrl={qrClientDataUrl}
+          onAnimation={(a) => setAnimationEnCours(a || animation)}
+        />
+      )}
+    </div>
+  );
+}
+
+function ContenuSection({
+  section,
+  slug,
+  couleur,
+  cartes,
+  recompenses,
+  scanRecent,
+  qrClientDataUrl,
+  onAnimation,
+}: {
+  section: Section;
+  slug: string;
+  couleur: string;
+  animation: string;
+  cartes: CarteAffichee[];
+  recompenses: RecompenseAffichee[];
+  scanRecent: boolean;
+  qrClientDataUrl: string | null;
+  onAnimation: (a: string) => void;
+}) {
+  if (section.type === "cartes") {
+    return (
       <section className="space-y-4">
-        <h2 className="px-1 text-lg font-extrabold text-stone-900">
-          💳 Mes cartes de fidélité
-        </h2>
+        {!scanRecent && (
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm text-amber-800">
+            📷 Pour prendre un tampon, scannez le QR code affiché en caisse.
+          </div>
+        )}
         {cartes.length === 0 ? (
           <p className="rounded-3xl border border-stone-200 bg-white p-6 text-center text-sm text-stone-500 shadow-xl">
-            Aucune carte disponible pour le moment — revenez bientôt !
+            Aucune carte disponible pour le moment.
           </p>
         ) : (
           cartes.map((carte) => (
@@ -374,46 +448,66 @@ export function EspaceClient({
               carte={carte}
               recompenses={recompenses.filter((r) => r.carte_id === carte.id)}
               scanRecent={scanRecent}
-              onRecompenseObtenue={(a) => setAnimationEnCours(a || animation)}
+              onRecompenseObtenue={onAnimation}
             />
           ))
         )}
       </section>
+    );
+  }
 
-      {/* ----- Récompenses proposées par le commerce ----- */}
-      {recompenses.length > 0 && (
-        <section className="space-y-4">
-          <h2 className="px-1 text-lg font-extrabold text-stone-900">🎁 Récompenses</h2>
-          <div className="grid grid-cols-2 gap-3">
-            {recompenses.map((r) => (
-              <div
-                key={r.id}
-                className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-lg"
-              >
-                {r.image_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={r.image_url} alt={r.texte} className="h-24 w-full object-cover" />
-                ) : (
-                  <div
-                    className="flex h-24 w-full items-center justify-center text-4xl"
-                    style={{ backgroundColor: `${couleur}14` }}
-                  >
-                    🎁
-                  </div>
-                )}
-                <div className="p-3">
-                  <p className="text-sm font-semibold text-stone-900">{r.texte}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+  if (section.type === "info") {
+    return (
+      <section className="rounded-3xl border border-stone-200 bg-white p-6 shadow-xl">
+        {section.texte && (
+          <p className="whitespace-pre-line text-center text-sm text-stone-600">
+            {section.texte}
+          </p>
+        )}
+        {qrClientDataUrl && (
+          <>
+            <div className="mt-5 flex justify-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={qrClientDataUrl}
+                alt="Mon QR code personnel"
+                className="w-64 rounded-2xl border border-stone-100 p-2"
+              />
+            </div>
+            <p className="mt-3 text-center text-xs text-stone-400">
+              Présentez ce QR code au commerçant. Il n&apos;a plus qu&apos;à le scanner
+              pour ajouter vos tampons.
+            </p>
+          </>
+        )}
+      </section>
+    );
+  }
+
+  // Section personnalisée : titre + texte + lien optionnel
+  return (
+    <section className="rounded-3xl border border-stone-200 bg-white p-6 shadow-xl">
+      <h2 className="text-lg font-bold text-stone-900">{section.titre}</h2>
+      {section.texte && (
+        <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-stone-600">
+          {section.texte}
+        </p>
       )}
-    </div>
+      {section.lien_url && (
+        <a
+          href={section.lien_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-5 inline-block rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:opacity-90"
+          style={{ backgroundColor: couleur }}
+        >
+          {section.lien_libelle || "Ouvrir le lien"} →
+        </a>
+      )}
+    </section>
   );
 }
 
-// --- Bloc récompense en attente : "présenter au commerçant" ---
 function RecompenseAttenteCard({
   slug,
   couleur,
@@ -436,7 +530,6 @@ function RecompenseAttenteCard({
       else setUtilisee(true);
     });
   }
-
   if (utilisee) return null;
 
   return (
@@ -453,9 +546,7 @@ function RecompenseAttenteCard({
             className="h-16 w-16 shrink-0 rounded-xl object-cover"
           />
         ) : (
-          <span
-            className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-white text-3xl"
-          >
+          <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-white text-3xl">
             🎁
           </span>
         )}

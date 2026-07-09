@@ -2,9 +2,10 @@ import { redirect } from "next/navigation";
 import QRCode from "qrcode";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import type { Carte, Recompense, Restaurant, SousCompte } from "@/lib/types";
+import type { Carte, Recompense, Restaurant, Section, SousCompte } from "@/lib/types";
 import { ConfigForm } from "./ConfigForm";
 import { CartesSection } from "./CartesSection";
+import { SectionsSection } from "./SectionsSection";
 import { CreationForm } from "./CreationForm";
 import { BoutonDeconnexion } from "./BoutonDeconnexion";
 import { SousCompteSection } from "./SousCompteSection";
@@ -33,11 +34,12 @@ export default async function Dashboard() {
   // Cartes, récompenses et statistiques du commerce
   let cartes: Carte[] = [];
   let recompenses: Recompense[] = [];
+  let sections: Section[] = [];
   let sousCompte: SousCompte | null = null;
   let nbClients = 0;
   let nbTampons = 0;
   if (restaurant) {
-    const [resCartes, resRecompenses, resClients, resSc] = await Promise.all([
+    const [resCartes, resRecompenses, resClients, resSc, resSections] = await Promise.all([
       supabase
         .from("cartes")
         .select("*")
@@ -57,12 +59,18 @@ export default async function Dashboard() {
         .select("*")
         .eq("restaurant_id", restaurant.id)
         .maybeSingle<SousCompte>(),
+      supabase
+        .from("sections")
+        .select("*")
+        .eq("restaurant_id", restaurant.id)
+        .order("ordre", { ascending: true }),
     ]);
     cartes = (resCartes.data as Carte[]) ?? [];
     recompenses = (resRecompenses.data as Recompense[]) ?? [];
     nbClients = resClients.data?.length ?? 0;
     nbTampons = resClients.data?.reduce((somme, c) => somme + c.tampons_total, 0) ?? 0;
     sousCompte = resSc.data ?? null;
+    sections = (resSections.data as Section[]) ?? [];
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -139,6 +147,7 @@ export default async function Dashboard() {
                 </div>
                 <ConfigForm restaurant={restaurant} />
                 <CartesSection cartes={cartes} recompenses={recompenses} />
+                <SectionsSection sections={sections} />
                 <SousCompteSection sousCompte={sousCompte} />
               </div>
 

@@ -57,6 +57,7 @@ export type ClientFidelite = {
   recompenses_reclamees: number;
   date_dernier_tampon: string | null;
   token_cookie: string;
+  token_public: string | null;
   notifications_push_actif: boolean;
   created_at: string;
 };
@@ -74,6 +75,19 @@ export type SousCompte = {
   nom: string;
   email: string;
   actif: boolean;
+  created_at: string;
+};
+
+export type Section = {
+  id: string;
+  restaurant_id: string;
+  type: "cartes" | "info" | "personnalisee";
+  titre: string;
+  texte: string | null;
+  lien_url: string | null;
+  lien_libelle: string | null;
+  ordre: number;
+  supprimable: boolean;
   created_at: string;
 };
 

@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import QRCode from "qrcode";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { dateDuJourParis } from "@/lib/utils";
 import type {
@@ -8,6 +9,7 @@ import type {
   Recompense,
   RecompenseGagnee,
   Restaurant,
+  Section,
 } from "@/lib/types";
 import { EspaceClient, type CarteAffichee } from "./EspaceClient";
 import { FormulaireInscription } from "./FormulaireInscription";
@@ -60,9 +62,20 @@ export default async function PageCommerce({
     client = data;
   }
 
+  // Toujours charger les sections (même quand pas de client) — inscription simple
+  const { data: sectionsData } = await admin
+    .from("sections")
+    .select("*")
+    .eq("restaurant_id", restaurant.id)
+    .order("ordre", { ascending: true })
+    .returns<Section[]>();
+  const sections = sectionsData ?? [];
+
   let cartesAffichees: CarteAffichee[] = [];
   let recompenses: Recompense[] = [];
   let recompensesEnAttente: RecompenseGagnee[] = [];
+  let qrClientDataUrl: string | null = null;
+
   if (client) {
     const aujourdHui = dateDuJourParis();
     const [resCartes, resRecompenses, resProgressions, resGagnees] = await Promise.all([
@@ -95,9 +108,11 @@ export default async function PageCommerce({
     recompensesEnAttente = (resGagnees.data as RecompenseGagnee[]) ?? [];
 
     cartesAffichees = cartes
-      // une carte expirée sans tampon accumulé est masquée
+      // Cartes sans date d'expiration : toujours visibles.
+      // Cartes expirées : masquées sauf si le client a des tampons dessus.
       .filter((c) => {
-        const expiree = c.date_expiration !== null && c.date_expiration < aujourdHui;
+        if (!c.date_expiration) return true;
+        const expiree = c.date_expiration < aujourdHui;
         const progression = progressions.find((p) => p.carte_id === c.id);
         return !expiree || (progression?.tampons_actuels ?? 0) > 0;
       })
@@ -116,12 +131,22 @@ export default async function PageCommerce({
           tampon_pris_aujourdhui: progression?.date_dernier_tampon === aujourdHui,
         };
       });
+
+    // QR code personnel du client — c'est ce QR que le commerçant scanne
+    // pour attribuer des tampons directement (sans saisie manuelle).
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+    const lienScan = `${siteUrl}/dashboard/scanner?c=${client.token_public ?? client.id}`;
+    qrClientDataUrl = await QRCode.toDataURL(lienScan, {
+      width: 480,
+      margin: 2,
+      color: { dark: restaurant.couleur_qr ?? "#380b15", light: "#ffffff" },
+    });
   }
 
   return (
     <main className="min-h-screen bg-white">
       <header
-        className="relative overflow-hidden px-6 pb-16 pt-10 text-center text-white"
+        className="relative overflow-hidden px-6 pb-24 pt-10 text-center text-white sm:pb-32"
         style={restaurant.fond_url ? undefined : { backgroundColor: restaurant.couleur }}
       >
         {restaurant.fond_url && (
@@ -132,7 +157,7 @@ export default async function PageCommerce({
               alt=""
               className="absolute inset-0 h-full w-full object-cover"
             />
-            <div className="absolute inset-0 bg-black/25" />
+            <div className="absolute inset-0 bg-black/30" />
           </>
         )}
         <div className="relative">
@@ -148,17 +173,19 @@ export default async function PageCommerce({
               🏪
             </div>
           )}
-          <h1 className="mt-4 text-2xl font-extrabold">{restaurant.nom}</h1>
-          <p className="mt-1 text-sm opacity-80">Carte de fidélité</p>
+          <h1 className="mt-4 text-2xl font-extrabold sm:text-3xl">
+            {restaurant.nom}
+          </h1>
         </div>
       </header>
 
-      <div className="mx-auto -mt-10 max-w-md px-4 pb-16">
+      <div className="mx-auto -mt-16 max-w-2xl px-4 pb-16 sm:-mt-20 sm:px-6">
         {client ? (
           <EspaceClient
             slug={slug}
             couleur={restaurant.couleur}
             animation={restaurant.animation_recompense ?? "confettis"}
+            sections={sections}
             cartes={cartesAffichees}
             recompenses={recompenses.map((r) => ({
               id: r.id,
@@ -169,6 +196,7 @@ export default async function PageCommerce({
             recompensesEnAttente={recompensesEnAttente}
             notificationsActives={client.notifications_push_actif}
             scanRecent={scanRecent}
+            qrClientDataUrl={qrClientDataUrl}
           />
         ) : (
           <FormulaireInscription slug={slug} couleur={restaurant.couleur} />

@@ -5,7 +5,13 @@ import { attribuerTampons } from "../actions";
 import { iconeEmoji } from "@/lib/icons";
 import type { Carte } from "@/lib/types";
 
-export function ScannerForm({ cartes }: { cartes: Carte[] }) {
+export function ScannerForm({
+  cartes,
+  telephonePrecharge = "",
+}: {
+  cartes: Carte[];
+  telephonePrecharge?: string;
+}) {
   const formRef = useRef<HTMLFormElement>(null);
   const [erreur, setErreur] = useState<string | null>(null);
   const [succes, setSucces] = useState<null | {
@@ -49,6 +55,7 @@ export function ScannerForm({ cartes }: { cartes: Carte[] }) {
           type="tel"
           inputMode="tel"
           required
+          defaultValue={telephonePrecharge}
           placeholder="06 12 34 56 78"
           className={classesInput}
         />

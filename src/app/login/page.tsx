@@ -105,6 +105,13 @@ function FormulaireLogin() {
               {chargement ? "Connexion…" : "Se connecter"}
             </button>
           </form>
+
+          <Link
+            href="/mot-de-passe-oublie"
+            className="mt-4 block text-center text-sm text-stone-500 hover:text-bordeaux-700"
+          >
+            Mot de passe oublié ?
+          </Link>
         </div>
 
         <p className="mt-6 text-center text-xs text-stone-400">

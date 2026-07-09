@@ -74,12 +74,33 @@ export async function creerRestaurant(formData: FormData) {
     .maybeSingle();
   if (existant) slug = `${slug}-${Math.random().toString(36).slice(2, 6)}`;
 
-  const { error } = await supabase.from("restaurants").insert({
-    owner_id: user.id,
-    nom,
-    slug,
-  });
-  if (error) return { erreur: "Impossible de créer le commerce." };
+  const { data: nouveau, error } = await supabase
+    .from("restaurants")
+    .insert({ owner_id: user.id, nom, slug })
+    .select("id")
+    .single();
+  if (error || !nouveau) return { erreur: "Impossible de créer le commerce." };
+
+  // Sections par défaut (cartes + info, toutes deux non supprimables)
+  const admin = createAdminClient();
+  await admin.from("sections").insert([
+    {
+      restaurant_id: nouveau.id,
+      type: "cartes",
+      titre: "Cartes de fidélité",
+      ordre: 0,
+      supprimable: false,
+    },
+    {
+      restaurant_id: nouveau.id,
+      type: "info",
+      titre: "Info",
+      texte:
+        "Présentez ce QR code au commerçant à chaque passage pour recevoir vos tampons.",
+      ordre: 100,
+      supprimable: false,
+    },
+  ]);
 
   revalidatePath("/dashboard");
   return { ok: true };
@@ -100,7 +121,7 @@ export async function mettreAJourConfig(formData: FormData) {
   if (!/^#[0-9a-fA-F]{6}$/.test(couleur)) return { erreur: "Couleur invalide." };
   if (!/^#[0-9a-fA-F]{6}$/.test(couleurQr))
     return { erreur: "Couleur du QR code invalide." };
-  if (!["confettis", "coeurs", "etoiles", "feux"].includes(animation))
+  if (!["aucune", "confettis", "coeurs", "etoiles", "feux"].includes(animation))
     return { erreur: "Animation invalide." };
 
   const maj: Record<string, string | boolean> = {
@@ -567,4 +588,132 @@ export async function attribuerTampons(formData: FormData) {
     requis,
     recompenses_creees: recompensesCreees,
   };
+}
+
+// ============================================================
+// SECTIONS (onglets de la page client)
+// ============================================================
+
+export async function creerSection(formData: FormData) {
+  const { supabase, restaurant } = await restaurantCourant();
+  if (!restaurant) return { erreur: "Aucun commerce associé à ce compte." };
+
+  const titre = String(formData.get("titre") ?? "").trim();
+  const texte = String(formData.get("texte") ?? "").trim();
+  const lienUrl = String(formData.get("lien_url") ?? "").trim();
+  const lienLibelle = String(formData.get("lien_libelle") ?? "").trim();
+
+  if (!titre) return { erreur: "Le titre est obligatoire." };
+  if (titre.length > 30) return { erreur: "Titre trop long (30 caractères max)." };
+  if (lienUrl && !/^https?:\/\//i.test(lienUrl))
+    return { erreur: "Le lien doit commencer par http:// ou https://" };
+
+  // ordre = max existant + 1 (avant la section info)
+  const { data: derniere } = await supabase
+    .from("sections")
+    .select("ordre")
+    .eq("restaurant_id", restaurant.id)
+    .neq("type", "info")
+    .order("ordre", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const ordre = (derniere?.ordre ?? 0) + 1;
+
+  const { error } = await supabase.from("sections").insert({
+    restaurant_id: restaurant.id,
+    type: "personnalisee",
+    titre,
+    texte: texte || null,
+    lien_url: lienUrl || null,
+    lien_libelle: lienLibelle || null,
+    ordre,
+    supprimable: true,
+  });
+  if (error) return { erreur: "Impossible de créer la section." };
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/c/${restaurant.slug}`);
+  return { ok: true };
+}
+
+export async function modifierSection(sectionId: string, formData: FormData) {
+  const { supabase, restaurant } = await restaurantCourant();
+  if (!restaurant) return { erreur: "Aucun commerce associé à ce compte." };
+
+  const titre = String(formData.get("titre") ?? "").trim();
+  const texte = String(formData.get("texte") ?? "").trim();
+  const lienUrl = String(formData.get("lien_url") ?? "").trim();
+  const lienLibelle = String(formData.get("lien_libelle") ?? "").trim();
+
+  if (!titre) return { erreur: "Le titre est obligatoire." };
+  if (lienUrl && !/^https?:\/\//i.test(lienUrl))
+    return { erreur: "Le lien doit commencer par http:// ou https://" };
+
+  const { error } = await supabase
+    .from("sections")
+    .update({
+      titre,
+      texte: texte || null,
+      lien_url: lienUrl || null,
+      lien_libelle: lienLibelle || null,
+    })
+    .eq("id", sectionId)
+    .eq("restaurant_id", restaurant.id);
+  if (error) return { erreur: "Échec de l'enregistrement." };
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/c/${restaurant.slug}`);
+  return { ok: true };
+}
+
+export async function supprimerSection(sectionId: string) {
+  const { supabase, restaurant } = await restaurantCourant();
+  if (!restaurant) return { erreur: "Aucun commerce associé à ce compte." };
+
+  const { data: section } = await supabase
+    .from("sections")
+    .select("supprimable")
+    .eq("id", sectionId)
+    .eq("restaurant_id", restaurant.id)
+    .maybeSingle();
+  if (!section) return { erreur: "Section introuvable." };
+  if (!section.supprimable)
+    return { erreur: "Cette section ne peut pas être supprimée." };
+
+  const { error } = await supabase
+    .from("sections")
+    .delete()
+    .eq("id", sectionId)
+    .eq("restaurant_id", restaurant.id);
+  if (error) return { erreur: "Échec de la suppression." };
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/c/${restaurant.slug}`);
+  return { ok: true };
+}
+
+// ============================================================
+// SOUS-COMPTE : changer le mot de passe
+// ============================================================
+export async function changerMotDePasseSousCompte(formData: FormData) {
+  const { restaurant } = await restaurantDuRestaurateur();
+  if (!restaurant) return { erreur: "Aucun commerce." };
+
+  const motDePasse = String(formData.get("mot_de_passe") ?? "");
+  if (motDePasse.length < 8)
+    return { erreur: "Mot de passe trop court (8 caractères minimum)." };
+
+  const admin = createAdminClient();
+  const { data: sc } = await admin
+    .from("sous_comptes")
+    .select("user_id")
+    .eq("restaurant_id", restaurant.id)
+    .maybeSingle();
+  if (!sc) return { erreur: "Aucun sous-compte." };
+
+  const { error } = await admin.auth.admin.updateUserById(sc.user_id, {
+    password: motDePasse,
+  });
+  if (error) return { erreur: "Échec de la mise à jour." };
+  return { ok: true };
 }

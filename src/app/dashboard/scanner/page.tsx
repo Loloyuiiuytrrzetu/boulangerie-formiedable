@@ -8,16 +8,21 @@ import { BoutonDeconnexion } from "../BoutonDeconnexion";
 
 export const dynamic = "force-dynamic";
 
-// Espace disponible pour le restaurateur ET son sous-compte :
-// attribuer manuellement N tampons à un client par téléphone.
-export default async function Scanner() {
+// Accessible au restaurateur ET à son sous-compte.
+// Attribue manuellement N tampons à un client :
+//   - par téléphone (saisie manuelle)
+//   - ou automatiquement via ?c=<token> venant du QR code du client
+export default async function Scanner({
+  searchParams,
+}: {
+  searchParams: Promise<{ c?: string }>;
+}) {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  // Restaurant : soit possédé, soit rattaché via sous-compte actif
   const admin = createAdminClient();
   const { data: restoOwn } = await admin
     .from("restaurants")
@@ -53,10 +58,25 @@ export default async function Scanner() {
     .order("created_at", { ascending: true })
     .returns<Carte[]>();
 
+  // Si un token client est passé (venant d'un scan de QR), on pré-charge
+  // ses infos pour éviter d'avoir à retaper son téléphone.
+  const { c: tokenClient } = await searchParams;
+  let clientPrecharge: { telephone: string } | null = null;
+  if (tokenClient) {
+    const { data: cli } = await admin
+      .from("clients_fidelite")
+      .select("numero_telephone, restaurant_id")
+      .eq("token_public", tokenClient)
+      .maybeSingle();
+    if (cli && cli.restaurant_id === restaurant.id) {
+      clientPrecharge = { telephone: cli.numero_telephone };
+    }
+  }
+
   return (
     <main className="min-h-screen bg-stone-50">
       <header className="border-b border-stone-200 bg-white">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4 sm:px-6">
           <div className="flex items-center gap-3">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-bordeaux-800 text-lg text-white">
               🎯
@@ -83,16 +103,21 @@ export default async function Scanner() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-xl px-6 py-8">
-        <div className="rounded-3xl border border-stone-200 bg-white p-6 shadow-lg">
-          <h1 className="text-xl font-bold text-stone-900">Attribuer des tampons</h1>
+      <div className="mx-auto max-w-xl px-4 py-6 sm:px-6 sm:py-8">
+        <div className="rounded-3xl border border-stone-200 bg-white p-5 shadow-lg sm:p-6">
+          <h1 className="text-xl font-bold text-stone-900">
+            {clientPrecharge ? "Client identifié ✓" : "Attribuer des tampons"}
+          </h1>
           <p className="mt-1 text-sm text-stone-500">
-            Entrez le numéro du client, choisissez la carte et le nombre de
-            tampons. Si la carte se remplit, la récompense est créditée
-            automatiquement dans son compte.
+            {clientPrecharge
+              ? "Le numéro du client est pré-rempli — choisissez la carte et le nombre de tampons."
+              : "Scannez le QR code du client depuis la section Info de sa page, ou entrez son numéro à la main."}
           </p>
 
-          <ScannerForm cartes={cartes ?? []} />
+          <ScannerForm
+            cartes={cartes ?? []}
+            telephonePrecharge={clientPrecharge?.telephone ?? ""}
+          />
         </div>
       </div>
     </main>

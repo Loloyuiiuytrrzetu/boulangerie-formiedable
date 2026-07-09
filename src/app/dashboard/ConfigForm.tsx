@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { mettreAJourConfig } from "./actions";
 import { SelecteurCouleur } from "./SelecteurCouleur";
+import { ApercuAnimation } from "./ApercuAnimation";
 import type { Restaurant } from "@/lib/types";
 
 // Identité du commerce : nom, logo, image de fond, couleurs
@@ -142,11 +143,13 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
             defaultValue={restaurant.animation_recompense ?? "confettis"}
             className="w-full rounded-lg border border-stone-300 px-3.5 py-2.5 outline-none transition focus:border-bordeaux-700 focus:ring-2 focus:ring-bordeaux-200"
           >
+            <option value="aucune">Aucune animation</option>
             <option value="confettis">🎉 Pluie de confettis</option>
             <option value="coeurs">💖 Cœurs qui montent</option>
             <option value="etoiles">✨ Étoiles filantes</option>
             <option value="feux">🎆 Feux d&apos;artifice</option>
           </select>
+          <ApercuAnimation selectId="animation_recompense" />
         </div>
       </div>
 
