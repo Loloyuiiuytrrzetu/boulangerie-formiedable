@@ -1,4 +1,4 @@
-# Fidélio — Carte de fidélité digitale
+# Walletiz — Carte de fidélité digitale
 
 Application web de carte de fidélité pour petits commerces (restaurants, cafés,
 boulangeries…). **Aucune application mobile à installer** : le client scanne un
