@@ -170,12 +170,15 @@ export async function mettreAJourConfig(formData: FormData) {
 function validerCarte(formData: FormData) {
   const titre = String(formData.get("titre") ?? "").trim();
   const tamponIcone = String(formData.get("tampon_icone") ?? "cafe");
+  const tamponForme = String(formData.get("tampon_forme") ?? "carre");
   const nombreTampons = parseInt(String(formData.get("nombre_tampons_requis") ?? "10"), 10);
   const texteBas = String(formData.get("texte_bas") ?? "").trim();
   const dateExpiration = String(formData.get("date_expiration") ?? "").trim();
 
   if (!titre) return { erreur: "Le titre de la carte est obligatoire." as const };
   if (!TAMPON_ICONES[tamponIcone]) return { erreur: "Icône de tampon invalide." as const };
+  if (!["carre", "cercle", "hexagone", "etoile"].includes(tamponForme))
+    return { erreur: "Forme de tampon invalide." as const };
   if (!Number.isInteger(nombreTampons) || nombreTampons < 1 || nombreTampons > 20)
     return { erreur: "Le nombre de tampons doit être entre 1 et 20." as const };
   if (dateExpiration && !/^\d{4}-\d{2}-\d{2}$/.test(dateExpiration))
@@ -185,6 +188,7 @@ function validerCarte(formData: FormData) {
     valeurs: {
       titre,
       tampon_icone: tamponIcone,
+      tampon_forme: tamponForme,
       nombre_tampons_requis: nombreTampons,
       texte_bas: texteBas || null,
       date_expiration: dateExpiration || null,

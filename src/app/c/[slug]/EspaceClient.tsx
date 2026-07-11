@@ -16,6 +16,7 @@ export type CarteAffichee = {
   titre: string;
   tampon_icone: string;
   tampon_image_url: string | null;
+  tampon_forme: "carre" | "cercle" | "hexagone" | "etoile";
   nombre_tampons_requis: number;
   texte_bas: string | null;
   date_expiration: string | null;
@@ -31,6 +32,102 @@ export type RecompenseAffichee = {
   texte: string;
   image_url: string | null;
 };
+
+// --- Rendu d'un tampon selon la forme choisie ---
+// Utilise un SVG pour toutes les formes : cohérent (bord dashed possible
+// pour chaque forme quand la case est vide) et pas de bug de clip-path.
+function TamponCase({
+  forme,
+  rempli,
+  couleur,
+  image,
+  emoji,
+}: {
+  forme: "carre" | "cercle" | "hexagone" | "etoile";
+  rempli: boolean;
+  couleur: string;
+  image: string | null;
+  emoji: string;
+}) {
+  const fill = rempli
+    ? image
+      ? "#ffffff"
+      : couleur
+    : "transparent";
+  const stroke = rempli ? couleur : "#e7e5e4";
+  const dashed = !rempli;
+  const strokeProps = dashed ? { strokeDasharray: "5 4" } : {};
+
+  return (
+    <div className="relative aspect-square">
+      <svg
+        viewBox="0 0 100 100"
+        className="h-full w-full"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        {forme === "carre" && (
+          <rect
+            x="5"
+            y="5"
+            width="90"
+            height="90"
+            rx="18"
+            fill={fill}
+            stroke={stroke}
+            strokeWidth="5"
+            {...strokeProps}
+          />
+        )}
+        {forme === "cercle" && (
+          <circle
+            cx="50"
+            cy="50"
+            r="45"
+            fill={fill}
+            stroke={stroke}
+            strokeWidth="5"
+            {...strokeProps}
+          />
+        )}
+        {forme === "hexagone" && (
+          <polygon
+            points="50,5 90,27 90,73 50,95 10,73 10,27"
+            fill={fill}
+            stroke={stroke}
+            strokeWidth="5"
+            {...strokeProps}
+          />
+        )}
+        {forme === "etoile" && (
+          <polygon
+            points="50,5 61,38 96,38 68,58 79,92 50,72 21,92 32,58 4,38 39,38"
+            fill={fill}
+            stroke={stroke}
+            strokeWidth="5"
+            {...strokeProps}
+          />
+        )}
+      </svg>
+      {/* Icône / image au centre */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+        {image ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={image}
+            alt=""
+            className={`h-3/5 w-3/5 object-contain transition ${
+              rempli ? "" : "opacity-20 grayscale"
+            }`}
+          />
+        ) : (
+          <span className={`text-2xl ${rempli ? "" : "opacity-20 grayscale"}`}>
+            {emoji}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
 
 // --- Petit carrousel de récompenses (utilisé pour 1 ou plusieurs) ---
 function CarrouselRecompenses({
@@ -186,31 +283,14 @@ function BlocCarte({
         {Array.from({ length: requis }, (_, i) => {
           const rempli = i < carte.tampons_actuels;
           return (
-            <div
+            <TamponCase
               key={i}
-              className="flex aspect-square items-center justify-center overflow-hidden rounded-2xl border-2 text-2xl transition"
-              style={
-                rempli
-                  ? {
-                      backgroundColor: carte.tampon_image_url ? "#ffffff" : couleur,
-                      borderColor: couleur,
-                    }
-                  : { borderColor: "#e7e5e4", borderStyle: "dashed" }
-              }
-            >
-              {carte.tampon_image_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={carte.tampon_image_url}
-                  alt=""
-                  className={`h-4/5 w-4/5 object-contain transition ${
-                    rempli ? "" : "opacity-20 grayscale"
-                  }`}
-                />
-              ) : (
-                <span className={rempli ? "" : "opacity-20 grayscale"}>{emoji}</span>
-              )}
-            </div>
+              forme={carte.tampon_forme}
+              rempli={rempli}
+              couleur={couleur}
+              image={carte.tampon_image_url}
+              emoji={emoji}
+            />
           );
         })}
       </div>
@@ -509,11 +589,6 @@ function ContenuSection({
   if (section.type === "cartes") {
     return (
       <section className="space-y-4">
-        {!scanRecent && (
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm text-amber-800">
-            📷 Pour prendre un tampon, scannez le QR code affiché en caisse.
-          </div>
-        )}
         {cartes.length === 0 ? (
           <p className="rounded-3xl border border-stone-200 bg-white p-6 text-center text-sm text-stone-500 shadow-xl">
             Aucune carte disponible pour le moment.

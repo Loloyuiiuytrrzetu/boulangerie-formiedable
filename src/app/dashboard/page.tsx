@@ -16,7 +16,6 @@ import { ConfigForm } from "./ConfigForm";
 import { CartesSection } from "./CartesSection";
 import { SectionsSection } from "./SectionsSection";
 import { CreationForm } from "./CreationForm";
-import { BoutonDeconnexion } from "./BoutonDeconnexion";
 import { SousCompteSection } from "./SousCompteSection";
 import { GraphiquesTampons } from "./GraphiquesTampons";
 import { BandeauImpersonation } from "./BandeauImpersonation";
@@ -141,20 +140,9 @@ export default async function Dashboard() {
   return (
     <main className="min-h-screen bg-stone-50">
       {effectif.impersonation && <BandeauImpersonation />}
-      <header className="border-b border-stone-200 bg-white">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-bordeaux-800 text-lg text-white">✦</span>
-            <div>
-              <p className="font-bold text-bordeaux-800">Walletiz</p>
-              <p className="text-xs text-stone-500">{effectif.email}</p>
-            </div>
-          </div>
-          <BoutonDeconnexion />
-        </div>
-      </header>
+      <NavigationSidebar userEmail={effectif.email} />
 
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:ml-64 lg:max-w-none lg:px-8">
         {!restaurant ? (
           <CreationForm />
         ) : (
@@ -166,9 +154,7 @@ export default async function Dashboard() {
               </p>
             )}
 
-            <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
-              <NavigationSidebar />
-
+            <div>
               <div className="space-y-8">
                 <div className="mb-2 grid grid-cols-2 gap-4 sm:grid-cols-3">
                   <div className="rounded-2xl border border-stone-200 bg-white p-5">

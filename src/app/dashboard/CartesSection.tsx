@@ -19,8 +19,40 @@ const classesInput =
   "w-full rounded-lg border border-stone-300 px-3.5 py-2.5 outline-none transition focus:border-bordeaux-700 focus:ring-2 focus:ring-bordeaux-200";
 
 // --- Champs communs création / édition d'une carte ---
+// Aperçu SVG d'une forme (utilisé dans le sélecteur)
+function ApercuForme({ forme, actif }: { forme: string; actif: boolean }) {
+  const stroke = actif ? "#7A1E2E" : "#a8a29e";
+  const fill = actif ? "#7A1E2E" : "transparent";
+  return (
+    <svg viewBox="0 0 100 100" className="h-8 w-8">
+      {forme === "carre" && (
+        <rect x="10" y="10" width="80" height="80" rx="18" fill={fill} stroke={stroke} strokeWidth="4" />
+      )}
+      {forme === "cercle" && (
+        <circle cx="50" cy="50" r="42" fill={fill} stroke={stroke} strokeWidth="4" />
+      )}
+      {forme === "hexagone" && (
+        <polygon points="50,8 88,29 88,71 50,92 12,71 12,29" fill={fill} stroke={stroke} strokeWidth="4" />
+      )}
+      {forme === "etoile" && (
+        <polygon points="50,5 61,38 96,38 68,58 79,92 50,72 21,92 32,58 4,38 39,38" fill={fill} stroke={stroke} strokeWidth="4" />
+      )}
+    </svg>
+  );
+}
+
+const FORMES: { cle: "carre" | "cercle" | "hexagone" | "etoile"; nom: string }[] = [
+  { cle: "carre", nom: "Carré" },
+  { cle: "cercle", nom: "Cercle" },
+  { cle: "hexagone", nom: "Hexagone" },
+  { cle: "etoile", nom: "Étoile" },
+];
+
 function ChampsCarte({ carte }: { carte?: Carte }) {
   const [icone, setIcone] = useState(carte?.tampon_icone ?? "cafe");
+  const [forme, setForme] = useState<"carre" | "cercle" | "hexagone" | "etoile">(
+    carte?.tampon_forme ?? "carre"
+  );
 
   return (
     <div className="space-y-4">
@@ -90,6 +122,30 @@ function ChampsCarte({ carte }: { carte?: Carte }) {
             accept="image/*"
             className="mt-2 block w-full text-xs text-stone-500 file:mr-2 file:rounded-lg file:border-0 file:bg-bordeaux-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-bordeaux-800 hover:file:bg-bordeaux-100"
           />
+        </div>
+      </div>
+
+      <div>
+        <span className="mb-1.5 block text-sm font-medium text-stone-700">
+          Forme du tampon
+        </span>
+        <input type="hidden" name="tampon_forme" value={forme} />
+        <div className="grid grid-cols-4 gap-2">
+          {FORMES.map((f) => (
+            <button
+              key={f.cle}
+              type="button"
+              onClick={() => setForme(f.cle)}
+              className={`flex flex-col items-center gap-1 rounded-xl border py-2 text-xs font-medium transition ${
+                forme === f.cle
+                  ? "border-bordeaux-700 bg-bordeaux-50 text-bordeaux-800 ring-2 ring-bordeaux-200"
+                  : "border-stone-200 bg-white text-stone-600 hover:border-stone-300"
+              }`}
+            >
+              <ApercuForme forme={f.cle} actif={forme === f.cle} />
+              <span>{f.nom}</span>
+            </button>
+          ))}
         </div>
       </div>
 
@@ -330,7 +386,7 @@ function BlocCarte({
 
       {ouvert && (
         <div className="border-t border-stone-100 px-5 py-5">
-          <form key={carte.id + carte.tampon_icone} action={enregistrer}>
+          <form key={`${carte.id}-${carte.tampon_icone}-${carte.tampon_forme}`} action={enregistrer}>
             <ChampsCarte carte={carte} />
             <div className="mt-4 flex items-center gap-3">
               <button

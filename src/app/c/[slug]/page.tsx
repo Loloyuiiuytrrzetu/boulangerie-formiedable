@@ -154,6 +154,7 @@ export default async function PageCommerce({
           titre: c.titre,
           tampon_icone: c.tampon_icone,
           tampon_image_url: c.tampon_image_url,
+          tampon_forme: c.tampon_forme ?? "carre",
           nombre_tampons_requis: c.nombre_tampons_requis,
           texte_bas: c.texte_bas,
           date_expiration: c.date_expiration,

@@ -23,6 +23,7 @@ export type Carte = {
   titre: string;
   tampon_icone: string;
   tampon_image_url: string | null;
+  tampon_forme: "carre" | "cercle" | "hexagone" | "etoile";
   nombre_tampons_requis: number;
   texte_bas: string | null;
   date_expiration: string | null;
