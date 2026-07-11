@@ -20,6 +20,8 @@ import { SousCompteSection } from "./SousCompteSection";
 import { GraphiquesTampons } from "./GraphiquesTampons";
 import { BandeauImpersonation } from "./BandeauImpersonation";
 import { NavigationSidebar } from "./NavigationSidebar";
+import { NotificationsPushSection, type NotificationPush } from "./NotificationsPushSection";
+import { getVapidPublicKey } from "@/lib/push";
 
 export default async function Dashboard() {
   const effectif = await utilisateurEffectif();
@@ -44,6 +46,8 @@ export default async function Dashboard() {
   let sections: Section[] = [];
   let sousCompte: SousCompte | null = null;
   let historique: TamponHistorique[] = [];
+  let notificationsPush: NotificationPush[] = [];
+  let nbAbonnes = 0;
   let nbClients = 0;
   let nbTampons = 0;
   if (restaurant) {
@@ -94,6 +98,21 @@ export default async function Dashboard() {
     sousCompte = resSc.data ?? null;
     sections = (resSections.data as Section[]) ?? [];
 
+    const [resNotifs, resAbonnes] = await Promise.all([
+      supabase
+        .from("notifications_push")
+        .select("*")
+        .eq("restaurant_id", restaurant.id)
+        .order("created_at", { ascending: false })
+        .limit(50),
+      supabase
+        .from("push_subscriptions")
+        .select("id", { count: "exact", head: true })
+        .eq("restaurant_id", restaurant.id),
+    ]);
+    notificationsPush = (resNotifs.data as NotificationPush[]) ?? [];
+    nbAbonnes = resAbonnes.count ?? 0;
+
     // Auto-réparation si aucune section (migration incomplète)
     if (sections.length === 0) {
       const admin = createAdminClient();
@@ -138,7 +157,7 @@ export default async function Dashboard() {
     : null;
 
   return (
-    <main className="min-h-screen bg-stone-50">
+    <main className="min-h-screen bg-stone-100">
       {effectif.impersonation && <BandeauImpersonation />}
       <NavigationSidebar userEmail={effectif.email} />
 
@@ -206,6 +225,14 @@ export default async function Dashboard() {
                 </div>
                 <div id="souscompte">
                   <SousCompteSection sousCompte={sousCompte} />
+                </div>
+                <div id="notifications">
+                  <NotificationsPushSection
+                    notifications={notificationsPush}
+                    timezone={restaurant.timezone ?? "Europe/Paris"}
+                    nbAbonnes={nbAbonnes}
+                    pushConfigure={Boolean(getVapidPublicKey())}
+                  />
                 </div>
 
                 <aside

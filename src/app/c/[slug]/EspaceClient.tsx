@@ -2,12 +2,12 @@
 
 import { useEffect, useState, useTransition } from "react";
 import {
-  activerNotifications,
   ajouterTampon,
   choisirRecompense,
   utiliserRecompense,
 } from "./actions";
 import { AnimationRecompense } from "./Animation";
+import { AbonnementPush } from "./AbonnementPush";
 import { iconeEmoji } from "@/lib/icons";
 import type { RecompenseGagnee, Section } from "@/lib/types";
 
@@ -405,6 +405,8 @@ export function EspaceClient({
   notificationsActives,
   scanRecent,
   qrClientDataUrl,
+  restaurantId,
+  vapidPublicKey,
 }: {
   slug: string;
   couleur: string;
@@ -416,6 +418,8 @@ export function EspaceClient({
   notificationsActives: boolean;
   scanRecent: boolean;
   qrClientDataUrl: string | null;
+  restaurantId: string;
+  vapidPublicKey: string | null;
 }) {
   // Fallback : si la table sections est vide (migration incomplète),
   // on affiche quand même les 2 onglets par défaut pour ne jamais avoir
@@ -464,13 +468,6 @@ export function EspaceClient({
     );
   }, [notificationsActives, cleRefus]);
 
-  async function accepterNotifs() {
-    setProposerNotifs(false);
-    try {
-      const permission = await Notification.requestPermission();
-      await activerNotifications(slug, permission === "granted");
-    } catch {}
-  }
   function refuserNotifs() {
     localStorage.setItem(cleRefus, "1");
     setProposerNotifs(false);
@@ -513,24 +510,21 @@ export function EspaceClient({
 
       {proposerNotifs && (
         <div className="rounded-2xl border border-stone-200 bg-white px-4 py-3 shadow-lg">
-          <p className="text-sm text-stone-600">
-            🔔 Être averti(e) quand une récompense vous attend ?
+          <p className="mb-2 text-sm text-stone-600">
+            🔔 Être averti(e) des nouveautés et récompenses de ce commerce ?
           </p>
-          <div className="mt-2 flex gap-2">
-            <button
-              onClick={accepterNotifs}
-              className="rounded-lg px-3 py-1.5 text-xs font-semibold text-white"
-              style={{ backgroundColor: couleur }}
-            >
-              Activer les notifications
-            </button>
-            <button
-              onClick={refuserNotifs}
-              className="rounded-lg px-3 py-1.5 text-xs font-medium text-stone-500 hover:bg-stone-100"
-            >
-              Plus tard
-            </button>
-          </div>
+          <AbonnementPush
+            restaurantId={restaurantId}
+            vapidPublicKey={vapidPublicKey}
+            dejaActif={notificationsActives}
+            couleur={couleur}
+          />
+          <button
+            onClick={refuserNotifs}
+            className="mt-2 text-xs font-medium text-stone-500 hover:text-stone-700"
+          >
+            Plus tard
+          </button>
         </div>
       )}
 

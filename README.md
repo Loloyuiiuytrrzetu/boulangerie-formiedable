@@ -58,6 +58,19 @@ Renseignez (Dashboard Supabase > Settings > API) :
 - `SUPABASE_SERVICE_ROLE_KEY` *(secrète — jamais exposée au navigateur)*
 - `NEXT_PUBLIC_SITE_URL` (URL du site, utilisée pour générer les QR codes)
 
+**Notifications push (optionnel)** — pour envoyer de vraies notifications :
+```bash
+npx web-push generate-vapid-keys
+```
+Ajoutez ensuite :
+- `NEXT_PUBLIC_VAPID_PUBLIC_KEY` (clé publique VAPID)
+- `VAPID_PRIVATE_KEY` (clé privée VAPID, secrète)
+- `VAPID_SUBJECT` (par ex. `mailto:contact@votredomaine.com`)
+- `CRON_SECRET` (recommandé — protège l'endpoint `/api/cron/notifications` ; Vercel envoie ce token dans l'en-tête `Authorization: Bearer`)
+
+Le cron Vercel défini dans `vercel.json` (`* * * * *`) exécute automatiquement
+les notifications programmées à leur date/heure locale du commerce.
+
 ### 3. Lancement
 ```bash
 npm install
@@ -85,8 +98,5 @@ déployez.
 
 ## Limites connues / pistes d'évolution
 
-- Les « notifications push » sont pour l'instant une préférence stockée
-  (permission navigateur demandée). Un vrai envoi push nécessiterait un service
-  worker + clés VAPID + une table d'abonnements (web-push).
 - Le numéro de téléphone n'est pas vérifié par SMS (à ajouter avec Twilio/Vonage
   si besoin).

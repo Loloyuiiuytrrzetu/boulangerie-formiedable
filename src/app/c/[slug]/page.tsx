@@ -13,6 +13,7 @@ import type {
 } from "@/lib/types";
 import { EspaceClient, type CarteAffichee } from "./EspaceClient";
 import { FormulaireInscription } from "./FormulaireInscription";
+import { getVapidPublicKey } from "@/lib/push";
 
 export const dynamic = "force-dynamic";
 
@@ -230,6 +231,8 @@ export default async function PageCommerce({
             notificationsActives={client.notifications_push_actif}
             scanRecent={scanRecent}
             qrClientDataUrl={qrClientDataUrl}
+            restaurantId={restaurant.id}
+            vapidPublicKey={getVapidPublicKey()}
           />
         ) : (
           <FormulaireInscription slug={slug} couleur={restaurant.couleur} />
