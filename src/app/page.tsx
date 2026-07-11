@@ -4,9 +4,12 @@ export default function Accueil() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-white px-6">
       <div className="w-full max-w-md text-center">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-bordeaux-800 text-3xl text-white shadow-lg">
-          ✦
-        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/icon.png"
+          alt="Walletiz"
+          className="mx-auto mb-6 h-20 w-20 rounded-2xl object-cover shadow-lg"
+        />
         <h1 className="text-4xl font-extrabold tracking-tight text-bordeaux-800">
           Walletiz
         </h1>

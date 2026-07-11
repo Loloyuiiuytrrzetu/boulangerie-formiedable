@@ -20,9 +20,12 @@ export function NavigationSidebar({ userEmail }: { userEmail: string }) {
       <div className="border-b border-stone-200 bg-white lg:hidden">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-bordeaux-800 text-sm text-white">
-              ✦
-            </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/icon.png"
+              alt="Walletiz"
+              className="h-8 w-8 rounded-lg object-cover"
+            />
             <span className="font-bold text-bordeaux-800">Walletiz</span>
           </div>
           <form action={deconnexion}>
@@ -51,9 +54,12 @@ export function NavigationSidebar({ userEmail }: { userEmail: string }) {
       <aside className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-30 lg:flex lg:w-64 lg:flex-col lg:bg-bordeaux-800 lg:text-white">
         {/* En-tête logo */}
         <div className="flex items-center gap-3 px-6 py-6">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 text-lg font-bold">
-            ✦
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/icon.png"
+            alt="Walletiz"
+            className="h-10 w-10 rounded-xl object-cover"
+          />
           <div>
             <p className="text-lg font-extrabold">Walletiz</p>
             <p className="text-xs uppercase tracking-widest opacity-60">Dashboard</p>
