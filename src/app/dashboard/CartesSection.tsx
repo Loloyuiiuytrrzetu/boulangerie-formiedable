@@ -50,6 +50,9 @@ const FORMES: { cle: "carre" | "cercle" | "hexagone" | "etoile"; nom: string }[]
 
 function ChampsCarte({ carte }: { carte?: Carte }) {
   const [icone, setIcone] = useState(carte?.tampon_icone ?? "cafe");
+  const [emojiCustom, setEmojiCustom] = useState(
+    carte?.tampon_icone?.startsWith("custom:") ? carte.tampon_icone.slice(7) : ""
+  );
   const [forme, setForme] = useState<"carre" | "cercle" | "hexagone" | "etoile">(
     carte?.tampon_forme ?? "carre"
   );
@@ -94,7 +97,10 @@ function ChampsCarte({ carte }: { carte?: Carte }) {
                 key={cle}
                 type="button"
                 title={label}
-                onClick={() => setIcone(cle)}
+                onClick={() => {
+                  setIcone(cle);
+                  setEmojiCustom("");
+                }}
                 className={`flex h-11 items-center justify-center rounded-xl border text-xl transition ${
                   icone === cle
                     ? "border-bordeaux-700 bg-bordeaux-50 ring-2 ring-bordeaux-200"
@@ -104,6 +110,42 @@ function ChampsCarte({ carte }: { carte?: Carte }) {
                 {emoji}
               </button>
             ))}
+          </div>
+        </div>
+
+        {/* Emoji personnalisé — n'importe quel emoji que le clavier permet */}
+        <div className="mt-3 rounded-xl border border-stone-200 bg-white p-3">
+          <p className="text-xs font-semibold text-stone-700">
+            Ou utilisez un autre emoji
+          </p>
+          <p className="mt-0.5 text-xs text-stone-400">
+            Tapez ou collez un emoji ci-dessous (🍔, 🎂, 🐶, ⭐…). Astuce mobile :
+            appuyez longtemps sur la touche 😀 de votre clavier.
+          </p>
+          <div className="mt-2 flex items-center gap-2">
+            <input
+              type="text"
+              maxLength={4}
+              value={emojiCustom}
+              onChange={(e) => {
+                const val = e.target.value;
+                setEmojiCustom(val);
+                if (val.trim()) setIcone(`custom:${val.trim()}`);
+              }}
+              placeholder="🍔"
+              className="w-24 rounded-lg border border-stone-300 px-3 py-2 text-center text-xl focus:border-bordeaux-500 focus:outline-none"
+            />
+            {emojiCustom.trim() && (
+              <span
+                className={`flex h-11 items-center justify-center rounded-xl border px-3 text-xl ${
+                  icone === `custom:${emojiCustom.trim()}`
+                    ? "border-bordeaux-700 bg-bordeaux-50 ring-2 ring-bordeaux-200"
+                    : "border-stone-200 bg-white"
+                }`}
+              >
+                {emojiCustom}
+              </span>
+            )}
           </div>
         </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import {
   ajouterTampon,
   choisirRecompense,
@@ -58,6 +58,10 @@ function TamponCase({
   const dashed = !rempli;
   const strokeProps = dashed ? { strokeDasharray: "5 4" } : {};
 
+  // clipPath partagé par l'image pour qu'elle épouse la forme choisie.
+  // Chaque case a son propre id (aléatoire) pour éviter les collisions.
+  const clipId = React.useId();
+
   return (
     <div className="relative aspect-square">
       <svg
@@ -65,6 +69,20 @@ function TamponCase({
         className="h-full w-full"
         preserveAspectRatio="xMidYMid meet"
       >
+        <defs>
+          <clipPath id={clipId}>
+            {forme === "carre" && (
+              <rect x="5" y="5" width="90" height="90" rx="18" />
+            )}
+            {forme === "cercle" && <circle cx="50" cy="50" r="45" />}
+            {forme === "hexagone" && (
+              <polygon points="50,5 90,27 90,73 50,95 10,73 10,27" />
+            )}
+            {forme === "etoile" && (
+              <polygon points="50,5 61,38 96,38 68,58 79,92 50,72 21,92 32,58 4,38 39,38" />
+            )}
+          </clipPath>
+        </defs>
         {forme === "carre" && (
           <rect
             x="5"
@@ -107,24 +125,27 @@ function TamponCase({
             {...strokeProps}
           />
         )}
-      </svg>
-      {/* Icône / image au centre */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        {image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={image}
-            alt=""
-            className={`h-3/5 w-3/5 object-contain transition ${
-              rempli ? "" : "opacity-20 grayscale"
-            }`}
+        {image && (
+          <image
+            href={image}
+            x="10"
+            y="10"
+            width="80"
+            height="80"
+            preserveAspectRatio="xMidYMid slice"
+            clipPath={`url(#${clipId})`}
+            opacity={rempli ? 1 : 0.25}
+            style={rempli ? undefined : { filter: "grayscale(1)" }}
           />
-        ) : (
+        )}
+      </svg>
+      {!image && (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <span className={`text-2xl ${rempli ? "" : "opacity-20 grayscale"}`}>
             {emoji}
           </span>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

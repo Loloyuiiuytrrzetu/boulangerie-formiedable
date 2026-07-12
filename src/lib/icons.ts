@@ -42,5 +42,10 @@ export const TAMPON_ICONES: Record<string, { emoji: string; label: string }> = {
 };
 
 export function iconeEmoji(cle: string): string {
-  return TAMPON_ICONES[cle]?.emoji ?? "⭐";
+  if (TAMPON_ICONES[cle]) return TAMPON_ICONES[cle].emoji;
+  // Emoji personnalisé saisi par le restaurateur : stocké tel quel dans la
+  // colonne tampon_icone (préfixé par "custom:" pour éviter les collisions
+  // improbables avec une clé prédéfinie).
+  if (cle.startsWith("custom:")) return cle.slice(7);
+  return "⭐";
 }
