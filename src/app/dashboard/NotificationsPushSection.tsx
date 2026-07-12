@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   envoyerNotificationMaintenant,
   programmerNotification,
@@ -64,22 +64,40 @@ export function NotificationsPushSection({
   const programmees = notifications.filter((n) => !n.envoyee_at && n.date_programmee);
   const envoyees = notifications.filter((n) => n.envoyee_at);
 
+  // Refs synchrones pour éviter les doubles envois : setState est
+  // asynchrone, un clic rapide peut soumettre 2-3 fois avant que le
+  // bouton ne soit désactivé visuellement.
+  const envoiEnCoursRef = useRef(false);
+  const programmationEnCoursRef = useRef(false);
+
   async function submitImmediat(formData: FormData) {
+    if (envoiEnCoursRef.current) return;
+    envoiEnCoursRef.current = true;
     setEnCours(true);
     setMsgImmediat(null);
-    const res = await envoyerNotificationMaintenant(formData);
-    setEnCours(false);
-    if (res?.erreur) setMsgImmediat("❌ " + res.erreur);
-    else setMsgImmediat(`✅ Notification envoyée à ${res?.envois ?? 0} abonné(s).`);
+    try {
+      const res = await envoyerNotificationMaintenant(formData);
+      if (res?.erreur) setMsgImmediat("❌ " + res.erreur);
+      else setMsgImmediat(`✅ Notification envoyée à ${res?.envois ?? 0} abonné(s).`);
+    } finally {
+      envoiEnCoursRef.current = false;
+      setEnCours(false);
+    }
   }
 
   async function submitProgramme(formData: FormData) {
+    if (programmationEnCoursRef.current) return;
+    programmationEnCoursRef.current = true;
     setEnCours(true);
     setMsgProgramme(null);
-    const res = await programmerNotification(formData);
-    setEnCours(false);
-    if (res?.erreur) setMsgProgramme("❌ " + res.erreur);
-    else setMsgProgramme("✅ Notification programmée.");
+    try {
+      const res = await programmerNotification(formData);
+      if (res?.erreur) setMsgProgramme("❌ " + res.erreur);
+      else setMsgProgramme("✅ Notification programmée.");
+    } finally {
+      programmationEnCoursRef.current = false;
+      setEnCours(false);
+    }
   }
 
   return (

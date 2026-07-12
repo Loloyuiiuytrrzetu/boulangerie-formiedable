@@ -72,7 +72,7 @@ async function envoyerAuxAbonnes(restaurantId: string, notification: {
   const payload = JSON.stringify({
     titre: notification.titre,
     message: notification.message,
-    icon: notification.logoUrl ?? "/favicon.ico",
+    icon: notification.logoUrl ?? `${siteUrl}/icon.png`,
     url: `${siteUrl}/c/${notification.slug}`,
   });
 

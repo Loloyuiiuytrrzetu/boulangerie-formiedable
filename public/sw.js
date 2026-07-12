@@ -18,10 +18,12 @@ self.addEventListener("push", (event) => {
   }
 
   const titre = data.titre || "Nouveau message";
+  const icone = data.icon || "/icon.png";
   const options = {
     body: data.message || "",
-    icon: data.icon || "/favicon.ico",
-    badge: data.badge || data.icon || "/favicon.ico",
+    icon: icone,
+    badge: icone,
+    image: icone,
     data: { url: data.url || "/" },
   };
 
