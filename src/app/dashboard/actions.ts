@@ -47,17 +47,19 @@ async function uploaderImage(
   fichier: File,
   prefixe: string
 ): Promise<{ url?: string; erreur?: string }> {
-  if (fichier.size > 4 * 1024 * 1024)
-    return { erreur: "L'image ne doit pas dépasser 4 Mo." };
+  if (fichier.size > 15 * 1024 * 1024)
+    return {
+      erreur: `L'image est trop lourde (${Math.round(fichier.size / 1024 / 1024)} Mo). Maximum 15 Mo.`,
+    };
   if (!fichier.type.startsWith("image/"))
-    return { erreur: "Le fichier doit être une image." };
+    return { erreur: "Le fichier doit être une image (JPG, PNG…)." };
 
   const extension = fichier.name.split(".").pop()?.toLowerCase() ?? "png";
   const chemin = `${restaurantId}/${prefixe}-${Date.now()}.${extension}`;
   const { error } = await supabase.storage
     .from("logos")
     .upload(chemin, fichier, { upsert: true, contentType: fichier.type });
-  if (error) return { erreur: "Échec de l'envoi de l'image." };
+  if (error) return { erreur: `Échec de l'envoi de l'image : ${error.message}` };
 
   const { data } = supabase.storage.from("logos").getPublicUrl(chemin);
   return { url: data.publicUrl };

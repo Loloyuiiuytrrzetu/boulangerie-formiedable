@@ -7,6 +7,41 @@ import { SelecteurCouleur } from "./SelecteurCouleur";
 import { ApercuAnimation } from "./ApercuAnimation";
 import type { Restaurant } from "@/lib/types";
 
+// Compresse une image côté client si elle dépasse une taille cible.
+// Les photos iPhone en HEIC/HEIF ou > 8 Mpx sont trop lourdes pour Supabase
+// Storage — on les redimensionne en JPEG max 2000px de côté.
+async function compresserImage(fichier: File): Promise<File> {
+  if (fichier.size < 2 * 1024 * 1024) return fichier;
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX = 2000;
+        const ratio = Math.min(1, MAX / Math.max(img.width, img.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return resolve(fichier);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) return resolve(fichier);
+            resolve(new File([blob], fichier.name.replace(/\.\w+$/, ".jpg"), { type: "image/jpeg" }));
+          },
+          "image/jpeg",
+          0.85
+        );
+      };
+      img.onerror = () => resolve(fichier);
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = () => resolve(fichier);
+    reader.readAsDataURL(fichier);
+  });
+}
+
 // Identité du commerce : nom, logo, image de fond, couleurs
 export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
   const router = useRouter();
@@ -21,6 +56,19 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
     setErreur(null);
     setSucces(false);
     startTransition(async () => {
+      // Compression côté client des images (photos iPhone HEIC/HEIF sont
+      // trop lourdes pour Supabase Storage → conversion en JPEG 2000px max).
+      for (const nom of ["logo", "fond"] as const) {
+        const fichier = formData.get(nom);
+        if (fichier instanceof File && fichier.size > 0) {
+          try {
+            const compresse = await compresserImage(fichier);
+            formData.set(nom, compresse);
+          } catch {
+            // en cas d'échec de compression, on envoie tel quel
+          }
+        }
+      }
       const resultat = await mettreAJourConfig(formData);
       if (resultat?.erreur) setErreur(resultat.erreur);
       else {
