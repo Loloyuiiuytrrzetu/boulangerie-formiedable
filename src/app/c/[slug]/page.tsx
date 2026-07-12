@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import QRCode from "qrcode";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { dateDuJourParis } from "@/lib/utils";
+import { dateDuJour } from "@/lib/utils";
 import type {
   Carte,
   CarteClient,
@@ -109,7 +109,7 @@ export default async function PageCommerce({
   let qrClientDataUrl: string | null = null;
 
   if (client) {
-    const aujourdHui = dateDuJourParis();
+    const aujourdHui = dateDuJour(restaurant.timezone ?? "Europe/Paris");
     const [resCartes, resRecompenses, resProgressions, resGagnees] = await Promise.all([
       admin
         .from("cartes")
