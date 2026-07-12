@@ -675,6 +675,7 @@ function ContenuSection({
             </p>
           </>
         )}
+        <DesactivationNotifs slug={slug} />
       </section>
     );
   }
@@ -766,5 +767,38 @@ function RecompenseAttenteCard({
         {erreur && <p className="mt-2 text-center text-xs text-red-600">{erreur}</p>}
       </div>
     </div>
+  );
+}
+
+// Petite case tout en bas de l'onglet Info : le client peut renoncer aux
+// notifications push (promotions, événements) à tout moment.
+function DesactivationNotifs({ slug }: { slug: string }) {
+  const cle = `walletiz_notif_refus_${slug}`;
+  const [refuse, setRefuse] = useState(false);
+  useEffect(() => {
+    if (typeof window !== "undefined") setRefuse(localStorage.getItem(cle) === "1");
+  }, [cle]);
+
+  function basculer(e: React.ChangeEvent<HTMLInputElement>) {
+    const v = e.target.checked;
+    setRefuse(v);
+    if (typeof window === "undefined") return;
+    if (v) localStorage.setItem(cle, "1");
+    else localStorage.removeItem(cle);
+  }
+
+  return (
+    <label className="mt-8 flex items-start gap-2 border-t border-stone-100 pt-4 text-xs text-stone-500">
+      <input
+        type="checkbox"
+        checked={refuse}
+        onChange={basculer}
+        className="mt-0.5 h-4 w-4 shrink-0 accent-stone-600"
+      />
+      <span>
+        J&apos;accepte de ne pas recevoir de notifications pour m&apos;avertir
+        d&apos;une promotion ou d&apos;un événement.
+      </span>
+    </label>
   );
 }

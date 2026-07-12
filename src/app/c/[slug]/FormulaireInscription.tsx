@@ -20,6 +20,14 @@ export function FormulaireInscription({
 
   function soumettre(formData: FormData) {
     setErreur(null);
+    // Si le client a décoché la case notifications à l'inscription, on
+    // pose immédiatement le refus en localStorage pour que la bannière
+    // d'abonnement n'apparaisse pas ensuite.
+    if (typeof window !== "undefined") {
+      const veutNotifs = formData.get("recevoir_notifs") === "on";
+      if (!veutNotifs) localStorage.setItem(`walletiz_notif_refus_${slug}`, "1");
+      else localStorage.removeItem(`walletiz_notif_refus_${slug}`);
+    }
     startTransition(async () => {
       const resultat = await inscrireClient(slug, formData);
       if (resultat?.erreur) setErreur(resultat.erreur);
@@ -71,6 +79,19 @@ export function FormulaireInscription({
             style={{ caretColor: couleur }}
           />
         </div>
+
+        <label className="flex items-start gap-2 text-xs text-stone-500">
+          <input
+            type="checkbox"
+            name="recevoir_notifs"
+            defaultChecked
+            className="mt-0.5 h-4 w-4 shrink-0 accent-stone-600"
+          />
+          <span>
+            Recevoir les alertes de promotions et événements par notification
+            (désactivable à tout moment dans l&apos;onglet Info).
+          </span>
+        </label>
 
         {erreur && (
           <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{erreur}</p>
