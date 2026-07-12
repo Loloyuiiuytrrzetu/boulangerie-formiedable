@@ -403,13 +403,6 @@ function BlocCarte({
           {carte.texte_bas}
         </p>
       )}
-      {carte.recompenses_reclamees > 0 && (
-        <p className="mt-3 text-center text-xs text-stone-400">
-          {carte.recompenses_reclamees} récompense
-          {carte.recompenses_reclamees > 1 ? "s" : ""} déjà obtenue
-          {carte.recompenses_reclamees > 1 ? "s" : ""} 🏆
-        </p>
-      )}
     </div>
   );
 }
