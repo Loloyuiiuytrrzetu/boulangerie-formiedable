@@ -94,6 +94,7 @@ export async function creerRestaurateur(formData: FormData) {
     nom: nomCommerce,
     slug,
     timezone,
+    animation_recompense: "etoiles",
   });
   if (erreurResto) {
     // Rollback : supprime l'utilisateur auth qu'on vient de créer pour
