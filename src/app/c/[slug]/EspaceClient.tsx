@@ -472,7 +472,7 @@ export function EspaceClient({
             type: "info",
             titre: "Info",
             texte:
-              "Présentez ce QR code au commerçant à chaque passage pour recevoir vos tampons.",
+              "Présentez ce QR code uniquement si le commerçant vous le demande.",
             lien_url: null,
             lien_libelle: null,
             ordre: 100,
@@ -653,8 +653,8 @@ function ContenuSection({
               />
             </div>
             <p className="mt-3 text-center text-xs text-stone-400">
-              Présentez ce QR code au commerçant. Il n&apos;a plus qu&apos;à le scanner
-              pour ajouter vos tampons.
+              Présentez ce QR code uniquement si le commerçant vous le
+              demande.
             </p>
           </>
         )}

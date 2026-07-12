@@ -129,7 +129,7 @@ export default async function Dashboard() {
           type: "info",
           titre: "Info",
           texte:
-            "Présentez ce QR code au commerçant à chaque passage pour recevoir vos tampons.",
+            "Présentez ce QR code uniquement si le commerçant vous le demande.",
           ordre: 100,
           supprimable: false,
         },
