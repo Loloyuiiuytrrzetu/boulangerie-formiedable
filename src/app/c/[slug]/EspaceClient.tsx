@@ -554,17 +554,34 @@ export function EspaceClient({
         </div>
       )}
 
-      {/* Récompenses en attente : toujours visibles, indépendantes de l'onglet */}
+      {/* Récompenses en attente : toujours visibles, indépendantes de l'onglet.
+          Si plusieurs, on les affiche dans un carrousel horizontal — le client
+          slide vers la gauche pour voir les suivantes. */}
       {recompensesEnAttente.length > 0 && (
         <section className="space-y-3">
           <h2 className="px-1 text-lg font-extrabold text-stone-900">
             🏆 Mes récompenses à récupérer ({recompensesEnAttente.length})
           </h2>
-          <div className="space-y-3">
-            {recompensesEnAttente.map((r) => (
-              <RecompenseAttenteCard key={r.id} slug={slug} couleur={couleur} recompense={r} />
-            ))}
-          </div>
+          {recompensesEnAttente.length === 1 ? (
+            <RecompenseAttenteCard
+              slug={slug}
+              couleur={couleur}
+              recompense={recompensesEnAttente[0]}
+            />
+          ) : (
+            <>
+              <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-4 pb-2 sm:mx-0 sm:px-0">
+                {recompensesEnAttente.map((r) => (
+                  <div key={r.id} className="w-[92%] shrink-0 snap-center sm:w-[85%]">
+                    <RecompenseAttenteCard slug={slug} couleur={couleur} recompense={r} />
+                  </div>
+                ))}
+              </div>
+              <p className="text-center text-xs text-stone-400">
+                ← Glissez pour voir toutes vos récompenses →
+              </p>
+            </>
+          )}
         </section>
       )}
 
