@@ -12,7 +12,7 @@ async function chargerRestaurant() {
   const admin = createAdminClient();
   const { data: restaurant } = await admin
     .from("restaurants")
-    .select("id, logo_url, timezone, slug")
+    .select("id, nom, logo_url, timezone, slug")
     .eq("owner_id", effectif.userId)
     .maybeSingle();
   return { admin, restaurant };
@@ -105,11 +105,10 @@ export async function envoyerNotificationMaintenant(formData: FormData) {
   const { admin, restaurant } = await chargerRestaurant();
   if (!restaurant) return { erreur: "Commerce introuvable." };
 
-  const titre = String(formData.get("titre") ?? "").trim();
   const message = String(formData.get("message") ?? "").trim();
-  if (!titre || !message) return { erreur: "Titre et message obligatoires." };
-  if (titre.length > 80) return { erreur: "Titre trop long (80 caractères max)." };
+  if (!message) return { erreur: "Message obligatoire." };
   if (message.length > 300) return { erreur: "Message trop long (300 caractères max)." };
+  const titre = restaurant.nom;
 
   const { data: notif, error } = await admin
     .from("notifications_push")
@@ -147,13 +146,12 @@ export async function programmerNotification(formData: FormData) {
   const { admin, restaurant } = await chargerRestaurant();
   if (!restaurant) return { erreur: "Commerce introuvable." };
 
-  const titre = String(formData.get("titre") ?? "").trim();
   const message = String(formData.get("message") ?? "").trim();
   const dateLocale = String(formData.get("date_locale") ?? "").trim();
-  if (!titre || !message || !dateLocale)
-    return { erreur: "Titre, message et date obligatoires." };
-  if (titre.length > 80) return { erreur: "Titre trop long (80 caractères max)." };
+  if (!message || !dateLocale)
+    return { erreur: "Message et date obligatoires." };
   if (message.length > 300) return { erreur: "Message trop long (300 caractères max)." };
+  const titre = restaurant.nom;
 
   const timezone = restaurant.timezone ?? "Europe/Paris";
   const dateUtc = localeVersUtc(dateLocale, timezone);
