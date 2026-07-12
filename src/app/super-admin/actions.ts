@@ -43,6 +43,10 @@ export async function creerRestaurateur(formData: FormData) {
 
   const admin = createAdminClient();
 
+  // Récupère ou crée l'utilisateur auth. Si un utilisateur avec cet email
+  // existe déjà mais qu'il n'a pas de restaurant associé (échec de tentative
+  // précédente), on réutilise son compte au lieu d'échouer.
+  let userId: string | null = null;
   const { data: nouvelUtilisateur, error: erreurAuth } =
     await admin.auth.admin.createUser({
       email,
@@ -50,8 +54,31 @@ export async function creerRestaurateur(formData: FormData) {
       email_confirm: true,
       app_metadata: { role: "restaurateur" },
     });
-  if (erreurAuth || !nouvelUtilisateur.user)
-    return { erreur: `Création du compte impossible : ${erreurAuth?.message}` };
+
+  if (nouvelUtilisateur?.user) {
+    userId = nouvelUtilisateur.user.id;
+  } else if (erreurAuth?.message?.toLowerCase().includes("already been registered")) {
+    // Cherche l'utilisateur existant et vérifie qu'il n'a pas déjà un restaurant
+    const { data: liste } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
+    const existant = liste?.users?.find((u) => u.email?.toLowerCase() === email);
+    if (!existant) return { erreur: "Utilisateur existant introuvable." };
+    const { data: restoExistant } = await admin
+      .from("restaurants")
+      .select("id")
+      .eq("owner_id", existant.id)
+      .maybeSingle();
+    if (restoExistant)
+      return { erreur: "Cet email est déjà utilisé par un autre commerce." };
+    // Orphelin : on réinitialise son mot de passe et on continue
+    await admin.auth.admin.updateUserById(existant.id, {
+      password: motDePasse,
+      email_confirm: true,
+      app_metadata: { role: "restaurateur" },
+    });
+    userId = existant.id;
+  } else {
+    return { erreur: `Création du compte impossible : ${erreurAuth?.message ?? "erreur inconnue"}` };
+  }
 
   // Slug unique pour la page publique
   let slug = slugify(nomCommerce);
@@ -63,13 +90,21 @@ export async function creerRestaurateur(formData: FormData) {
   if (existant) slug = `${slug}-${Math.random().toString(36).slice(2, 6)}`;
 
   const { error: erreurResto } = await admin.from("restaurants").insert({
-    owner_id: nouvelUtilisateur.user.id,
+    owner_id: userId,
     nom: nomCommerce,
     slug,
     timezone,
   });
-  if (erreurResto)
-    return { erreur: "Compte créé mais échec de la création du commerce." };
+  if (erreurResto) {
+    // Rollback : supprime l'utilisateur auth qu'on vient de créer pour
+    // qu'il puisse retenter avec le même email.
+    if (nouvelUtilisateur?.user) {
+      await admin.auth.admin.deleteUser(nouvelUtilisateur.user.id);
+    }
+    return {
+      erreur: `Échec de la création du commerce : ${erreurResto.message}`,
+    };
+  }
 
   revalidatePath("/super-admin");
   return { ok: true };
