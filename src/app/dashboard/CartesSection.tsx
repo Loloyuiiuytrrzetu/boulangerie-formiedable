@@ -119,8 +119,7 @@ function ChampsCarte({ carte }: { carte?: Carte }) {
             Ou utilisez un autre emoji
           </p>
           <p className="mt-0.5 text-xs text-stone-400">
-            Tapez ou collez un emoji ci-dessous (🍔, 🎂, 🐶, ⭐…). Astuce mobile :
-            appuyez longtemps sur la touche 😀 de votre clavier.
+            Tapez ou collez un emoji ci-dessous (🍔, 🎂, 🐶, ⭐…).
           </p>
           <div className="mt-2 flex items-center gap-2">
             <input
