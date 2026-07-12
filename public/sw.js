@@ -18,14 +18,17 @@ self.addEventListener("push", (event) => {
   }
 
   const titre = data.titre || "Nouveau message";
-  const icone = data.icon || "/icon.png";
   const options = {
     body: data.message || "",
-    icon: icone,
-    badge: icone,
-    image: icone,
     data: { url: data.url || "/" },
   };
+  // On n'inclut le logo que si le commerce en a fourni un. Sinon on laisse
+  // le navigateur afficher son icône par défaut (jamais celui de Walletiz).
+  if (data.icon) {
+    options.icon = data.icon;
+    options.badge = data.icon;
+    options.image = data.icon;
+  }
 
   event.waitUntil(self.registration.showNotification(titre, options));
 });

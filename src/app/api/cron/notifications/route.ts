@@ -59,7 +59,7 @@ export async function GET(req: Request) {
     const payload = JSON.stringify({
       titre: n.titre,
       message: n.message,
-      icon: restaurant?.logo_url ?? `${siteUrl}/icon.png`,
+      icon: restaurant?.logo_url ?? undefined,
       url: restaurant ? `${siteUrl}/c/${restaurant.slug}` : "/",
     });
 
