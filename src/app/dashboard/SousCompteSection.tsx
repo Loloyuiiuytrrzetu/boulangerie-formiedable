@@ -84,6 +84,19 @@ export function SousCompteSection({ sousCompte }: { sousCompte: SousCompte | nul
 
         <form action={creer} className="mt-4 space-y-3">
           <label className="block text-sm font-medium text-stone-700">
+            Email de l&apos;employé
+            <input
+              name="email"
+              type="email"
+              required
+              placeholder="email@exemple.fr"
+              className="mt-1 w-full rounded-lg border border-stone-300 px-3.5 py-2.5 outline-none transition focus:border-bordeaux-700 focus:ring-2 focus:ring-bordeaux-200"
+            />
+            <span className="mt-1 block text-xs font-normal text-stone-500">
+              Il servira à se connecter et à récupérer son mot de passe.
+            </span>
+          </label>
+          <label className="block text-sm font-medium text-stone-700">
             Mot de passe initial
             <input
               name="mot_de_passe"

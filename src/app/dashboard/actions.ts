@@ -417,7 +417,10 @@ export async function creerSousCompte(formData: FormData) {
   const { restaurant } = await restaurantDuRestaurateur();
   if (!restaurant) return { erreur: "Aucun commerce associé à ce compte." };
 
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const motDePasse = String(formData.get("mot_de_passe") ?? "");
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    return { erreur: "Email invalide." };
   if (motDePasse.length < 8)
     return { erreur: "Mot de passe trop court (8 caractères minimum)." };
 
@@ -431,7 +434,6 @@ export async function creerSousCompte(formData: FormData) {
     .maybeSingle();
   if (existant) return { erreur: "Un sous-compte existe déjà pour ce commerce." };
 
-  const email = `souscompte-${restaurant.slug}@walletiz.local`;
   const nom = `Sous compte ${restaurant.nom}`;
 
   const { data: nouvel, error: erreurAuth } = await admin.auth.admin.createUser({

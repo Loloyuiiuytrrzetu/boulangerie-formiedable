@@ -28,7 +28,13 @@ export default function MotDePasseOublie() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-white px-6">
       <div className="w-full max-w-sm">
-        <Link href="/" className="mb-8 block text-center">
+        <Link href="/" className="mb-8 flex flex-col items-center gap-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/icon.png"
+            alt="Walletiz"
+            className="h-16 w-16 rounded-2xl object-cover shadow-md"
+          />
           <span className="text-3xl font-extrabold text-bordeaux-800">Walletiz</span>
         </Link>
 
