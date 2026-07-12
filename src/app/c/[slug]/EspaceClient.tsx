@@ -128,10 +128,10 @@ function TamponCase({
         {image && (
           <image
             href={image}
-            x="10"
-            y="10"
-            width="80"
-            height="80"
+            x="0"
+            y="0"
+            width="100"
+            height="100"
             preserveAspectRatio="xMidYMid slice"
             clipPath={`url(#${clipId})`}
             opacity={rempli ? 1 : 0.25}
