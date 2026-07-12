@@ -237,6 +237,7 @@ function BlocCarte({
   carte,
   recompenses,
   scanRecent,
+  tamponRestaurateurOnly,
   onRecompenseObtenue,
 }: {
   slug: string;
@@ -244,6 +245,7 @@ function BlocCarte({
   carte: CarteAffichee;
   recompenses: RecompenseAffichee[];
   scanRecent: boolean;
+  tamponRestaurateurOnly: boolean;
   onRecompenseObtenue: (animation: string) => void;
 }) {
   const [erreur, setErreur] = useState<string | null>(null);
@@ -374,6 +376,12 @@ function BlocCarte({
                 🎉 Choisir ma récompense
               </button>
             )
+          ) : tamponRestaurateurOnly ? (
+            <div className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-center text-sm text-stone-600">
+              {carte.tampon_pris_aujourdhui
+                ? "Tampon du jour déjà pris ✓"
+                : "Présentez votre QR code personnel au commerçant pour recevoir votre tampon."}
+            </div>
           ) : (
             <>
               <button
@@ -421,6 +429,7 @@ export function EspaceClient({
   qrClientDataUrl,
   restaurantId,
   vapidPublicKey,
+  tamponRestaurateurOnly,
 }: {
   slug: string;
   couleur: string;
@@ -434,6 +443,7 @@ export function EspaceClient({
   qrClientDataUrl: string | null;
   restaurantId: string;
   vapidPublicKey: string | null;
+  tamponRestaurateurOnly: boolean;
 }) {
   // Fallback : si la table sections est vide (migration incomplète),
   // on affiche quand même les 2 onglets par défaut pour ne jamais avoir
@@ -567,6 +577,7 @@ export function EspaceClient({
           recompenses={recompenses}
           scanRecent={scanRecent}
           qrClientDataUrl={qrClientDataUrl}
+          tamponRestaurateurOnly={tamponRestaurateurOnly}
           onAnimation={(a) => setAnimationEnCours(a || animation)}
         />
       )}
@@ -582,6 +593,7 @@ function ContenuSection({
   recompenses,
   scanRecent,
   qrClientDataUrl,
+  tamponRestaurateurOnly,
   onAnimation,
 }: {
   section: Section;
@@ -592,6 +604,7 @@ function ContenuSection({
   recompenses: RecompenseAffichee[];
   scanRecent: boolean;
   qrClientDataUrl: string | null;
+  tamponRestaurateurOnly: boolean;
   onAnimation: (a: string) => void;
 }) {
   if (section.type === "cartes") {
@@ -610,6 +623,7 @@ function ContenuSection({
               carte={carte}
               recompenses={recompenses.filter((r) => r.carte_id === carte.id)}
               scanRecent={scanRecent}
+              tamponRestaurateurOnly={tamponRestaurateurOnly}
               onRecompenseObtenue={onAnimation}
             />
           ))

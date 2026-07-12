@@ -123,6 +123,7 @@ export async function mettreAJourConfig(formData: FormData) {
   const couleur = String(formData.get("couleur") ?? "#7A1E2E");
   const couleurQr = String(formData.get("couleur_qr") ?? "#380b15");
   const tamponParCarte = formData.get("tampon_par_carte") === "on";
+  const tamponRestaurateurOnly = formData.get("tampon_restaurateur_only") === "on";
   const animation = String(formData.get("animation_recompense") ?? "confettis");
 
   if (!nom) return { erreur: "Le nom du commerce est obligatoire." };
@@ -137,6 +138,7 @@ export async function mettreAJourConfig(formData: FormData) {
     couleur,
     couleur_qr: couleurQr,
     tampon_par_carte: tamponParCarte,
+    tampon_restaurateur_only: tamponRestaurateurOnly,
     animation_recompense: animation,
   };
 

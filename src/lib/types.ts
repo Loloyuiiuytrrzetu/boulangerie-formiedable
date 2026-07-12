@@ -14,6 +14,7 @@ export type Restaurant = {
   nombre_tampons_requis: number;
   texte_recompense: string;
   actif: boolean;
+  tampon_restaurateur_only: boolean;
   created_at: string;
 };
 

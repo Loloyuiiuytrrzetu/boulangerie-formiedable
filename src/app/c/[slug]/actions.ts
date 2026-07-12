@@ -131,6 +131,16 @@ export async function ajouterTampon(slug: string, carteId: string) {
   if ("erreur" in ctx) return { erreur: ctx.erreur };
   const { admin, restaurant, client, carte, progression, aujourdHui } = ctx;
 
+  // Mode anti-fraude : seul le restaurateur peut attribuer les tampons
+  // (via son scanner). Le bouton client est désactivé côté UI mais on
+  // re-vérifie ici pour empêcher tout appel direct à l'API.
+  if (restaurant.tampon_restaurateur_only === true) {
+    return {
+      erreur:
+        "Demandez au commerçant de scanner votre QR code personnel pour recevoir votre tampon.",
+    };
+  }
+
   // Scan strict : le cookie n'est posé qu'en passant par /scan/[slug]
   // (via le QR code). Sans lui — page laissée ouverte, favori… —
   // impossible de prendre un tampon.

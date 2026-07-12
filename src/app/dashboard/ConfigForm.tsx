@@ -127,6 +127,28 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
           </label>
         </div>
 
+        <div className="rounded-xl border border-stone-200 bg-stone-50 p-4">
+          <p className="mb-2 text-sm font-medium text-stone-700">
+            Anti-fraude
+          </p>
+          <label className="flex items-start gap-3">
+            <input
+              type="checkbox"
+              name="tampon_restaurateur_only"
+              defaultChecked={restaurant.tampon_restaurateur_only === true}
+              className="mt-0.5 h-4 w-4 shrink-0 accent-bordeaux-800"
+            />
+            <span className="text-sm text-stone-600">
+              <strong>Seul moi (ou mon sous-compte) peux attribuer les tampons.</strong>{" "}
+              Le bouton « Prendre mon tampon » disparaît côté client — le
+              tampon n&apos;est donné qu&apos;en scannant le QR code personnel
+              du client depuis le scanner du dashboard. Idéal pour éviter que
+              des clients prennent en photo votre QR de caisse et se donnent
+              des tampons depuis chez eux.
+            </span>
+          </label>
+        </div>
+
         <div>
           <label
             htmlFor="animation_recompense"

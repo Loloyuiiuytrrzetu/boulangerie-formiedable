@@ -233,6 +233,7 @@ export default async function PageCommerce({
             qrClientDataUrl={qrClientDataUrl}
             restaurantId={restaurant.id}
             vapidPublicKey={getVapidPublicKey()}
+            tamponRestaurateurOnly={restaurant.tampon_restaurateur_only === true}
           />
         ) : (
           <FormulaireInscription slug={slug} couleur={restaurant.couleur} />
