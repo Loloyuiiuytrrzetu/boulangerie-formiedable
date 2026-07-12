@@ -233,7 +233,8 @@ export function SectionsSection({ sections }: { sections: Section[] }) {
         <div>
           <h2 className="text-lg font-bold text-stone-900">Sections de ma page</h2>
           <p className="text-sm text-stone-500">
-            Les onglets affichés à vos clients sous le nom de votre commerce.
+            Rajouter des onglets à la page d&apos;accueil de vos clients pour
+            faire passer une information ou annoncer un événement.
           </p>
         </div>
         <button

@@ -571,7 +571,7 @@ export function CartesSection({
         <div>
           <h2 className="text-lg font-bold text-stone-900">Mes cartes de fidélité</h2>
           <p className="text-sm text-stone-500">
-            Vos clients les voient toutes sur votre page.
+            Créez une carte de fidélité dès maintenant.
           </p>
         </div>
         <button
