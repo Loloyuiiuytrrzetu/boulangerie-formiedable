@@ -13,6 +13,9 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
   const [erreur, setErreur] = useState<string | null>(null);
   const [succes, setSucces] = useState(false);
   const [enCours, startTransition] = useTransition();
+  const [animationCouleur, setAnimationCouleur] = useState(
+    restaurant.animation_couleur ?? "#FFD700"
+  );
 
   function soumettre(formData: FormData) {
     setErreur(null);
@@ -162,7 +165,7 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
           <select
             id="animation_recompense"
             name="animation_recompense"
-            defaultValue={restaurant.animation_recompense ?? "etoiles"}
+            defaultValue={restaurant.animation_recompense ?? "rayons"}
             className="w-full rounded-lg border border-stone-300 px-3.5 py-2.5 outline-none transition focus:border-bordeaux-700 focus:ring-2 focus:ring-bordeaux-200"
           >
             <option value="aucune">Aucune animation</option>
@@ -171,7 +174,33 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
             <option value="rayons">Rayons éclatants</option>
             <option value="vague">Vague colorée</option>
           </select>
-          <ApercuAnimation selectId="animation_recompense" couleur={restaurant.couleur} />
+
+          <div className="mt-3">
+            <label className="mb-1 block text-xs font-medium text-stone-700">
+              Couleur de l&apos;animation
+            </label>
+            <div className="flex items-center gap-3">
+              <input
+                type="color"
+                name="animation_couleur"
+                value={animationCouleur}
+                onChange={(e) => setAnimationCouleur(e.target.value)}
+                className="h-11 w-16 cursor-pointer rounded-lg border border-stone-300 bg-white p-1"
+              />
+              <input
+                type="text"
+                value={animationCouleur}
+                onChange={(e) => setAnimationCouleur(e.target.value)}
+                pattern="^#[0-9a-fA-F]{6}$"
+                className="w-28 rounded-lg border border-stone-300 px-3 py-2 font-mono text-sm uppercase focus:border-bordeaux-500 focus:outline-none"
+              />
+              <span className="text-xs text-stone-400">
+                Jaune brillant recommandé pour un effet lumineux.
+              </span>
+            </div>
+          </div>
+
+          <ApercuAnimation selectId="animation_recompense" couleur={animationCouleur} />
         </div>
       </div>
 

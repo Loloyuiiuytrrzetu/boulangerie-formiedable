@@ -124,12 +124,15 @@ export async function mettreAJourConfig(formData: FormData) {
   const couleurQr = String(formData.get("couleur_qr") ?? "#380b15");
   const tamponParCarte = formData.get("tampon_par_carte") === "on";
   const tamponRestaurateurOnly = formData.get("tampon_restaurateur_only") === "on";
-  const animation = String(formData.get("animation_recompense") ?? "confettis");
+  const animation = String(formData.get("animation_recompense") ?? "rayons");
+  const animationCouleur = String(formData.get("animation_couleur") ?? "#FFD700");
 
   if (!nom) return { erreur: "Le nom du commerce est obligatoire." };
   if (!/^#[0-9a-fA-F]{6}$/.test(couleur)) return { erreur: "Couleur invalide." };
   if (!/^#[0-9a-fA-F]{6}$/.test(couleurQr))
     return { erreur: "Couleur du QR code invalide." };
+  if (!/^#[0-9a-fA-F]{6}$/.test(animationCouleur))
+    return { erreur: "Couleur de l'animation invalide." };
   if (!["aucune", "etoiles", "ondes", "rayons", "vague"].includes(animation))
     return { erreur: "Animation invalide." };
 
@@ -140,6 +143,7 @@ export async function mettreAJourConfig(formData: FormData) {
     tampon_par_carte: tamponParCarte,
     tampon_restaurateur_only: tamponRestaurateurOnly,
     animation_recompense: animation,
+    animation_couleur: animationCouleur,
   };
 
   const logo = formData.get("logo");

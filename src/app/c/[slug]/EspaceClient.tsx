@@ -430,6 +430,7 @@ export function EspaceClient({
   restaurantId,
   vapidPublicKey,
   tamponRestaurateurOnly,
+  animationCouleur,
 }: {
   slug: string;
   couleur: string;
@@ -444,6 +445,7 @@ export function EspaceClient({
   restaurantId: string;
   vapidPublicKey: string | null;
   tamponRestaurateurOnly: boolean;
+  animationCouleur: string;
 }) {
   // Fallback : si la table sections est vide (migration incomplète),
   // on affiche quand même les 2 onglets par défaut pour ne jamais avoir
@@ -505,7 +507,7 @@ export function EspaceClient({
       {animationEnCours && (
         <AnimationRecompense
           type={animationEnCours}
-          couleur={couleur}
+          couleur={animationCouleur}
           onEnd={() => setAnimationEnCours(null)}
         />
       )}

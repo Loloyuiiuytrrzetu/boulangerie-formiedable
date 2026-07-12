@@ -9,7 +9,8 @@ export type Restaurant = {
   couleur_qr: string;
   timezone: string;
   tampon_par_carte: boolean;
-  animation_recompense: "confettis" | "coeurs" | "etoiles" | "feux";
+  animation_recompense: "aucune" | "etoiles" | "ondes" | "rayons" | "vague";
+  animation_couleur: string;
   tampon_icone: string;
   nombre_tampons_requis: number;
   texte_recompense: string;

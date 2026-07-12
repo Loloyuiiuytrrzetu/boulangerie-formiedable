@@ -218,7 +218,8 @@ export default async function PageCommerce({
           <EspaceClient
             slug={slug}
             couleur={restaurant.couleur}
-            animation={restaurant.animation_recompense ?? "confettis"}
+            animation={restaurant.animation_recompense ?? "rayons"}
+            animationCouleur={restaurant.animation_couleur ?? "#FFD700"}
             sections={sections}
             cartes={cartesAffichees}
             recompenses={recompenses.map((r) => ({
