@@ -28,17 +28,6 @@ export const TAMPON_ICONES: Record<string, { emoji: string; label: string }> = {
   sushi: { emoji: "🍣", label: "Sushi" },
   ramen: { emoji: "🍜", label: "Ramen" },
   tacos: { emoji: "🌮", label: "Tacos" },
-  burrito: { emoji: "🌯", label: "Burrito" },
-  hotdog: { emoji: "🌭", label: "Hot-dog" },
-  sandwich: { emoji: "🥪", label: "Sandwich" },
-  salade: { emoji: "🥗", label: "Salade" },
-  brochette: { emoji: "🍢", label: "Brochette" },
-  poulet: { emoji: "🍗", label: "Poulet" },
-  // Fruits
-  pomme: { emoji: "🍎", label: "Pomme" },
-  fraise: { emoji: "🍓", label: "Fraise" },
-  orange: { emoji: "🍊", label: "Orange" },
-  banane: { emoji: "🍌", label: "Banane" },
 };
 
 export function iconeEmoji(cle: string): string {
