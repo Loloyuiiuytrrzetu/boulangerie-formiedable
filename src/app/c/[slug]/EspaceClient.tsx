@@ -340,7 +340,7 @@ function BlocCarte({
                 {recompenses.map((r) => (
                   <button
                     key={r.id}
-                    onClick={() => choisir(r.id, "confettis")}
+                    onClick={() => choisir(r.id, "rayons")}
                     disabled={enCours}
                     className="flex w-full items-center gap-3 rounded-xl border border-stone-200 bg-white p-3 text-left transition hover:border-stone-300 disabled:opacity-60"
                   >

@@ -132,7 +132,7 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
 
         <div className="rounded-xl border border-stone-200 bg-stone-50 p-4">
           <p className="mb-2 text-sm font-medium text-stone-700">
-            Anti-fraude
+            Système manuel
           </p>
           <label className="flex items-start gap-3">
             <input
@@ -145,9 +145,7 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
               <strong>Seul moi (ou mon sous-compte) peux attribuer les tampons.</strong>{" "}
               Le bouton « Prendre mon tampon » disparaît côté client — le
               tampon n&apos;est donné qu&apos;en scannant le QR code personnel
-              du client depuis le scanner du dashboard. Idéal pour éviter que
-              des clients prennent en photo votre QR de caisse et se donnent
-              des tampons depuis chez eux.
+              du client depuis le scanner du dashboard.
             </span>
           </label>
         </div>

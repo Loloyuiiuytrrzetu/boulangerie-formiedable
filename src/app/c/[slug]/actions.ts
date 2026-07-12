@@ -262,7 +262,7 @@ export async function choisirRecompense(
   return {
     ok: true,
     recompense: recompense.texte,
-    animation: restaurant.animation_recompense ?? "confettis",
+    animation: restaurant.animation_recompense ?? "rayons",
   };
 }
 
