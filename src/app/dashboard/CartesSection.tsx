@@ -48,7 +48,13 @@ const FORMES: { cle: "carre" | "cercle" | "hexagone" | "etoile"; nom: string }[]
   { cle: "etoile", nom: "Étoile" },
 ];
 
-function ChampsCarte({ carte }: { carte?: Carte }) {
+function ChampsCarte({
+  carte,
+  titreDefaut,
+}: {
+  carte?: Carte;
+  titreDefaut?: string;
+}) {
   const [icone, setIcone] = useState(carte?.tampon_icone ?? "cafe");
   const [emojiCustom, setEmojiCustom] = useState(
     carte?.tampon_icone?.startsWith("custom:") ? carte.tampon_icone.slice(7) : ""
@@ -67,8 +73,7 @@ function ChampsCarte({ carte }: { carte?: Carte }) {
           name="titre"
           required
           maxLength={60}
-          defaultValue={carte?.titre ?? ""}
-          placeholder="Ex : Carte café, Carte midi…"
+          defaultValue={carte?.titre ?? titreDefaut ?? ""}
           className={classesInput}
         />
       </div>
@@ -543,9 +548,11 @@ function BlocCarte({
 export function CartesSection({
   cartes,
   recompenses,
+  nomCommerce,
 }: {
   cartes: Carte[];
   recompenses: Recompense[];
+  nomCommerce: string;
 }) {
   const router = useRouter();
   const [creation, setCreation] = useState(false);
@@ -584,7 +591,7 @@ export function CartesSection({
 
       {creation && (
         <form action={creer} className="rounded-2xl border-2 border-dashed border-bordeaux-200 bg-white p-5">
-          <ChampsCarte />
+          <ChampsCarte titreDefaut={`Carte de fidélité ${nomCommerce}`} />
           {erreur && (
             <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{erreur}</p>
           )}

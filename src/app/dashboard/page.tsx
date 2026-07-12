@@ -218,7 +218,11 @@ export default async function Dashboard() {
                   <ConfigForm restaurant={restaurant} />
                 </div>
                 <div id="cartes">
-                  <CartesSection cartes={cartes} recompenses={recompenses} />
+                  <CartesSection
+                    cartes={cartes}
+                    recompenses={recompenses}
+                    nomCommerce={restaurant.nom}
+                  />
                 </div>
                 <div id="sections-page">
                   <SectionsSection sections={sections} />
