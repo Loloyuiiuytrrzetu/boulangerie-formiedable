@@ -17,6 +17,15 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
   const [animationCouleur, setAnimationCouleur] = useState(
     restaurant.animation_couleur ?? "#FFD700"
   );
+  const [apercuLogo, setApercuLogo] = useState<string | null>(null);
+  const [apercuFond, setApercuFond] = useState<string | null>(null);
+
+  function previsualiser(fichier: File | null, setter: (v: string | null) => void) {
+    if (!fichier) return setter(null);
+    const reader = new FileReader();
+    reader.onload = (e) => setter((e.target?.result as string) ?? null);
+    reader.readAsDataURL(fichier);
+  }
 
   function soumettre(formData: FormData) {
     setErreur(null);
@@ -69,29 +78,43 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
             <label htmlFor="logo" className="mb-1.5 block text-sm font-medium text-stone-700">
               Logo
             </label>
-            {restaurant.logo_url && (
+            {(apercuLogo || restaurant.logo_url) && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={restaurant.logo_url}
-                alt="Logo actuel"
+                src={apercuLogo || restaurant.logo_url!}
+                alt="Aperçu logo"
                 className="mb-2 h-20 w-20 rounded-xl border border-stone-200 object-cover"
               />
             )}
-            <input id="logo" name="logo" type="file" accept="image/*" className={classesFichier} />
+            <input
+              id="logo"
+              name="logo"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={(e) => previsualiser(e.target.files?.[0] ?? null, setApercuLogo)}
+              className={classesFichier}
+            />
           </div>
           <div>
             <label htmlFor="fond" className="mb-1.5 block text-sm font-medium text-stone-700">
               Image de fond
             </label>
-            {restaurant.fond_url && (
+            {(apercuFond || restaurant.fond_url) && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={restaurant.fond_url}
-                alt="Image de fond actuelle"
+                src={apercuFond || restaurant.fond_url!}
+                alt="Aperçu fond"
                 className="mb-2 h-20 w-full rounded-xl border border-stone-200 object-cover"
               />
             )}
-            <input id="fond" name="fond" type="file" accept="image/*" className={classesFichier} />
+            <input
+              id="fond"
+              name="fond"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={(e) => previsualiser(e.target.files?.[0] ?? null, setApercuFond)}
+              className={classesFichier}
+            />
           </div>
         </div>
         <p className="-mt-3 text-xs text-stone-400">
