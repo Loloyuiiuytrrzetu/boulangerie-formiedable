@@ -774,31 +774,59 @@ function RecompenseAttenteCard({
 // notifications push (promotions, événements) à tout moment.
 function DesactivationNotifs({ slug }: { slug: string }) {
   const cle = `walletiz_notif_refus_${slug}`;
-  const [refuse, setRefuse] = useState(false);
+  // Valeur sauvegardée (celle qui compte réellement)
+  const [enregistre, setEnregistre] = useState(false);
+  // Valeur temporaire (celle qu'affiche la case, en attente de clic "Enregistrer")
+  const [choix, setChoix] = useState(false);
+  const [succes, setSucces] = useState(false);
+
   useEffect(() => {
-    if (typeof window !== "undefined") setRefuse(localStorage.getItem(cle) === "1");
+    if (typeof window === "undefined") return;
+    const val = localStorage.getItem(cle) === "1";
+    setEnregistre(val);
+    setChoix(val);
   }, [cle]);
 
-  function basculer(e: React.ChangeEvent<HTMLInputElement>) {
-    const v = e.target.checked;
-    setRefuse(v);
+  function enregistrer() {
     if (typeof window === "undefined") return;
-    if (v) localStorage.setItem(cle, "1");
+    if (choix) localStorage.setItem(cle, "1");
     else localStorage.removeItem(cle);
+    setEnregistre(choix);
+    setSucces(true);
+    setTimeout(() => setSucces(false), 2000);
   }
 
+  const modifie = choix !== enregistre;
+
   return (
-    <label className="mt-8 flex items-start gap-2 border-t border-stone-100 pt-4 text-xs text-stone-500">
-      <input
-        type="checkbox"
-        checked={refuse}
-        onChange={basculer}
-        className="mt-0.5 h-4 w-4 shrink-0 accent-stone-600"
-      />
-      <span>
-        J&apos;accepte de ne pas recevoir de notifications pour m&apos;avertir
-        d&apos;une promotion ou d&apos;un événement.
-      </span>
-    </label>
+    <div className="mt-8 border-t border-stone-100 pt-4">
+      <label className="flex items-start gap-2 text-xs text-stone-500">
+        <input
+          type="checkbox"
+          checked={choix}
+          onChange={(e) => setChoix(e.target.checked)}
+          className="mt-0.5 h-4 w-4 shrink-0 accent-stone-600"
+        />
+        <span>
+          J&apos;accepte de ne pas recevoir de notifications pour m&apos;avertir
+          d&apos;une promotion ou d&apos;un événement.
+        </span>
+      </label>
+      <div className="mt-3 flex items-center gap-3">
+        <button
+          type="button"
+          onClick={enregistrer}
+          disabled={!modifie}
+          className="rounded-lg bg-stone-800 px-4 py-2 text-xs font-semibold text-white transition hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          Enregistrer
+        </button>
+        {succes && (
+          <span className="text-xs font-medium text-green-600">
+            ✓ Choix enregistré
+          </span>
+        )}
+      </div>
+    </div>
   );
 }
