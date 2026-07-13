@@ -235,6 +235,7 @@ export default async function Dashboard() {
                     notifications={notificationsPush}
                     timezone={restaurant.timezone ?? "Europe/Paris"}
                     nbAbonnes={nbAbonnes}
+                    nbClientsTotal={nbClients}
                     pushConfigure={Boolean(getVapidPublicKey())}
                   />
                 </div>

@@ -24,12 +24,25 @@ export function AbonnementPush({
   dejaActif: boolean;
   couleur: string;
 }) {
-  const [statut, setStatut] = useState<"init" | "actif" | "refuse" | "erreur" | "loading">(
+  const [statut, setStatut] = useState<"init" | "actif" | "refuse" | "erreur" | "loading" | "ios-install">(
     dejaActif ? "actif" : "init"
   );
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
+    // iOS Safari : les notifications push ne marchent QUE si la page est
+    // ajoutée à l'écran d'accueil (installée comme PWA). Sinon on doit
+    // demander au client de l'installer d'abord.
+    const isIOS =
+      /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+      !("MSStream" in window);
+    const isStandalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (navigator as unknown as { standalone?: boolean }).standalone === true;
+    if (isIOS && !isStandalone) {
+      setStatut("ios-install");
+      return;
+    }
     if (!("Notification" in window)) setStatut("erreur");
     else if (Notification.permission === "denied") setStatut("refuse");
   }, []);
@@ -99,6 +112,21 @@ export function AbonnementPush({
     return (
       <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
         {message ?? "Impossible d'activer les notifications."}
+      </div>
+    );
+  }
+  if (statut === "ios-install") {
+    return (
+      <div className="rounded-2xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
+        📱 Pour recevoir les notifications sur iPhone, ajoutez cette page à
+        votre écran d&apos;accueil :
+        <ol className="mt-2 list-inside list-decimal space-y-1 text-xs">
+          <li>Appuyez sur le bouton <strong>Partager</strong> ⬆️ en bas de
+            Safari</li>
+          <li>Choisissez <strong>« Sur l&apos;écran d&apos;accueil »</strong></li>
+          <li>Ouvrez l&apos;app depuis votre écran d&apos;accueil et revenez
+            ici pour activer les notifications</li>
+        </ol>
       </div>
     );
   }

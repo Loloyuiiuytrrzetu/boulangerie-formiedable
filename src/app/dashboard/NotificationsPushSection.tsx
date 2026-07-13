@@ -49,11 +49,13 @@ export function NotificationsPushSection({
   notifications,
   timezone,
   nbAbonnes,
+  nbClientsTotal,
   pushConfigure,
 }: {
   notifications: NotificationPush[];
   timezone: string;
   nbAbonnes: number;
+  nbClientsTotal: number;
   pushConfigure: boolean;
 }) {
   const [ongletActif, setOngletActif] = useState<"immediat" | "programme">("immediat");
@@ -109,12 +111,20 @@ export function NotificationsPushSection({
           une notification sur leur téléphone avec le logo de votre commerce.
         </p>
         <p className="mt-2 text-xs text-stone-500">
-          {nbAbonnes === 0
-            ? "Aucun client abonné pour le moment."
-            : `${nbAbonnes} client${nbAbonnes > 1 ? "s" : ""} abonné${nbAbonnes > 1 ? "s" : ""}.`}
-          {" · Fuseau : "}
+          <strong>{nbAbonnes}</strong> client{nbAbonnes > 1 ? "s" : ""}{" "}
+          {nbAbonnes > 1 ? "ont" : "a"} activé les notifications sur{" "}
+          <strong>{nbClientsTotal}</strong> inscrit
+          {nbClientsTotal > 1 ? "s" : ""}. · Fuseau :{" "}
           <span className="font-medium">{timezone}</span>
         </p>
+        {nbClientsTotal > 0 && nbAbonnes === 0 && (
+          <div className="mt-3 rounded-lg bg-blue-50 px-3 py-2 text-xs text-blue-900">
+            💡 Vos clients doivent <strong>autoriser les notifications</strong>{" "}
+            sur leur téléphone pour recevoir vos messages. Sur iPhone, cela
+            fonctionne uniquement si le client ajoute votre page à son écran
+            d&apos;accueil (bouton Partager → « Sur l&apos;écran d&apos;accueil »).
+          </div>
+        )}
       </div>
 
       {!pushConfigure && (
