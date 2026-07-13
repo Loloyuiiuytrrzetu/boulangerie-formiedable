@@ -14,8 +14,46 @@ import type {
 import { EspaceClient, type CarteAffichee } from "./EspaceClient";
 import { FormulaireInscription } from "./FormulaireInscription";
 import { getVapidPublicKey } from "@/lib/push";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+
+// Métadonnées par commerce : chaque restaurateur devient sa propre "app" sur
+// iPhone (quand le client ajoute la page à l'écran d'accueil). Nom + icône
+// deviennent ceux du commerce, plus ceux de Walletiz.
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const admin = createAdminClient();
+  const { data: restaurant } = await admin
+    .from("restaurants")
+    .select("nom, logo_url")
+    .eq("slug", slug)
+    .maybeSingle<Pick<Restaurant, "nom" | "logo_url">>();
+
+  if (!restaurant) return { title: "Commerce introuvable" };
+
+  return {
+    title: restaurant.nom,
+    description: `Carte de fidélité ${restaurant.nom}`,
+    manifest: `/c/${slug}/manifest.webmanifest`,
+    icons: restaurant.logo_url
+      ? {
+          icon: restaurant.logo_url,
+          apple: restaurant.logo_url,
+          shortcut: restaurant.logo_url,
+        }
+      : undefined,
+    appleWebApp: {
+      capable: true,
+      title: restaurant.nom,
+      statusBarStyle: "default",
+    },
+  };
+}
 
 export default async function PageCommerce({
   params,
