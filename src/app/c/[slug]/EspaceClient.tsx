@@ -535,9 +535,19 @@ export function EspaceClient({
       </div>
 
       {proposerNotifs && (
-        <div className="rounded-2xl border border-stone-200 bg-white px-4 py-3 shadow-lg">
-          <p className="mb-2 text-sm text-stone-600">
-            🔔 Être averti(e) des nouveautés et récompenses de ce commerce ?
+        <div
+          className="animate-pulse-slow rounded-2xl border-2 px-4 py-4 shadow-xl"
+          style={{
+            borderColor: couleur,
+            backgroundColor: `${couleur}0d`,
+          }}
+        >
+          <p className="mb-1 text-base font-bold" style={{ color: couleur }}>
+            🔔 Dernière étape : activez vos notifications
+          </p>
+          <p className="mb-3 text-xs text-stone-600">
+            Appuyez sur le bouton ci-dessous et autorisez les notifications pour
+            recevoir les promotions et les alertes de récompenses de ce commerce.
           </p>
           <AbonnementPush
             restaurantId={restaurantId}
@@ -549,7 +559,7 @@ export function EspaceClient({
             onClick={refuserNotifs}
             className="mt-2 text-xs font-medium text-stone-500 hover:text-stone-700"
           >
-            Plus tard
+            Non merci, plus tard
           </button>
         </div>
       )}
