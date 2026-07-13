@@ -1,9 +1,12 @@
 "use client";
 
 import React, { useEffect, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import {
   ajouterTampon,
   choisirRecompense,
+  desinscrireClient,
+  modifierIdentite,
   utiliserRecompense,
 } from "./actions";
 import { AnimationRecompense } from "./Animation";
@@ -433,6 +436,7 @@ export function EspaceClient({
   tamponRestaurateurOnly,
   animationCouleur,
   nomCommerce,
+  identiteClient,
 }: {
   slug: string;
   couleur: string;
@@ -449,6 +453,7 @@ export function EspaceClient({
   tamponRestaurateurOnly: boolean;
   animationCouleur: string;
   nomCommerce: string;
+  identiteClient: string;
 }) {
   // Fallback : si la table sections est vide (migration incomplète),
   // on affiche quand même les 2 onglets par défaut pour ne jamais avoir
@@ -612,6 +617,7 @@ export function EspaceClient({
           qrClientDataUrl={qrClientDataUrl}
           tamponRestaurateurOnly={tamponRestaurateurOnly}
           restaurantId={restaurantId}
+          identiteClient={identiteClient}
           onAnimation={(a) => setAnimationEnCours(a || animation)}
         />
       )}
@@ -629,6 +635,7 @@ function ContenuSection({
   qrClientDataUrl,
   tamponRestaurateurOnly,
   restaurantId,
+  identiteClient,
   onAnimation,
 }: {
   section: Section;
@@ -641,6 +648,7 @@ function ContenuSection({
   qrClientDataUrl: string | null;
   tamponRestaurateurOnly: boolean;
   restaurantId: string;
+  identiteClient: string;
   onAnimation: (a: string) => void;
 }) {
   if (section.type === "cartes") {
@@ -692,7 +700,9 @@ function ContenuSection({
             </p>
           </>
         )}
+        <ModifierIdentite slug={slug} identiteActuelle={identiteClient} />
         <DesactivationNotifs slug={slug} restaurantId={restaurantId} />
+        <BoutonDesinscription slug={slug} couleur={couleur} />
       </section>
     );
   }
@@ -876,6 +886,155 @@ function DesactivationNotifs({
           </span>
         )}
       </div>
+    </div>
+  );
+}
+
+// Modification du nom / prénom depuis l'onglet Info.
+function ModifierIdentite({
+  slug,
+  identiteActuelle,
+}: {
+  slug: string;
+  identiteActuelle: string;
+}) {
+  const router = useRouter();
+  const [valeur, setValeur] = useState(identiteActuelle);
+  const [succes, setSucces] = useState(false);
+  const [erreur, setErreur] = useState<string | null>(null);
+  const [enCours, startTransition] = useTransition();
+
+  function enregistrer() {
+    setErreur(null);
+    setSucces(false);
+    const formData = new FormData();
+    formData.set("identite", valeur);
+    startTransition(async () => {
+      const r = await modifierIdentite(slug, formData);
+      if (r?.erreur) setErreur(r.erreur);
+      else {
+        setSucces(true);
+        router.refresh();
+        setTimeout(() => setSucces(false), 2000);
+      }
+    });
+  }
+
+  const modifie = valeur.trim() !== identiteActuelle.trim();
+
+  return (
+    <div className="mt-8 border-t border-stone-100 pt-4">
+      <label className="mb-1.5 block text-sm font-medium text-stone-700">
+        Nom et prénom
+      </label>
+      <input
+        type="text"
+        value={valeur}
+        onChange={(e) => setValeur(e.target.value)}
+        maxLength={80}
+        className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:border-stone-500 focus:outline-none"
+      />
+      {erreur && <p className="mt-1 text-xs text-red-600">{erreur}</p>}
+      <div className="mt-2 flex items-center gap-3">
+        <button
+          type="button"
+          onClick={enregistrer}
+          disabled={!modifie || enCours || !valeur.trim()}
+          className="rounded-lg bg-stone-800 px-4 py-2 text-xs font-semibold text-white transition hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          {enCours ? "…" : "Enregistrer"}
+        </button>
+        {succes && (
+          <span className="text-xs font-medium text-green-600">
+            ✓ Modifié
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Bouton de désinscription tout en bas de l'onglet Info : supprime le
+// compte client + efface le cookie de reconnaissance. Après ça, un
+// nouveau scan du QR code redémarre comme une première visite.
+function BoutonDesinscription({
+  slug,
+  couleur,
+}: {
+  slug: string;
+  couleur: string;
+}) {
+  const router = useRouter();
+  const [confirmation, setConfirmation] = useState(false);
+  const [erreur, setErreur] = useState<string | null>(null);
+  const [enCours, startTransition] = useTransition();
+
+  function confirmer() {
+    setErreur(null);
+    startTransition(async () => {
+      const r = await desinscrireClient(slug);
+      if (r?.erreur) setErreur(r.erreur);
+      else {
+        setConfirmation(false);
+        router.refresh();
+      }
+    });
+  }
+
+  return (
+    <div className="mt-8 border-t border-stone-100 pt-4 text-center">
+      <button
+        type="button"
+        onClick={() => setConfirmation(true)}
+        className="text-xs font-medium text-stone-500 underline hover:text-red-600"
+      >
+        Se désinscrire de ce commerce
+      </button>
+
+      {confirmation && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4"
+          onClick={() => !enCours && setConfirmation(false)}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className="text-lg font-bold text-stone-900">
+              Se désinscrire ?
+            </p>
+            <p className="mt-2 text-sm text-stone-600">
+              Toutes vos cartes de fidélité, tampons et récompenses en attente
+              seront <strong>définitivement supprimés</strong>. Vous pourrez
+              vous réinscrire en scannant à nouveau le QR code du commerce.
+            </p>
+            {erreur && (
+              <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700">
+                {erreur}
+              </p>
+            )}
+            <div className="mt-5 flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={confirmer}
+                disabled={enCours}
+                className="rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-60"
+              >
+                {enCours ? "Désinscription…" : "Oui, me désinscrire"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirmation(false)}
+                disabled={enCours}
+                className="rounded-xl border border-stone-300 px-4 py-2.5 text-sm font-medium text-stone-600 transition hover:bg-stone-50"
+                style={{ color: couleur, borderColor: `${couleur}55` }}
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -305,3 +305,56 @@ export async function activerNotifications(slug: string, actif: boolean) {
   revalidatePath(`/c/${slug}`);
   return { ok: true };
 }
+
+// --- Modification du nom / prénom (onglet Info) ---
+export async function modifierIdentite(slug: string, formData: FormData) {
+  const restaurant = await chargerRestaurant(slug);
+  if (!restaurant) return { erreur: "Commerce introuvable." };
+
+  const client = await chargerClientViaCookie(restaurant);
+  if (!client) return { erreur: "Carte introuvable." };
+
+  const identite = String(formData.get("identite") ?? "").trim().slice(0, 80);
+  if (!identite) return { erreur: "Entrez au moins un nom ou un prénom." };
+
+  const admin = createAdminClient();
+  await admin
+    .from("clients_fidelite")
+    .update({ identite })
+    .eq("id", client.id);
+
+  revalidatePath(`/c/${slug}`);
+  return { ok: true as const };
+}
+
+// --- Désinscription : supprime le compte client complètement.
+//     Les tampons, cartes en cours et récompenses en attente sont perdus.
+//     Le cookie de reconnaissance est effacé pour que le prochain scan
+//     du QR code redémarre comme si c'était la première fois. ---
+export async function desinscrireClient(slug: string) {
+  const restaurant = await chargerRestaurant(slug);
+  if (!restaurant) return { erreur: "Commerce introuvable." };
+
+  const client = await chargerClientViaCookie(restaurant);
+  if (!client) return { erreur: "Carte introuvable." };
+
+  const admin = createAdminClient();
+  // On supprime le client — les tables liées (cartes_clients,
+  // recompenses_gagnees, tampons_historique, push_subscriptions) ont
+  // une cascade DELETE sur client_id.
+  await admin.from("clients_fidelite").delete().eq("id", client.id);
+
+  // Efface le cookie pour que le prochain scan soit reconnu comme
+  // une première visite.
+  const cookieStore = await cookies();
+  cookieStore.set(nomCookieClient(restaurant.id), "", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    maxAge: 0,
+    path: "/",
+  });
+
+  revalidatePath(`/c/${slug}`);
+  return { ok: true as const };
+}
