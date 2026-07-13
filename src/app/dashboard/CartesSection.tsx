@@ -14,6 +14,7 @@ import {
 } from "./actions";
 import { TAMPON_ICONES, iconeEmoji } from "@/lib/icons";
 import type { Carte, Recompense } from "@/lib/types";
+import { compresserChampsImage } from "@/lib/compresser-image";
 
 const classesInput =
   "w-full rounded-lg border border-stone-300 px-3.5 py-2.5 outline-none transition focus:border-bordeaux-700 focus:ring-2 focus:ring-bordeaux-200";
@@ -264,6 +265,7 @@ function LigneRecompense({ recompense }: { recompense: Recompense }) {
   function changerImage(formData: FormData) {
     setErreur(null);
     startTransition(async () => {
+      await compresserChampsImage(formData, ["image"]);
       const r = await mettreAJourImageRecompense(recompense.id, formData);
       if (r?.erreur) setErreur(r.erreur);
       else {
@@ -370,6 +372,7 @@ function BlocCarte({
     setErreur(null);
     setSucces(false);
     startTransition(async () => {
+      await compresserChampsImage(formData, ["tampon_image"]);
       const r = await mettreAJourCarte(carte.id, formData);
       if (r?.erreur) setErreur(r.erreur);
       else {
@@ -405,6 +408,7 @@ function BlocCarte({
   function nouvelleRecompense(formData: FormData) {
     setErreur(null);
     startTransition(async () => {
+      await compresserChampsImage(formData, ["image"]);
       const r = await ajouterRecompense(carte.id, formData);
       if (r?.erreur) setErreur(r.erreur);
       else {
@@ -562,6 +566,7 @@ export function CartesSection({
   function creer(formData: FormData) {
     setErreur(null);
     startTransition(async () => {
+      await compresserChampsImage(formData, ["tampon_image"]);
       const r = await creerCarte(formData);
       if (r?.erreur) setErreur(r.erreur);
       else {
