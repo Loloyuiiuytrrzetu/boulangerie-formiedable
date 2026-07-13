@@ -7,6 +7,22 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { slugify } from "@/lib/utils";
 import { TIMEZONES_VALIDES } from "@/lib/timezones";
 
+// Traduit les messages d'erreur Supabase Auth en français.
+function traduireErreurAuth(message: string | undefined): string {
+  if (!message) return "erreur inconnue.";
+  const m = message.toLowerCase();
+  if (m.includes("already been registered") || m.includes("already registered"))
+    return "cet email est déjà utilisé par un autre compte.";
+  if (m.includes("invalid email")) return "email invalide.";
+  if (m.includes("password should be at least"))
+    return "mot de passe trop court (8 caractères minimum).";
+  if (m.includes("weak password"))
+    return "mot de passe trop faible. Utilisez au moins 8 caractères.";
+  if (m.includes("rate limit"))
+    return "trop de tentatives. Réessayez dans quelques minutes.";
+  return message;
+}
+
 // Garde-fou commun : chaque action vérifie côté serveur que l'appelant
 // est bien connecté ET possède le rôle super_admin avant d'utiliser
 // la clé service_role.
@@ -77,7 +93,9 @@ export async function creerRestaurateur(formData: FormData) {
     });
     userId = existant.id;
   } else {
-    return { erreur: `Création du compte impossible : ${erreurAuth?.message ?? "erreur inconnue"}` };
+    return {
+      erreur: `Création du compte impossible : ${traduireErreurAuth(erreurAuth?.message)}`,
+    };
   }
 
   // Slug unique pour la page publique

@@ -9,6 +9,22 @@ import { dateDuJour, slugify } from "@/lib/utils";
 import type { CarteClient } from "@/lib/types";
 import { utilisateurEffectif } from "@/lib/impersonate";
 
+// Traduit les messages d'erreur Supabase Auth en français.
+function traduireErreurAuth(message: string | undefined): string {
+  if (!message) return "erreur inconnue.";
+  const m = message.toLowerCase();
+  if (m.includes("already been registered") || m.includes("already registered"))
+    return "cet email est déjà utilisé par un autre compte.";
+  if (m.includes("invalid email")) return "email invalide.";
+  if (m.includes("password should be at least"))
+    return "mot de passe trop court (8 caractères minimum).";
+  if (m.includes("weak password"))
+    return "mot de passe trop faible. Utilisez au moins 8 caractères.";
+  if (m.includes("rate limit"))
+    return "trop de tentatives. Réessayez dans quelques minutes.";
+  return message;
+}
+
 // Déconnexion manuelle du restaurateur
 export async function deconnexion() {
   const supabase = await createClient();
@@ -445,7 +461,7 @@ export async function creerSousCompte(formData: FormData) {
     app_metadata: { role: "sous_compte" },
   });
   if (erreurAuth || !nouvel.user)
-    return { erreur: `Création du compte impossible : ${erreurAuth?.message}` };
+    return { erreur: `Création du compte impossible : ${traduireErreurAuth(erreurAuth?.message)}` };
 
   await admin
     .from("profiles")
