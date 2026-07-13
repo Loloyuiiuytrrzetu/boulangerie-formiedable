@@ -607,6 +607,7 @@ export function EspaceClient({
           scanRecent={scanRecent}
           qrClientDataUrl={qrClientDataUrl}
           tamponRestaurateurOnly={tamponRestaurateurOnly}
+          restaurantId={restaurantId}
           onAnimation={(a) => setAnimationEnCours(a || animation)}
         />
       )}
@@ -623,6 +624,7 @@ function ContenuSection({
   scanRecent,
   qrClientDataUrl,
   tamponRestaurateurOnly,
+  restaurantId,
   onAnimation,
 }: {
   section: Section;
@@ -634,6 +636,7 @@ function ContenuSection({
   scanRecent: boolean;
   qrClientDataUrl: string | null;
   tamponRestaurateurOnly: boolean;
+  restaurantId: string;
   onAnimation: (a: string) => void;
 }) {
   if (section.type === "cartes") {
@@ -685,7 +688,7 @@ function ContenuSection({
             </p>
           </>
         )}
-        <DesactivationNotifs slug={slug} />
+        <DesactivationNotifs slug={slug} restaurantId={restaurantId} />
       </section>
     );
   }
@@ -782,13 +785,20 @@ function RecompenseAttenteCard({
 
 // Petite case tout en bas de l'onglet Info : le client peut renoncer aux
 // notifications push (promotions, événements) à tout moment.
-function DesactivationNotifs({ slug }: { slug: string }) {
+function DesactivationNotifs({
+  slug,
+  restaurantId,
+}: {
+  slug: string;
+  restaurantId: string;
+}) {
   const cle = `walletiz_notif_refus_${slug}`;
   // Valeur sauvegardée (celle qui compte réellement)
   const [enregistre, setEnregistre] = useState(false);
   // Valeur temporaire (celle qu'affiche la case, en attente de clic "Enregistrer")
   const [choix, setChoix] = useState(false);
   const [succes, setSucces] = useState(false);
+  const [enCours, setEnCours] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -797,12 +807,37 @@ function DesactivationNotifs({ slug }: { slug: string }) {
     setChoix(val);
   }, [cle]);
 
-  function enregistrer() {
+  async function enregistrer() {
     if (typeof window === "undefined") return;
-    if (choix) localStorage.setItem(cle, "1");
-    else localStorage.removeItem(cle);
+    setEnCours(true);
+    if (choix) {
+      // Le client demande à ne plus recevoir de notifications :
+      // 1. Désenregistre l'abonnement du navigateur
+      // 2. Supprime les abonnements de la base côté serveur
+      // 3. Mémorise le refus en localStorage pour ne plus proposer la bannière
+      localStorage.setItem(cle, "1");
+      try {
+        const registration = await navigator.serviceWorker?.getRegistration("/sw.js");
+        const subscription = await registration?.pushManager.getSubscription();
+        if (subscription) await subscription.unsubscribe();
+      } catch {
+        // Continue même si le désabonnement navigateur échoue
+      }
+      try {
+        await fetch("/api/push/unsubscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ restaurantId }),
+        });
+      } catch {
+        // Continue même en cas d'échec réseau
+      }
+    } else {
+      localStorage.removeItem(cle);
+    }
     setEnregistre(choix);
     setSucces(true);
+    setEnCours(false);
     setTimeout(() => setSucces(false), 2000);
   }
 
@@ -826,10 +861,10 @@ function DesactivationNotifs({ slug }: { slug: string }) {
         <button
           type="button"
           onClick={enregistrer}
-          disabled={!modifie}
+          disabled={!modifie || enCours}
           className="rounded-lg bg-stone-800 px-4 py-2 text-xs font-semibold text-white transition hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          Enregistrer
+          {enCours ? "…" : "Enregistrer"}
         </button>
         {succes && (
           <span className="text-xs font-medium text-green-600">
