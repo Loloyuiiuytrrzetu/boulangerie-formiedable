@@ -17,20 +17,22 @@ self.addEventListener("push", (event) => {
     data = { titre: "Notification", message: event.data ? event.data.text() : "" };
   }
 
-  const titre = data.titre || "Nouveau message";
+  // Sur iOS, si le titre est différent du nom de l'app installée (PWA),
+  // le système ajoute une ligne "from <nom de l'app>". Pour éviter ce
+  // doublon disgracieux (« COCO hit » + « from COCO hit »), on omet le
+  // titre : iOS utilise alors directement le nom de l'app (= le nom du
+  // commerce, grâce au manifest.webmanifest dynamique) comme titre.
   const options = {
     body: data.message || "",
     data: { url: data.url || "/" },
   };
-  // On n'inclut le logo que si le commerce en a fourni un. Sinon on laisse
-  // le navigateur afficher son icône par défaut (jamais celui de Walletiz).
   if (data.icon) {
     options.icon = data.icon;
     options.badge = data.icon;
     options.image = data.icon;
   }
 
-  event.waitUntil(self.registration.showNotification(titre, options));
+  event.waitUntil(self.registration.showNotification("", options));
 });
 
 self.addEventListener("notificationclick", (event) => {
