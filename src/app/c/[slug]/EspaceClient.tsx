@@ -8,6 +8,7 @@ import {
 } from "./actions";
 import { AnimationRecompense } from "./Animation";
 import { AbonnementPush } from "./AbonnementPush";
+import { InstallationIOS } from "./InstallationIOS";
 import { iconeEmoji } from "@/lib/icons";
 import type { RecompenseGagnee, Section } from "@/lib/types";
 
@@ -431,6 +432,7 @@ export function EspaceClient({
   vapidPublicKey,
   tamponRestaurateurOnly,
   animationCouleur,
+  nomCommerce,
 }: {
   slug: string;
   couleur: string;
@@ -446,6 +448,7 @@ export function EspaceClient({
   vapidPublicKey: string | null;
   tamponRestaurateurOnly: boolean;
   animationCouleur: string;
+  nomCommerce: string;
 }) {
   // Fallback : si la table sections est vide (migration incomplète),
   // on affiche quand même les 2 onglets par défaut pour ne jamais avoir
@@ -504,6 +507,7 @@ export function EspaceClient({
 
   return (
     <div className="space-y-6">
+      <InstallationIOS couleur={couleur} nomCommerce={nomCommerce} />
       {animationEnCours && (
         <AnimationRecompense
           type={animationEnCours}

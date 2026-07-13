@@ -273,6 +273,7 @@ export default async function PageCommerce({
             restaurantId={restaurant.id}
             vapidPublicKey={getVapidPublicKey()}
             tamponRestaurateurOnly={restaurant.tampon_restaurateur_only === true}
+            nomCommerce={restaurant.nom}
           />
         ) : (
           <FormulaireInscription
