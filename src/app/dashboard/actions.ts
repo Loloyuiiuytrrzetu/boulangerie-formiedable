@@ -200,7 +200,11 @@ function validerCarte(formData: FormData) {
   const dateExpiration = String(formData.get("date_expiration") ?? "").trim();
 
   if (!titre) return { erreur: "Le titre de la carte est obligatoire." as const };
-  if (!TAMPON_ICONES[tamponIcone]) return { erreur: "Icône de tampon invalide." as const };
+  // Icône = clé prédéfinie OU emoji personnalisé (préfixe "custom:")
+  const iconeValide =
+    !!TAMPON_ICONES[tamponIcone] ||
+    (tamponIcone.startsWith("custom:") && tamponIcone.length > 7 && tamponIcone.length <= 20);
+  if (!iconeValide) return { erreur: "Icône de tampon invalide." as const };
   if (!["carre", "cercle", "hexagone", "etoile"].includes(tamponForme))
     return { erreur: "Forme de tampon invalide." as const };
   if (!Number.isInteger(nombreTampons) || nombreTampons < 1 || nombreTampons > 20)
