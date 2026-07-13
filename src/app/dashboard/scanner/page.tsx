@@ -113,7 +113,7 @@ export default async function Scanner({
           <p className="mt-1 text-sm text-stone-500">
             {clientPrecharge
               ? "Choisissez la carte et le nombre de tampons à attribuer."
-              : "Demandez au client d'ouvrir son onglet Info sur sa page Walletiz, puis scannez son QR code personnel."}
+              : "Demandez au client d'ouvrir son onglet Info après avoir scanné le QR code, puis scannez son QR code personnel."}
           </p>
 
           <ScannerForm
