@@ -237,7 +237,12 @@ export default async function PageCommerce({
             tamponRestaurateurOnly={restaurant.tampon_restaurateur_only === true}
           />
         ) : (
-          <FormulaireInscription slug={slug} couleur={restaurant.couleur} />
+          <FormulaireInscription
+            slug={slug}
+            couleur={restaurant.couleur}
+            restaurantId={restaurant.id}
+            vapidPublicKey={getVapidPublicKey()}
+          />
         )}
       </div>
     </main>
