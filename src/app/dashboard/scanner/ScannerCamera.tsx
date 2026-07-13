@@ -2,28 +2,36 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import jsQR from "jsqr";
 
-// Scanner de QR code via la caméra du navigateur.
-// Utilise l'API native BarcodeDetector (Chrome / Safari 17+). Sinon, message
-// pour utiliser l'appareil photo natif du téléphone.
+// Scanner QR code via la caméra du navigateur. Utilise l'API BarcodeDetector
+// si disponible (Chrome Android), sinon jsQR côté JS (marche partout —
+// iOS Safari inclus). Le scanner est intégré au site : aucune app native
+// requise, le restaurateur clique sur le bouton et scan directement.
 export function ScannerCamera({ slugRestaurant }: { slugRestaurant?: string }) {
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [ouvert, setOuvert] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
-  const [supporte, setSupporte] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    // @ts-expect-error API non typée
-    setSupporte(typeof window.BarcodeDetector === "function");
-  }, []);
 
   useEffect(() => {
     if (!ouvert) return;
     let stream: MediaStream | null = null;
     let interval: ReturnType<typeof setInterval> | null = null;
     let annule = false;
+
+    // Détecte le support natif BarcodeDetector (Chrome / Android) sinon
+    // on retombera sur jsQR (pure JS, marche partout).
+    const winTyped = window as unknown as {
+      BarcodeDetector?: new (o?: { formats?: string[] }) => {
+        detect(v: HTMLVideoElement): Promise<{ rawValue?: string }[]>;
+      };
+    };
+    const supportNatif = typeof winTyped.BarcodeDetector === "function";
+    const detector = supportNatif
+      ? new winTyped.BarcodeDetector!({ formats: ["qr_code"] })
+      : null;
 
     (async () => {
       try {
@@ -37,33 +45,55 @@ export function ScannerCamera({ slugRestaurant }: { slugRestaurant?: string }) {
         const video = videoRef.current;
         if (!video) return;
         video.srcObject = stream;
+        // iOS Safari nécessite playsInline pour ne pas basculer en fullscreen.
         await video.play();
 
-        // @ts-expect-error API non typée
-        const detector = new window.BarcodeDetector({ formats: ["qr_code"] });
         interval = setInterval(async () => {
-          try {
-            const codes = await detector.detect(video);
-            if (codes.length > 0) {
-              const raw = codes[0].rawValue as string;
-              try {
-                const u = new URL(raw);
-                const c = u.searchParams.get("c");
-                if (c) {
-                  setOuvert(false);
-                  router.push(`/dashboard/scanner?c=${c}`);
-                  router.refresh();
-                  return;
-                }
-              } catch {
-                // Pas une URL, ignore
-              }
-              setErreur("Ce QR code n'est pas un QR code client Walletiz.");
+          const v = videoRef.current;
+          if (!v || v.readyState < 2) return;
+
+          let raw: string | null = null;
+          if (detector) {
+            try {
+              const codes = await detector.detect(v);
+              if (codes.length > 0 && codes[0].rawValue) raw = codes[0].rawValue;
+            } catch {
+              // ignore
             }
-          } catch {
-            // Erreur de détection ponctuelle, ignore
+          } else {
+            // Fallback jsQR : dessine le frame vidéo sur un canvas, extrait
+            // les pixels, décode.
+            const canvas = canvasRef.current;
+            if (!canvas) return;
+            const w = v.videoWidth;
+            const h = v.videoHeight;
+            if (!w || !h) return;
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d", { willReadFrequently: true });
+            if (!ctx) return;
+            ctx.drawImage(v, 0, 0, w, h);
+            const img = ctx.getImageData(0, 0, w, h);
+            const code = jsQR(img.data, w, h, { inversionAttempts: "attemptBoth" });
+            if (code?.data) raw = code.data;
           }
-        }, 400);
+
+          if (raw) {
+            try {
+              const u = new URL(raw);
+              const c = u.searchParams.get("c");
+              if (c) {
+                setOuvert(false);
+                router.push(`/dashboard/scanner?c=${c}`);
+                router.refresh();
+                return;
+              }
+            } catch {
+              // Pas une URL
+            }
+            setErreur("Ce QR code n'est pas un QR code client Walletiz.");
+          }
+        }, 300);
       } catch (e) {
         setErreur(
           "Impossible d'accéder à la caméra. Autorisez l'accès dans les réglages du navigateur."
@@ -78,17 +108,6 @@ export function ScannerCamera({ slugRestaurant }: { slugRestaurant?: string }) {
       if (stream) stream.getTracks().forEach((t) => t.stop());
     };
   }, [ouvert, router, slugRestaurant]);
-
-  if (supporte === false) {
-    return (
-      <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-        📷 Votre navigateur ne peut pas scanner directement. <strong>Ouvrez l&apos;
-        appareil photo natif de votre téléphone</strong> et pointez-le sur le QR
-        code du client : il détectera le QR et ouvrira directement cette page
-        avec le client identifié.
-      </div>
-    );
-  }
 
   return (
     <>
@@ -119,8 +138,10 @@ export function ScannerCamera({ slugRestaurant }: { slugRestaurant?: string }) {
               ref={videoRef}
               playsInline
               muted
+              autoPlay
               className="aspect-square w-full rounded-2xl object-cover"
             />
+            <canvas ref={canvasRef} className="hidden" />
             <div className="pointer-events-none absolute inset-8 rounded-2xl border-4 border-white/70" />
             <button
               type="button"
