@@ -189,7 +189,7 @@ export default function Vitrine() {
             {[
               {
                 num: "1",
-                emoji: "📷",
+                video: "/qrscan.webm",
                 titre: "Ils scannent",
                 desc: "Le client scanne le QR code affiché en caisse avec l'appareil photo de son téléphone. Aucune application requise.",
               },
@@ -211,9 +211,22 @@ export default function Vitrine() {
                 className="relative rounded-3xl border border-stone-200 bg-white p-8 shadow-sm transition hover:-translate-y-1 hover:border-bordeaux-300 hover:shadow-lg"
                 style={{ animationDelay: `${i * 0.15}s` }}
               >
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-bordeaux-800 to-bordeaux-600 text-2xl shadow-lg">
-                  {e.emoji}
-                </div>
+                {e.video ? (
+                  <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-bordeaux-800 to-bordeaux-600 shadow-lg">
+                    <video
+                      src={e.video}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="h-14 w-14 object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-bordeaux-800 to-bordeaux-600 text-2xl shadow-lg">
+                    {e.emoji}
+                  </div>
+                )}
                 <div className="absolute right-6 top-6 text-6xl font-black text-bordeaux-100">
                   {e.num}
                 </div>
