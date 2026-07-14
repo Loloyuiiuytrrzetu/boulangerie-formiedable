@@ -60,7 +60,12 @@ export default async function SuperAdmin() {
       <header className="border-b border-stone-200 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-bordeaux-950 text-lg text-white">⚙️</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/icon.png"
+              alt="Walletiz"
+              className="h-10 w-10 rounded-xl object-cover shadow-sm"
+            />
             <div>
               <p className="font-bold text-bordeaux-800">Walletiz — Super admin</p>
               <p className="text-xs text-stone-500">{user.email}</p>
