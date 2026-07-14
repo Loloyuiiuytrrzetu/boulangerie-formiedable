@@ -10,9 +10,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@lottiefiles/dotlottie-react": "^0.19.9",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.4",
     "jsqr": "^1.4.0",
+    "lottie-react": "^2.4.1",
     "next": "^15.3.3",
     "qrcode": "^1.5.4",
     "react": "^19.1.0",

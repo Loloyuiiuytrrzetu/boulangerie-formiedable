@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { HeroTampons, GrapheAnime, MockupCartes, NotifsAnimees } from "./VitrineAnimations";
 import { MenuMobile } from "./MenuMobile";
+import { LottieAnim } from "./LottieAnim";
 
 // Vitrine publique de Walletiz. Objectif : en 15 secondes, un visiteur
 // qui ne connaît pas le produit comprend ce que ça fait et clique soit
@@ -195,7 +196,7 @@ export default function Vitrine() {
               },
               {
                 num: "2",
-                emoji: "✍️",
+                lottie: "/signup.json",
                 titre: "Ils s'inscrivent",
                 desc: "Numéro de téléphone + prénom. En 10 secondes ils ont leur carte de fidélité. Aucun mot de passe à retenir.",
               },
@@ -221,6 +222,10 @@ export default function Vitrine() {
                       playsInline
                       className="h-14 w-14 object-cover"
                     />
+                  </div>
+                ) : e.lottie ? (
+                  <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-stone-200">
+                    <LottieAnim src={e.lottie} className="h-14 w-14" />
                   </div>
                 ) : (
                   <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-bordeaux-800 to-bordeaux-600 text-2xl shadow-lg">
