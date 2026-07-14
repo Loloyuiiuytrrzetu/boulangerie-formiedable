@@ -477,25 +477,24 @@ export default function Vitrine() {
 
       {/* ==================== TARIF ==================== */}
       <section id="tarif" className="py-20 sm:py-28">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="text-center">
             <p className="text-sm font-bold uppercase tracking-widest text-bordeaux-700">
               Tarif transparent
             </p>
             <h2 className="mt-3 text-3xl font-extrabold text-stone-900 sm:text-5xl">
-              Un seul plan, tout inclus.
+              Deux formules, un seul produit.
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-stone-600">
-              Pas de coût caché, pas d&apos;options à cocher, pas de commission
-              sur vos ventes. Un tarif clair, aussi simple que le reste.
+              Frais de mise en place unique de <strong>{PRIX_SETUP}€</strong>{" "}
+              (programmation, configuration, création de votre commerce), puis
+              choisissez votre rythme. Pas de coût caché, pas de commission.
             </p>
           </div>
 
-          <div className="mx-auto mt-14 max-w-xl">
-            <div
-              className="anim-glow relative overflow-hidden rounded-3xl border-2 border-bordeaux-200 bg-white p-8 shadow-2xl sm:p-10"
-            >
-              <div className="absolute -right-6 -top-6 h-32 w-32 rounded-full bg-bordeaux-100 opacity-40 blur-2xl" />
+          <div className="mx-auto mt-14 grid max-w-5xl gap-6 lg:grid-cols-2 lg:items-stretch">
+            {/* -------- Plan Pro mensuel -------- */}
+            <div className="relative flex flex-col rounded-3xl border-2 border-stone-200 bg-white p-8 shadow-sm transition hover:border-bordeaux-300 hover:shadow-lg sm:p-10">
               <div className="flex items-center gap-3">
                 <span className="inline-block rounded-full bg-bordeaux-800 px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
                   Plan Pro
@@ -504,54 +503,16 @@ export default function Vitrine() {
                   7 jours gratuits
                 </span>
               </div>
-              <div className="mt-6">
-                <p className="text-sm text-stone-500">Frais de mise en place</p>
-                <p className="text-4xl font-black text-bordeaux-800 sm:text-5xl">
-                  {PRIX_SETUP}€{" "}
-                  <span className="text-lg font-medium text-stone-500">
-                    une fois
-                  </span>
-                </p>
-                <p className="mt-1 text-xs text-stone-400">
-                  Programmation, configuration, création de votre commerce.
-                </p>
-              </div>
-              <div className="mt-6 rounded-2xl bg-bordeaux-50 p-5">
-                <p className="text-sm text-stone-600">
-                  Puis, après vos 7 jours d&apos;essai
-                </p>
-                <p className="text-4xl font-black text-bordeaux-800 sm:text-5xl">
-                  {PRIX_ABO}€{" "}
-                  <span className="text-lg font-medium text-stone-500">/ mois</span>
-                </p>
-                <p className="mt-1 text-xs text-stone-500">
-                  Sans engagement. Annulez en 1 clic depuis votre dashboard —
-                  aucun prélèvement si vous annulez avant la fin de la semaine
-                  d&apos;essai.
-                </p>
-              </div>
-
-              {/* Offre annuelle : -20% sur l'abonnement mensuel */}
-              <div className="mt-4 rounded-2xl border-2 border-green-300 bg-green-50 p-5">
-                <div className="flex items-center gap-2">
-                  <span className="rounded-full bg-green-600 px-3 py-1 text-xs font-bold uppercase tracking-widest text-white">
-                    -20%
-                  </span>
-                  <p className="text-sm font-semibold text-green-900">
-                    Ou payez à l&apos;année
-                  </p>
-                </div>
-                <p className="mt-3 text-3xl font-black text-green-900 sm:text-4xl">
-                  {Math.round(PRIX_ABO * 12 * 0.8)}€{" "}
-                  <span className="text-base font-medium text-green-800/70">
-                    / an
-                  </span>
-                </p>
-                <p className="mt-1 text-xs text-green-800/80">
-                  Soit <strong>{Math.round(PRIX_ABO * 0.8)}€/mois</strong> —
-                  vous économisez {Math.round(PRIX_ABO * 12 * 0.2)}€ par an.
-                </p>
-              </div>
+              <p className="mt-6 text-sm text-stone-500">Facturé chaque mois</p>
+              <p className="mt-1 text-5xl font-black text-bordeaux-800 sm:text-6xl">
+                {PRIX_ABO}€
+                <span className="text-lg font-medium text-stone-500"> / mois</span>
+              </p>
+              <p className="mt-2 text-sm text-stone-500">
+                Sans engagement. Annulez en 1 clic depuis votre dashboard —
+                aucun prélèvement si vous annulez avant la fin de la semaine
+                d&apos;essai.
+              </p>
 
               <ul className="mt-6 space-y-2.5 text-sm text-stone-700">
                 {[
@@ -574,16 +535,79 @@ export default function Vitrine() {
                 href={CALENDLY}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-8 flex w-full items-center justify-center gap-2 rounded-xl bg-bordeaux-800 px-6 py-4 text-base font-bold text-white shadow-lg transition hover:bg-bordeaux-700"
+                className="mt-auto flex w-full items-center justify-center gap-2 rounded-xl border-2 border-bordeaux-800 bg-white px-6 py-4 text-base font-bold text-bordeaux-800 transition hover:bg-bordeaux-50"
+                style={{ marginTop: "2rem" }}
               >
-                📅 Réserver un rendez-vous
-                <span>→</span>
+                Choisir le mensuel
               </a>
-              <p className="mt-3 text-center text-xs text-stone-400">
-                On vous appelle, on vous montre, vous décidez.
+            </div>
+
+            {/* -------- Plan Pro annuel (RECOMMANDÉ) -------- */}
+            <div className="anim-glow relative flex flex-col rounded-3xl border-2 border-bordeaux-800 bg-gradient-to-br from-white via-bordeaux-50/50 to-white p-8 shadow-2xl sm:p-10">
+              <span className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-bordeaux-800 px-5 py-1.5 text-xs font-bold uppercase tracking-widest text-white shadow-lg">
+                ⭐ Recommandé
+              </span>
+              <div className="absolute -right-6 -top-6 h-32 w-32 rounded-full bg-bordeaux-100 opacity-40 blur-2xl" />
+
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="inline-block rounded-full bg-bordeaux-800 px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
+                  Plan Pro annuel
+                </span>
+                <span className="inline-block rounded-full bg-green-600 px-3 py-1 text-xs font-bold uppercase tracking-widest text-white">
+                  -20%
+                </span>
+                <span className="inline-block rounded-full bg-green-100 px-3 py-1 text-xs font-bold uppercase tracking-widest text-green-800">
+                  7 jours gratuits
+                </span>
+              </div>
+
+              <p className="mt-6 text-sm text-stone-500">Facturé une fois par an</p>
+              <p className="mt-1 text-5xl font-black text-bordeaux-800 sm:text-6xl">
+                {Math.round(PRIX_ABO * 0.8)}€
+                <span className="text-lg font-medium text-stone-500"> / mois</span>
               </p>
+              <p className="mt-2 text-sm font-semibold text-green-800">
+                Soit {Math.round(PRIX_ABO * 12 * 0.8)}€ / an —{" "}
+                <span className="font-bold">économisez {Math.round(PRIX_ABO * 12 * 0.2)}€</span>
+              </p>
+              <p className="mt-2 text-xs text-stone-500">
+                Annulable à tout moment. Aucun prélèvement pendant votre semaine
+                d&apos;essai.
+              </p>
+
+              <ul className="mt-6 space-y-2.5 text-sm text-stone-700">
+                <li className="flex items-start gap-2 font-semibold text-bordeaux-800">
+                  <span className="mt-0.5">✓</span>
+                  <span>Tout ce qui est dans le plan mensuel</span>
+                </li>
+                {[
+                  "20% de réduction sur l'année",
+                  "Priorité sur les demandes de support",
+                  "Facture unique pour votre comptabilité",
+                ].map((a) => (
+                  <li key={a} className="flex items-start gap-2">
+                    <span className="mt-0.5 text-bordeaux-700">✓</span>
+                    <span>{a}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <a
+                href={CALENDLY}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-auto flex w-full items-center justify-center gap-2 rounded-xl bg-bordeaux-800 px-6 py-4 text-base font-bold text-white shadow-lg transition hover:bg-bordeaux-700"
+                style={{ marginTop: "2rem" }}
+              >
+                📅 Choisir l&apos;annuel <span>→</span>
+              </a>
             </div>
           </div>
+
+          <p className="mx-auto mt-6 max-w-xl text-center text-xs text-stone-400">
+            On vous appelle, on vous montre, vous décidez. Aucun paiement
+            demandé avant votre rendez-vous.
+          </p>
         </div>
       </section>
 
