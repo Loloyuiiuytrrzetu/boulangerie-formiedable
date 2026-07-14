@@ -493,7 +493,7 @@ export function NotifsAnimees() {
 
         <div className="space-y-2 px-3">
           <NotifCard delay={0} logoImg="/exemple-patir.png" nom="Pâtir Boulangerie" msg="Croissants -30% ce midi jusqu'à 14h !" />
-          <NotifCard delay={2.5} logo="☕" nom="Café du Coin" msg="Votre récompense vous attend ✨" />
+          <NotifCard delay={2.5} logoImg="/exemple-patir.png" nom="Pâtir Boulangerie" msg="Votre récompense vous attend ✨" />
         </div>
       </div>
     </IPhoneFrame>
