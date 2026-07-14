@@ -85,7 +85,7 @@ export function InstallationIOS({
               >
                 ⬆︎
               </span>{" "}
-              en bas de Safari
+              de Safari ou Chrome
             </span>
           </li>
           <li className="flex items-start gap-3">
@@ -96,8 +96,7 @@ export function InstallationIOS({
               2
             </span>
             <span>
-              Faites défiler et appuyez sur{" "}
-              <strong>« Sur l&apos;écran d&apos;accueil »</strong>
+              Cliquez sur <strong>« En voir plus »</strong>
             </span>
           </li>
           <li className="flex items-start gap-3">
@@ -108,8 +107,20 @@ export function InstallationIOS({
               3
             </span>
             <span>
-              Ouvrez ensuite l&apos;app {nomCommerce} depuis l&apos;icône
-              apparue sur votre écran d&apos;accueil
+              Faites défiler et cliquez sur{" "}
+              <strong>« Ajouter à l&apos;écran d&apos;accueil »</strong>
+            </span>
+          </li>
+          <li className="flex items-start gap-3">
+            <span
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
+              style={{ backgroundColor: couleur }}
+            >
+              4
+            </span>
+            <span>
+              Ouvrez l&apos;app {nomCommerce} depuis l&apos;icône apparue sur
+              votre écran d&apos;accueil
             </span>
           </li>
         </ol>
