@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { HeroTampons, GrapheAnime, MockupCartes, NotifsAnimees } from "./VitrineAnimations";
+import { MenuMobile } from "./MenuMobile";
 
 // Vitrine publique de Walletiz. Objectif : en 15 secondes, un visiteur
 // qui ne connaît pas le produit comprend ce que ça fait et clique soit
@@ -55,6 +56,7 @@ export default function Vitrine() {
             >
               Connexion
             </Link>
+            <MenuMobile />
           </div>
         </div>
       </nav>

@@ -103,6 +103,12 @@ html {
 }
 .anim-pulse { animation: pulse-doux 2.5s ease-in-out infinite; }
 
+@keyframes slide-right {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+.anim-slide-right { animation: slide-right 0.25s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
 @media (prefers-reduced-motion: reduce) {
   .anim-flotter, .anim-flotter-2, .anim-flotter-3,
   .anim-remplir, .anim-apparaitre, .anim-glow,
