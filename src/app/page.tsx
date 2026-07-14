@@ -354,10 +354,31 @@ export default function Vitrine() {
                 </span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="mt-0.5 text-bordeaux-700">✓</span>
+                <span className="mt-0.5 text-bordeaux-700">📱</span>
                 <span>
-                  <strong>iPhone & Android</strong> supportés (une fois la page
-                  ajoutée à l&apos;écran d&apos;accueil sur iPhone).
+                  <strong>Sur iPhone</strong>, pour recevoir les notifications
+                  push, le client doit ajouter votre page à son écran
+                  d&apos;accueil en 3 étapes :
+                  <ol className="mt-2 ml-1 list-decimal space-y-1 pl-4 text-sm text-stone-600">
+                    <li>
+                      Ouvrir votre page dans <strong>Safari</strong> ou{" "}
+                      <strong>Chrome</strong> et appuyer sur le bouton{" "}
+                      <strong>Partager</strong>.
+                    </li>
+                    <li>
+                      Cliquer sur <strong>« En voir plus »</strong>.
+                    </li>
+                    <li>
+                      Faire défiler et cliquer sur{" "}
+                      <strong>« Ajouter à l&apos;écran d&apos;accueil »</strong>.
+                    </li>
+                  </ol>
+                  <span className="mt-2 block text-xs text-stone-500">
+                    Une fois l&apos;icône ajoutée, il ouvre l&apos;app depuis son
+                    écran d&apos;accueil et accepte les notifications — c&apos;est
+                    tout. On lui affiche automatiquement ces instructions à sa
+                    première visite.
+                  </span>
                 </span>
               </li>
             </ul>
