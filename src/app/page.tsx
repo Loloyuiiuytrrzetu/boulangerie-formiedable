@@ -187,7 +187,7 @@ export default function Vitrine() {
           </div>
 
           <div className="mt-16 grid gap-8 md:grid-cols-3">
-            {[
+            {([
               {
                 num: "1",
                 video: "/qrscan.webm",
@@ -206,7 +206,7 @@ export default function Vitrine() {
                 titre: "Ils reviennent",
                 desc: "À chaque visite, un tampon. Carte pleine ? Ils choisissent leur récompense — pizza offerte, café gratuit, ce que vous voulez.",
               },
-            ].map((e, i) => (
+            ] as Array<{ num: string; titre: string; desc: string; video?: string; lottie?: string; emoji?: string }>).map((e, i) => (
               <div
                 key={e.num}
                 className="relative rounded-3xl border border-stone-200 bg-white p-8 shadow-sm transition hover:-translate-y-1 hover:border-bordeaux-300 hover:shadow-lg"
