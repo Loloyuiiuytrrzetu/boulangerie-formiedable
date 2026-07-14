@@ -132,7 +132,7 @@ export default function Vitrine() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-lg">✅</span>
-                <span>Mise en place en 15 min</span>
+                <span>Mise en place en moins de 72h</span>
               </div>
             </div>
           </div>
