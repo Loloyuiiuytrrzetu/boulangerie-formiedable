@@ -426,9 +426,9 @@ export default function Vitrine() {
           </div>
 
           <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {[
+            {([
               { icone: "🎨", titre: "Aux couleurs de votre commerce", desc: "Logo, image de fond, 24 couleurs au choix. Une page 100% à l'image de votre marque." },
-              { icone: "🃏", titre: "Plusieurs cartes par commerce", desc: "Carte café, carte midi, carte week-end… Créez toutes les cartes que vous voulez, avec leurs règles propres." },
+              { lottie: "/payment.json", titre: "Plusieurs cartes par commerce", desc: "Carte café, carte midi, carte week-end… Créez toutes les cartes que vous voulez, avec leurs règles propres." },
               { icone: "🎁", titre: "Récompenses au choix", desc: "Le client choisit sa récompense parmi celles que vous proposez. Avec photos pour donner envie." },
               { icone: "🔔", titre: "Notifications push", desc: "Envoyez une promo qui apparaît sur l'écran de vos clients. Programmable à l'heure locale." },
               { icone: "📊", titre: "Statistiques exactes", desc: "Graphiques semaine et année. Compteurs au jour près selon votre fuseau horaire." },
@@ -436,14 +436,20 @@ export default function Vitrine() {
               { icone: "👥", titre: "Sous-compte employé", desc: "Donnez un accès limité : uniquement le scanner, pas le reste du dashboard." },
               { icone: "🌍", titre: "7 langues côté client", desc: "Français, anglais, espagnol, allemand, chinois, arabe, russe. Chaque client choisit la sienne." },
               { icone: "📱", titre: "Installable comme une app", desc: "Vos clients peuvent ajouter votre page à leur écran d'accueil. Une vraie app, sans passer par le store." },
-            ].map((f) => (
+            ] as Array<{ icone?: string; lottie?: string; titre: string; desc: string }>).map((f) => (
               <div
                 key={f.titre}
                 className="group rounded-2xl border border-stone-200 bg-white p-6 transition hover:-translate-y-1 hover:border-bordeaux-300 hover:shadow-lg"
               >
-                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-bordeaux-50 text-2xl transition group-hover:scale-110 group-hover:bg-bordeaux-100">
-                  {f.icone}
-                </div>
+                {f.lottie ? (
+                  <div className="mb-3 flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-white ring-1 ring-stone-200 transition group-hover:scale-110">
+                    <LottieAnim src={f.lottie} className="h-12 w-12" />
+                  </div>
+                ) : (
+                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-bordeaux-50 text-2xl transition group-hover:scale-110 group-hover:bg-bordeaux-100">
+                    {f.icone}
+                  </div>
+                )}
                 <h3 className="text-base font-bold text-stone-900">{f.titre}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-stone-600">{f.desc}</p>
               </div>
