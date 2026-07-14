@@ -586,13 +586,19 @@ export function EspaceClient({
               slug={slug}
               couleur={couleur}
               recompense={recompensesEnAttente[0]}
+              onAnimation={() => setAnimationEnCours(animation)}
             />
           ) : (
             <>
               <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-4 pb-2 sm:mx-0 sm:px-0">
                 {recompensesEnAttente.map((r) => (
                   <div key={r.id} className="w-[92%] shrink-0 snap-center sm:w-[85%]">
-                    <RecompenseAttenteCard slug={slug} couleur={couleur} recompense={r} />
+                    <RecompenseAttenteCard
+                      slug={slug}
+                      couleur={couleur}
+                      recompense={r}
+                      onAnimation={() => setAnimationEnCours(animation)}
+                    />
                   </div>
                 ))}
               </div>
@@ -735,10 +741,12 @@ function RecompenseAttenteCard({
   slug,
   couleur,
   recompense,
+  onAnimation,
 }: {
   slug: string;
   couleur: string;
   recompense: RecompenseGagnee;
+  onAnimation?: () => void;
 }) {
   const [erreur, setErreur] = useState<string | null>(null);
   const [enCours, startTransition] = useTransition();
@@ -750,7 +758,12 @@ function RecompenseAttenteCard({
     startTransition(async () => {
       const r = await utiliserRecompense(slug, recompense.id);
       if (r?.erreur) setErreur(r.erreur);
-      else setUtilisee(true);
+      else {
+        setUtilisee(true);
+        // Rejoue l'animation de récompense choisie par le restaurateur
+        // pour valider visuellement l'utilisation devant le commerçant.
+        onAnimation?.();
+      }
     });
   }
   if (utilisee) return null;
