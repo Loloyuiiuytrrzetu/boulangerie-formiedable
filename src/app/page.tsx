@@ -470,9 +470,14 @@ export default function Vitrine() {
               className="anim-glow relative overflow-hidden rounded-3xl border-2 border-bordeaux-200 bg-white p-8 shadow-2xl sm:p-10"
             >
               <div className="absolute -right-6 -top-6 h-32 w-32 rounded-full bg-bordeaux-100 opacity-40 blur-2xl" />
-              <span className="inline-block rounded-full bg-bordeaux-800 px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
-                Formule unique
-              </span>
+              <div className="flex items-center gap-3">
+                <span className="inline-block rounded-full bg-bordeaux-800 px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
+                  Plan Pro
+                </span>
+                <span className="inline-block rounded-full bg-green-100 px-3 py-1 text-xs font-bold uppercase tracking-widest text-green-800">
+                  7 jours gratuits
+                </span>
+              </div>
               <div className="mt-6">
                 <p className="text-sm text-stone-500">Frais de mise en place</p>
                 <p className="text-4xl font-black text-bordeaux-800 sm:text-5xl">
@@ -486,13 +491,17 @@ export default function Vitrine() {
                 </p>
               </div>
               <div className="mt-6 rounded-2xl bg-bordeaux-50 p-5">
-                <p className="text-sm text-stone-600">Puis chaque mois</p>
+                <p className="text-sm text-stone-600">
+                  Puis, après vos 7 jours d&apos;essai
+                </p>
                 <p className="text-4xl font-black text-bordeaux-800 sm:text-5xl">
                   {PRIX_ABO}€{" "}
                   <span className="text-lg font-medium text-stone-500">/ mois</span>
                 </p>
                 <p className="mt-1 text-xs text-stone-500">
-                  Sans engagement de durée. Résiliation à tout moment.
+                  Sans engagement. Annulez en 1 clic depuis votre dashboard —
+                  aucun prélèvement si vous annulez avant la fin de la semaine
+                  d&apos;essai.
                 </p>
               </div>
 

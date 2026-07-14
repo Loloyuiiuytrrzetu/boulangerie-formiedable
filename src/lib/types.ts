@@ -16,6 +16,13 @@ export type Restaurant = {
   texte_recompense: string;
   actif: boolean;
   tampon_restaurateur_only: boolean;
+  abonnement_statut: "essai" | "actif" | "annule" | "expire";
+  essai_fin_le: string | null;
+  abonnement_debut_le: string | null;
+  abonnement_prochaine_facture_le: string | null;
+  abonnement_annule_le: string | null;
+  stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
   created_at: string;
 };
 

@@ -60,6 +60,7 @@ export function LigneRestaurant({ restaurant }: { restaurant: RestaurantAvecStat
                 désactivé
               </span>
             )}
+            <BadgeAbonnement statut={restaurant.abonnement_statut} />
           </div>
           <p className="mt-0.5 truncate text-xs text-stone-500">
             {restaurant.email} · inscrit le{" "}
@@ -106,5 +107,27 @@ export function LigneRestaurant({ restaurant }: { restaurant: RestaurantAvecStat
       </div>
       {erreur && <p className="mt-2 text-xs text-red-600">{erreur}</p>}
     </li>
+  );
+}
+
+function BadgeAbonnement({
+  statut,
+}: {
+  statut: RestaurantAvecStats["abonnement_statut"];
+}) {
+  const config: Record<
+    RestaurantAvecStats["abonnement_statut"],
+    { label: string; classes: string }
+  > = {
+    essai: { label: "Essai", classes: "bg-green-100 text-green-800" },
+    actif: { label: "Pro", classes: "bg-bordeaux-100 text-bordeaux-800" },
+    annule: { label: "Annulé", classes: "bg-amber-100 text-amber-800" },
+    expire: { label: "Expiré", classes: "bg-red-100 text-red-800" },
+  };
+  const c = config[statut] ?? config.essai;
+  return (
+    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${c.classes}`}>
+      {c.label}
+    </span>
   );
 }

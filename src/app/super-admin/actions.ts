@@ -107,12 +107,18 @@ export async function creerRestaurateur(formData: FormData) {
     .maybeSingle();
   if (existant) slug = `${slug}-${Math.random().toString(36).slice(2, 6)}`;
 
+  // Chaque nouveau commerce démarre avec 7 jours d'essai gratuit.
+  const essaiFin = new Date();
+  essaiFin.setDate(essaiFin.getDate() + 7);
+
   const { error: erreurResto } = await admin.from("restaurants").insert({
     owner_id: userId,
     nom: nomCommerce,
     slug,
     timezone,
     animation_recompense: "etoiles",
+    abonnement_statut: "essai",
+    essai_fin_le: essaiFin.toISOString(),
   });
   if (erreurResto) {
     // Rollback : supprime l'utilisateur auth qu'on vient de créer pour

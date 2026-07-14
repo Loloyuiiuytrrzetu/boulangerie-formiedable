@@ -11,6 +11,7 @@ export function NavigationSidebar({ userEmail }: { userEmail: string }) {
     { href: "#sections-page", label: "Sections de ma page", icone: "🗂️" },
     { href: "#souscompte", label: "Sous-compte", icone: "👥" },
     { href: "#notifications", label: "Notifications push", icone: "🔔" },
+    { href: "#abonnement", label: "Mon abonnement", icone: "💳" },
     { href: "#qr-code", label: "QR code", icone: "📱" },
   ];
 

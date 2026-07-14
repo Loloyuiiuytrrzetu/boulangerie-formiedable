@@ -21,6 +21,7 @@ import { GraphiquesTampons } from "./GraphiquesTampons";
 import { BandeauImpersonation } from "./BandeauImpersonation";
 import { NavigationSidebar } from "./NavigationSidebar";
 import { NotificationsPushSection, type NotificationPush } from "./NotificationsPushSection";
+import { AbonnementSection } from "./AbonnementSection";
 import { getVapidPublicKey } from "@/lib/push";
 
 export default async function Dashboard() {
@@ -238,6 +239,9 @@ export default async function Dashboard() {
                     nbClientsTotal={nbClients}
                     pushConfigure={Boolean(getVapidPublicKey())}
                   />
+                </div>
+                <div id="abonnement">
+                  <AbonnementSection restaurant={restaurant} />
                 </div>
 
                 <aside
