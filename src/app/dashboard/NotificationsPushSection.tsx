@@ -254,31 +254,96 @@ export function NotificationsPushSection({
       )}
 
       {envoyees.length > 0 && (
-        <div>
-          <h3 className="mb-2 text-sm font-bold text-stone-800">Historique</h3>
-          <ul className="space-y-2">
-            {envoyees.slice(0, 10).map((n) => (
-              <li
-                key={n.id}
-                className="rounded-xl border border-stone-200 bg-white p-3"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <p className="truncate text-sm font-semibold text-stone-900">
-                    {n.titre}
-                  </p>
-                  <span className="shrink-0 text-xs text-stone-500">
-                    {formaterDate(n.envoyee_at, timezone)}
-                  </span>
-                </div>
-                <p className="mt-0.5 truncate text-xs text-stone-600">{n.message}</p>
-                <p className="mt-1 text-xs text-stone-500">
-                  Envoyée à {n.nb_envois} abonné{n.nb_envois > 1 ? "s" : ""}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <HistoriqueEnvoyees envoyees={envoyees} timezone={timezone} />
       )}
     </section>
+  );
+}
+
+// Historique déroulant : par défaut on affiche uniquement la dernière
+// notification envoyée. Clic sur la carte ou sur la flèche → révèle
+// jusqu'à 10 anciennes notifications.
+function HistoriqueEnvoyees({
+  envoyees,
+  timezone,
+}: {
+  envoyees: NotificationPush[];
+  timezone: string;
+}) {
+  const [ouvert, setOuvert] = useState(false);
+  const dernier = envoyees[0];
+  const anciens = envoyees.slice(1, 10);
+
+  function LigneNotif({ n }: { n: NotificationPush }) {
+    return (
+      <div className="rounded-xl border border-stone-200 bg-white p-3">
+        <div className="flex items-center justify-between gap-3">
+          <p className="truncate text-sm font-semibold text-stone-900">{n.titre}</p>
+          <span className="shrink-0 text-xs text-stone-500">
+            {formaterDate(n.envoyee_at, timezone)}
+          </span>
+        </div>
+        <p className="mt-0.5 truncate text-xs text-stone-600">{n.message}</p>
+        <p className="mt-1 text-xs text-stone-500">
+          Envoyée à {n.nb_envois} abonné{n.nb_envois > 1 ? "s" : ""}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <h3 className="mb-2 text-sm font-bold text-stone-800">Historique</h3>
+      <button
+        type="button"
+        onClick={() => anciens.length > 0 && setOuvert(!ouvert)}
+        className={`block w-full text-left transition ${
+          anciens.length > 0 ? "cursor-pointer hover:opacity-80" : ""
+        }`}
+        disabled={anciens.length === 0}
+      >
+        <div className="rounded-xl border border-stone-200 bg-white p-3">
+          <div className="flex items-center justify-between gap-3">
+            <p className="truncate text-sm font-semibold text-stone-900">
+              {dernier.titre}
+            </p>
+            <span className="flex shrink-0 items-center gap-1 text-xs text-stone-500">
+              {formaterDate(dernier.envoyee_at, timezone)}
+              {anciens.length > 0 && (
+                <span
+                  className={`ml-1 transition-transform ${ouvert ? "rotate-180" : ""}`}
+                >
+                  ▾
+                </span>
+              )}
+            </span>
+          </div>
+          <p className="mt-0.5 truncate text-xs text-stone-600">{dernier.message}</p>
+          <p className="mt-1 text-xs text-stone-500">
+            Envoyée à {dernier.nb_envois} abonné{dernier.nb_envois > 1 ? "s" : ""}
+          </p>
+        </div>
+      </button>
+      {ouvert && anciens.length > 0 && (
+        <ul className="mt-2 space-y-2">
+          {anciens.map((n) => (
+            <li key={n.id}>
+              <LigneNotif n={n} />
+            </li>
+          ))}
+        </ul>
+      )}
+      {anciens.length > 0 && (
+        <button
+          type="button"
+          onClick={() => setOuvert(!ouvert)}
+          className="mt-2 text-xs font-medium text-bordeaux-700 hover:underline"
+        >
+          {ouvert
+            ? "Masquer les anciennes notifications"
+            : `Voir les ${anciens.length} anciennes notification${anciens.length > 1 ? "s" : ""}`}
+        </button>
+      )}
+    </div>
   );
 }
