@@ -350,8 +350,7 @@ export default function Vitrine() {
               <li className="flex items-start gap-3">
                 <span className="mt-0.5 text-bordeaux-700">✓</span>
                 <span>
-                  <strong>Votre logo</strong> apparaît sur la notification —
-                  jamais celui de Walletiz.
+                  <strong>Votre logo</strong> apparaît sur la notification.
                 </span>
               </li>
               <li className="flex items-start gap-3">
