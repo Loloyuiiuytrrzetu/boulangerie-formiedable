@@ -106,8 +106,7 @@ export default function Vitrine() {
             </h1>
             <p className="mt-6 max-w-xl text-lg text-stone-600 sm:text-xl">
               Vos clients scannent un QR code, obtiennent leurs tampons en
-              temps réel, et reviennent. Zéro friction, zéro papier, zéro
-              carte à imprimer.
+              temps réel, et reviennent encore et encore.
             </p>
             <div className="mt-10 flex flex-col items-start gap-3 sm:flex-row">
               <a
@@ -153,7 +152,7 @@ export default function Vitrine() {
       <section className="border-y border-bordeaux-100 bg-bordeaux-50/40 py-6">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-4 px-4 text-center sm:grid-cols-4 sm:px-6">
           {[
-            { chiffre: "10 s", label: "d'inscription client" },
+            { chiffre: "10 s", label: "pour l'inscription d'un client" },
             { chiffre: "0 €", label: "de matériel à acheter" },
             { chiffre: "7", label: "langues côté client" },
             { chiffre: "24/7", label: "notifications programmables" },
