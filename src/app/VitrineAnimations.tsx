@@ -175,8 +175,49 @@ function Particules() {
   );
 }
 
+// ---------------------------------------------------------------------------
+// iPhone : cadre complet et réaliste (côtés, boutons, Dynamic Island, home
+// indicator). L'écran est passé en children. On voit tout le téléphone,
+// jamais un demi-appareil coupé.
+// ---------------------------------------------------------------------------
+export function IPhoneFrame({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`relative mx-auto w-[280px] shrink-0 sm:w-[320px] ${className}`}
+    >
+      {/* Boutons latéraux gauche : mode silence + volume + / - */}
+      <div className="pointer-events-none absolute -left-[3px] top-[110px] h-8 w-[3px] rounded-l bg-stone-800" />
+      <div className="pointer-events-none absolute -left-[3px] top-[160px] h-14 w-[3px] rounded-l bg-stone-800" />
+      <div className="pointer-events-none absolute -left-[3px] top-[230px] h-14 w-[3px] rounded-l bg-stone-800" />
+      {/* Bouton latéral droit : power */}
+      <div className="pointer-events-none absolute -right-[3px] top-[170px] h-20 w-[3px] rounded-r bg-stone-800" />
+
+      {/* Corps du téléphone (bordure épaisse noire = châssis) */}
+      <div className="relative rounded-[3rem] border-[12px] border-stone-900 bg-stone-900 shadow-2xl">
+        {/* Écran */}
+        <div className="relative overflow-hidden rounded-[2.2rem] bg-white">
+          {/* Dynamic Island */}
+          <div className="pointer-events-none absolute left-1/2 top-2 z-20 h-6 w-24 -translate-x-1/2 rounded-full bg-stone-900" />
+
+          {/* Contenu de l'écran */}
+          {children}
+
+          {/* Home indicator */}
+          <div className="pointer-events-none absolute bottom-1.5 left-1/2 z-20 h-1 w-24 -translate-x-1/2 rounded-full bg-stone-900/60" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Mockup d'un téléphone montrant une carte qui se remplit — pour la
-// section "temps réel".
+// section "temps réel". iPhone complet.
 export function MockupCartes() {
   const [progression, setProgression] = useState(3);
 
@@ -188,147 +229,274 @@ export function MockupCartes() {
   }, []);
 
   return (
-    <div className="relative">
-      {/* Cadre téléphone */}
-      <div className="relative w-64 rounded-[2.5rem] border-[10px] border-stone-900 bg-white shadow-2xl sm:w-72">
-        <div className="absolute left-1/2 top-2 h-1.5 w-16 -translate-x-1/2 rounded-full bg-stone-900" />
-        <div className="overflow-hidden rounded-[1.8rem]">
-          {/* En-tête du commerce */}
-          <div
-            className="px-4 py-6 text-center text-white"
-            style={{ backgroundColor: "#0d4b3e" }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/exemple-patir.png"
-              alt="Pâtir"
-              className="mx-auto h-14 w-14 rounded-2xl border-2 border-white/20 object-cover"
-            />
-            <p className="mt-2 text-sm font-bold">Pâtir Boulangerie</p>
-          </div>
-
-          {/* Onglets */}
-          <div className="bg-stone-100 p-1.5">
-            <div
-              className="rounded-xl py-1.5 text-center text-xs font-semibold text-white"
-              style={{ backgroundColor: "#0d4b3e" }}
-            >
-              Cartes de fidélité
-            </div>
-          </div>
-
-          {/* Carte */}
-          <div className="p-4">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-bold text-stone-900">Carte pain</p>
-              <span className="text-xs font-bold" style={{ color: "#0d4b3e" }}>
-                {progression} / 8
-              </span>
-            </div>
-            <div className="mt-3 grid grid-cols-4 gap-2">
-              {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
-                <div
-                  key={`${i}-${i < progression}`}
-                  className={`relative aspect-square overflow-hidden rounded-lg border-2 ${
-                    i < progression ? "border-[#0d4b3e]" : "border-dashed border-stone-300"
-                  } bg-stone-50`}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/exemple-patir.png"
-                    alt=""
-                    className={`h-full w-full object-cover transition ${
-                      i < progression ? "anim-remplir" : "opacity-25 grayscale"
-                    }`}
-                  />
-                </div>
-              ))}
-            </div>
-            <div
-              className="mt-3 rounded-lg py-1.5 text-center text-xs font-semibold text-white"
-              style={{ backgroundColor: "#0d4b3e" }}
-            >
-              {progression === 8 ? "🎉 Récompense !" : "1 pain offert à la 8ème"}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Graphique animé pour la section "statistiques temps réel".
-export function GrapheAnime() {
-  const jours = ["L", "M", "M", "J", "V", "S", "D"];
-  const valeurs = [45, 62, 38, 71, 88, 95, 52];
-  const max = Math.max(...valeurs);
-
-  return (
-    <div className="w-full max-w-md rounded-3xl border border-stone-200 bg-white p-6 shadow-2xl">
-      <div className="mb-4 flex items-center justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">
-            Cette semaine
-          </p>
-          <p className="mt-1 text-2xl font-black text-bordeaux-800">451 tampons</p>
-        </div>
-        <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-800">
-          +18%
+    <IPhoneFrame>
+      {/* Barre de statut (heure + icônes) */}
+      <div className="flex items-center justify-between px-6 pt-3 pb-1 text-[11px] font-semibold text-stone-900">
+        <span>9:41</span>
+        <span className="flex items-center gap-1">
+          <span>▂▄▆</span>
+          <span>􀛨</span>
+          <span>􀛩</span>
         </span>
       </div>
 
-      <div className="flex h-40 items-end justify-between gap-2">
-        {valeurs.map((v, i) => (
-          <div key={i} className="flex flex-1 flex-col items-center gap-2">
-            <div className="flex h-32 w-full items-end">
-              <div
-                className="anim-barre w-full rounded-t-md bg-gradient-to-t from-bordeaux-800 to-bordeaux-500"
-                style={{
-                  height: `${(v / max) * 100}%`,
-                  animationDelay: `${i * 0.08}s`,
-                }}
-              />
-            </div>
-            <span className="text-xs font-medium text-stone-500">{jours[i]}</span>
-          </div>
-        ))}
+      {/* En-tête du commerce */}
+      <div
+        className="px-4 pb-6 pt-8 text-center text-white"
+        style={{ backgroundColor: "#0d4b3e" }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/exemple-patir.png"
+          alt="Pâtir"
+          className="mx-auto h-14 w-14 rounded-2xl border-2 border-white/20 object-cover"
+        />
+        <p className="mt-2 text-sm font-bold">Pâtir Boulangerie</p>
       </div>
 
-      <div className="mt-5 grid grid-cols-2 gap-3 border-t border-stone-100 pt-4">
-        <div>
-          <p className="text-xs text-stone-500">Clients fidèles</p>
-          <p className="text-xl font-bold text-stone-900">128</p>
-        </div>
-        <div>
-          <p className="text-xs text-stone-500">Aujourd&apos;hui</p>
-          <p className="text-xl font-bold text-stone-900">
-            <span className="anim-pulse inline-block h-2 w-2 rounded-full bg-green-500 align-middle" />{" "}
-            52
-          </p>
+      {/* Onglets */}
+      <div className="bg-stone-100 p-1.5">
+        <div
+          className="rounded-xl py-1.5 text-center text-xs font-semibold text-white"
+          style={{ backgroundColor: "#0d4b3e" }}
+        >
+          Cartes de fidélité
         </div>
       </div>
+
+      {/* Carte */}
+      <div className="p-4 pb-8">
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-bold text-stone-900">Carte pain</p>
+          <span className="text-xs font-bold" style={{ color: "#0d4b3e" }}>
+            {progression} / 8
+          </span>
+        </div>
+        <div className="mt-3 grid grid-cols-4 gap-2">
+          {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+            <div
+              key={`${i}-${i < progression}`}
+              className={`relative aspect-square overflow-hidden rounded-lg border-2 ${
+                i < progression ? "border-[#0d4b3e]" : "border-dashed border-stone-300"
+              } bg-stone-50`}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/exemple-patir.png"
+                alt=""
+                className={`h-full w-full object-cover transition ${
+                  i < progression ? "anim-remplir" : "opacity-25 grayscale"
+                }`}
+              />
+            </div>
+          ))}
+        </div>
+        <div
+          className="mt-3 rounded-lg py-1.5 text-center text-xs font-semibold text-white"
+          style={{ backgroundColor: "#0d4b3e" }}
+        >
+          {progression === 8 ? "🎉 Récompense !" : "1 pain offert à la 8ème"}
+        </div>
+      </div>
+    </IPhoneFrame>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Graphique animé pour la section "statistiques" — reprend EXACTEMENT le
+// design du dashboard restaurateur (GraphiquesTampons) : deux courbes SVG
+// avec grille, zone dégradée, points et valeurs. Chiffres volontairement
+// gonflés pour la vitrine.
+// ---------------------------------------------------------------------------
+
+const TRAIT = "#7A1E2E";
+const nfFr = new Intl.NumberFormat("fr-FR");
+function formatNb(n: number) {
+  return nfFr.format(n);
+}
+
+function Courbe({
+  labels,
+  valeurs,
+  couleur = TRAIT,
+  height = 220,
+}: {
+  labels: string[];
+  valeurs: number[];
+  couleur?: string;
+  height?: number;
+}) {
+  const largeur = 900;
+  const maxBrut = Math.max(1, ...valeurs);
+  const puissance = Math.pow(10, Math.floor(Math.log10(maxBrut)));
+  const bases = [1, 2, 5, 10];
+  const max = bases.map((b) => b * puissance).find((v) => v >= maxBrut) ?? maxBrut;
+  const paddingBas = 30;
+  const paddingHaut = 28;
+  const paddingLat = formatNb(max).length > 4 ? 70 : 50;
+
+  const zoneLargeur = largeur - paddingLat - 20;
+  const points = valeurs.map((v, i) => {
+    const x =
+      paddingLat + (i / Math.max(1, labels.length - 1)) * zoneLargeur;
+    const y =
+      paddingHaut +
+      (1 - v / max) * (height - paddingBas - paddingHaut);
+    return { x, y };
+  });
+  const path = points
+    .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`)
+    .join(" ");
+
+  return (
+    <div className="w-full">
+      <svg
+        viewBox={`0 0 ${largeur} ${height}`}
+        className="w-full"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        {[0, 1, 2, 3, 4].map((i) => {
+          const y = paddingHaut + (i / 4) * (height - paddingBas - paddingHaut);
+          const valeur = Math.round(max - (i / 4) * max);
+          return (
+            <g key={i}>
+              <line
+                x1={paddingLat}
+                x2={largeur - 10}
+                y1={y}
+                y2={y}
+                stroke="#e7e5e4"
+                strokeDasharray="4 4"
+              />
+              <text
+                x={paddingLat - 8}
+                y={y + 4}
+                textAnchor="end"
+                fontSize={11}
+                fill="#78716c"
+                fontWeight={500}
+              >
+                {formatNb(valeur)}
+              </text>
+            </g>
+          );
+        })}
+        <path
+          d={`${path} L ${points[points.length - 1]?.x ?? 0} ${height - paddingBas} L ${paddingLat} ${height - paddingBas} Z`}
+          fill={couleur}
+          opacity={0.12}
+        />
+        <path d={path} fill="none" stroke={couleur} strokeWidth={2.5} />
+        {points.map((p, i) => (
+          <g key={i}>
+            <circle cx={p.x} cy={p.y} r={4} fill={couleur} />
+            {valeurs[i] > 0 && (
+              <text
+                x={p.x}
+                y={p.y - 8}
+                textAnchor="middle"
+                fontSize={11}
+                fill={couleur}
+                fontWeight={600}
+              >
+                {formatNb(valeurs[i])}
+              </text>
+            )}
+          </g>
+        ))}
+        {labels.map((l, i) => (
+          <text
+            key={i}
+            x={points[i]?.x ?? 0}
+            y={height - 8}
+            textAnchor="middle"
+            fontSize={10}
+            fill="#78716c"
+          >
+            {l}
+          </text>
+        ))}
+      </svg>
     </div>
   );
 }
 
-// Téléphone qui reçoit des notifications push en boucle.
+export function GrapheAnime() {
+  // Chiffres gonflés pour la vitrine (gros commerce imaginaire)
+  const semaineJours = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
+  const semaineValeurs = [820, 1420, 1180, 1560, 1780, 2340, 2010];
+
+  const moisNoms = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"];
+  const moisValeurs = [4200, 4800, 5600, 6300, 7100, 7900, 8600, 8200, 7400, 6800, 6100, 5300];
+
+  const totalSemaine = semaineValeurs.reduce((s, v) => s + v, 0);
+  const totalAnnee = moisValeurs.reduce((s, v) => s + v, 0);
+
+  return (
+    <section className="w-full max-w-xl space-y-4">
+      <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-xl">
+        <div className="mb-2 flex items-baseline justify-between">
+          <h3 className="text-sm font-bold text-stone-900">Tampons cette semaine</h3>
+          <span className="text-xs text-stone-500">
+            Total : <strong style={{ color: TRAIT }}>{formatNb(totalSemaine)}</strong>
+          </span>
+        </div>
+        <Courbe labels={semaineJours} valeurs={semaineValeurs} />
+        <p className="mt-1 text-xs text-stone-400">
+          Les 7 derniers jours (aujourd&apos;hui à droite).
+        </p>
+      </div>
+
+      <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-xl">
+        <div className="mb-2 flex items-baseline justify-between gap-2">
+          <h3 className="text-sm font-bold text-stone-900">Tampons par mois</h3>
+          <div className="flex items-center gap-2">
+            <span className="rounded-lg border border-stone-300 bg-white px-2 py-1 text-xs font-semibold text-stone-700">
+              2026
+            </span>
+            <span className="text-xs text-stone-500">
+              Total : <strong style={{ color: TRAIT }}>{formatNb(totalAnnee)}</strong>
+            </span>
+          </div>
+        </div>
+        <Courbe labels={moisNoms} valeurs={moisValeurs} />
+        <p className="mt-1 text-xs text-stone-400">
+          Historique conservé — vous pouvez revenir sur les années précédentes.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+// Téléphone qui reçoit des notifications push — iPhone complet.
 export function NotifsAnimees() {
   return (
-    <div className="relative w-64 sm:w-72">
-      <div className="relative rounded-[2.5rem] border-[10px] border-stone-900 bg-gradient-to-b from-stone-800 to-stone-900 pb-8 shadow-2xl">
-        <div className="absolute left-1/2 top-2 h-1.5 w-16 -translate-x-1/2 rounded-full bg-black" />
-        <div className="mt-6 px-4 pb-4">
+    <IPhoneFrame>
+      {/* Écran verrouillé sombre */}
+      <div className="bg-gradient-to-b from-stone-800 to-stone-900 pb-10">
+        {/* Barre de statut blanche (lock screen) */}
+        <div className="flex items-center justify-between px-6 pt-3 pb-1 text-[11px] font-semibold text-white">
+          <span>9:41</span>
+          <span className="flex items-center gap-1 opacity-80">
+            <span>▂▄▆</span>
+            <span>􀛨</span>
+            <span>􀛩</span>
+          </span>
+        </div>
+
+        <div className="mt-8 px-4 pb-4">
           <p className="text-center text-xs font-medium text-white/70">
             lun. 14 juil.
           </p>
           <p className="text-center text-6xl font-thin text-white">14:30</p>
         </div>
+
         <div className="space-y-2 px-3">
           <NotifCard delay={0} logo="🥐" nom="Boulangerie Bio" msg="Croissants -30% ce midi jusqu'à 14h !" />
           <NotifCard delay={2.5} logo="☕" nom="Café du Coin" msg="Votre récompense vous attend ✨" />
         </div>
       </div>
-    </div>
+    </IPhoneFrame>
   );
 }
 

@@ -33,6 +33,9 @@ export default function Vitrine() {
             <a href="#tarif" className="text-sm font-medium text-stone-600 hover:text-bordeaux-700">
               Tarif
             </a>
+            <a href="#sites-web" className="text-sm font-medium text-stone-600 hover:text-bordeaux-700">
+              Sites web
+            </a>
             <a href="#contact" className="text-sm font-medium text-stone-600 hover:text-bordeaux-700">
               Contact
             </a>
@@ -536,6 +539,109 @@ export default function Vitrine() {
               <p className="mt-3 text-center text-xs text-stone-400">
                 On vous appelle, on vous montre, vous décidez.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ==================== SITES WEB SUR MESURE ==================== */}
+      <section
+        id="sites-web"
+        className="relative overflow-hidden border-y border-bordeaux-100 bg-gradient-to-br from-bordeaux-50/60 via-white to-white py-20 sm:py-28"
+      >
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="mx-auto max-w-3xl text-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-bordeaux-200 bg-white px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-bordeaux-800 shadow-sm">
+              🛠️ Nouveau service
+            </span>
+            <h2 className="mt-5 text-3xl font-extrabold text-stone-900 sm:text-5xl">
+              Création de site web{" "}
+              <span className="bg-gradient-to-r from-bordeaux-800 to-bordeaux-500 bg-clip-text text-transparent">
+                sur mesure
+              </span>
+            </h2>
+            <p className="mt-4 text-lg text-stone-600">
+              Vous voulez plus qu&apos;une carte de fidélité ? On code aussi
+              votre site vitrine, votre boutique en ligne, votre système de
+              réservation. <strong>On s&apos;adapte à votre demande</strong> :
+              vous nous dites ce dont vous avez besoin, on fait le reste.
+            </p>
+          </div>
+
+          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                icone: "🏪",
+                titre: "Site vitrine",
+                desc: "Une page ou plusieurs, pour présenter votre commerce, votre carte, vos horaires. Rapide, léger, mobile-first.",
+              },
+              {
+                icone: "🛒",
+                titre: "Boutique en ligne",
+                desc: "Vendez en ligne : commande à emporter, livraison, click & collect, paiement en ligne. On intègre Stripe pour vous.",
+              },
+              {
+                icone: "📅",
+                titre: "Réservation de table",
+                desc: "Vos clients réservent en ligne, vous validez depuis votre téléphone. Sans commission par couvert.",
+              },
+              {
+                icone: "🎨",
+                titre: "Refonte de site",
+                desc: "Vous avez déjà un site vieillissant ? On le refait, moderne, rapide, aux couleurs de votre marque.",
+              },
+              {
+                icone: "📱",
+                titre: "App web installable",
+                desc: "Votre site s'installe sur l'écran d'accueil de vos clients comme une vraie appli — sans passer par l'App Store.",
+              },
+              {
+                icone: "🔗",
+                titre: "Intégration Walletiz",
+                desc: "Votre nouveau site et vos cartes de fidélité communiquent : un seul écosystème, une seule expérience.",
+              },
+            ].map((f) => (
+              <div
+                key={f.titre}
+                className="group rounded-2xl border border-stone-200 bg-white p-6 transition hover:-translate-y-1 hover:border-bordeaux-300 hover:shadow-lg"
+              >
+                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-bordeaux-50 text-2xl transition group-hover:scale-110 group-hover:bg-bordeaux-100">
+                  {f.icone}
+                </div>
+                <h3 className="text-base font-bold text-stone-900">{f.titre}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-stone-600">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mx-auto mt-14 max-w-2xl rounded-3xl border-2 border-bordeaux-200 bg-white p-8 text-center shadow-xl sm:p-10">
+            <p className="text-sm font-bold uppercase tracking-widest text-bordeaux-700">
+              Devis gratuit, sans engagement
+            </p>
+            <h3 className="mt-3 text-2xl font-extrabold text-stone-900 sm:text-3xl">
+              Chaque projet est différent.
+            </h3>
+            <p className="mt-3 text-stone-600">
+              Le tarif dépend de ce que vous voulez faire. On discute d&apos;abord
+              de votre besoin, puis on vous propose un devis clair, tout compris.
+              Vous n&apos;engagez rien tant que vous n&apos;avez pas signé.
+            </p>
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <a
+                href={CALENDLY}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-bordeaux-800 px-6 py-4 text-base font-bold text-white shadow-lg transition hover:bg-bordeaux-700 sm:w-auto"
+              >
+                📅 Prendre rendez-vous
+                <span>→</span>
+              </a>
+              <a
+                href={`mailto:${EMAIL}?subject=Demande%20de%20site%20web%20sur%20mesure`}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-stone-200 bg-white px-6 py-4 text-base font-semibold text-stone-700 transition hover:border-bordeaux-300 hover:text-bordeaux-700 sm:w-auto"
+              >
+                ✉️ Nous contacter
+              </a>
             </div>
           </div>
         </div>
