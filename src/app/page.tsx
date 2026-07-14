@@ -407,7 +407,7 @@ export default function Vitrine() {
 
           <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {[
-              { icone: "🎨", titre: "Aux couleurs de votre commerce", desc: "Logo, image de fond, 24 couleurs au choix. Vos clients voient VOTRE marque, pas Walletiz." },
+              { icone: "🎨", titre: "Aux couleurs de votre commerce", desc: "Logo, image de fond, 24 couleurs au choix. Une page 100% à l'image de votre marque." },
               { icone: "🃏", titre: "Plusieurs cartes par commerce", desc: "Carte café, carte midi, carte week-end… Créez toutes les cartes que vous voulez, avec leurs règles propres." },
               { icone: "🎁", titre: "Récompenses au choix", desc: "Le client choisit sa récompense parmi celles que vous proposez. Avec photos pour donner envie." },
               { icone: "🔔", titre: "Notifications push", desc: "Envoyez une promo qui apparaît sur l'écran de vos clients. Programmable à l'heure locale." },
