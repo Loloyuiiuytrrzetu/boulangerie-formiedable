@@ -34,3 +34,80 @@ html {
 [id] {
   scroll-margin-top: 1rem;
 }
+
+/* ===== Animations vitrine ===== */
+@keyframes flotter {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-12px) rotate(2deg); }
+}
+.anim-flotter { animation: flotter 6s ease-in-out infinite; }
+.anim-flotter-2 { animation: flotter 7s ease-in-out infinite; animation-delay: -2s; }
+.anim-flotter-3 { animation: flotter 8s ease-in-out infinite; animation-delay: -4s; }
+
+@keyframes remplir-tampon {
+  0% { transform: scale(0) rotate(0deg); opacity: 0; }
+  40% { transform: scale(1.15) rotate(180deg); opacity: 1; }
+  60% { transform: scale(1) rotate(360deg); opacity: 1; }
+  100% { transform: scale(1) rotate(360deg); opacity: 1; }
+}
+.anim-remplir { animation: remplir-tampon 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+@keyframes apparaitre-bas {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.anim-apparaitre { animation: apparaitre-bas 0.8s ease-out both; }
+
+@keyframes glow-bordeaux {
+  0%, 100% { box-shadow: 0 0 40px rgba(122, 30, 46, 0.3); }
+  50% { box-shadow: 0 0 80px rgba(122, 30, 46, 0.55); }
+}
+.anim-glow { animation: glow-bordeaux 3s ease-in-out infinite; }
+
+@keyframes particule {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  10% { opacity: 0.6; }
+  100% { transform: translateY(-100vh) translateX(var(--dx, 0px)); opacity: 0; }
+}
+.anim-particule { animation: particule linear infinite; }
+
+@keyframes grandir-barre {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+.anim-barre {
+  transform-origin: bottom;
+  animation: grandir-barre 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes glisser-notif {
+  0% { transform: translateY(-120%) scale(0.9); opacity: 0; }
+  15% { transform: translateY(0) scale(1); opacity: 1; }
+  85% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-120%) scale(0.9); opacity: 0; }
+}
+.anim-notif { animation: glisser-notif 5s ease-in-out infinite; }
+
+@keyframes gradient-bouger {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.anim-gradient {
+  background-size: 200% 200%;
+  animation: gradient-bouger 8s ease infinite;
+}
+
+@keyframes pulse-doux {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.anim-pulse { animation: pulse-doux 2.5s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-flotter, .anim-flotter-2, .anim-flotter-3,
+  .anim-remplir, .anim-apparaitre, .anim-glow,
+  .anim-particule, .anim-barre, .anim-notif,
+  .anim-gradient, .anim-pulse {
+    animation: none !important;
+  }
+}
