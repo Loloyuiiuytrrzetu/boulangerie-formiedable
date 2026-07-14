@@ -492,7 +492,7 @@ export function NotifsAnimees() {
         </div>
 
         <div className="space-y-2 px-3">
-          <NotifCard delay={0} logo="🥐" nom="Boulangerie Bio" msg="Croissants -30% ce midi jusqu'à 14h !" />
+          <NotifCard delay={0} logoImg="/exemple-patir.png" nom="Pâtir Boulangerie" msg="Croissants -30% ce midi jusqu'à 14h !" />
           <NotifCard delay={2.5} logo="☕" nom="Café du Coin" msg="Votre récompense vous attend ✨" />
         </div>
       </div>
@@ -503,11 +503,13 @@ export function NotifsAnimees() {
 function NotifCard({
   delay,
   logo,
+  logoImg,
   nom,
   msg,
 }: {
   delay: number;
-  logo: string;
+  logo?: string;
+  logoImg?: string;
   nom: string;
   msg: string;
 }) {
@@ -517,9 +519,18 @@ function NotifCard({
       style={{ animationDelay: `${delay}s` }}
     >
       <div className="flex items-start gap-2.5">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-bordeaux-100 text-lg">
-          {logo}
-        </div>
+        {logoImg ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={logoImg}
+            alt=""
+            className="h-9 w-9 shrink-0 rounded-lg object-cover"
+          />
+        ) : (
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-bordeaux-100 text-lg">
+            {logo}
+          </div>
+        )}
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-2">
             <p className="truncate text-xs font-bold text-stone-900">{nom}</p>
