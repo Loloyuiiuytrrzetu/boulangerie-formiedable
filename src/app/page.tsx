@@ -444,31 +444,8 @@ export default function Vitrine() {
         />
         <div className="relative mx-auto max-w-4xl px-4 text-center sm:px-6">
           <h2 className="text-3xl font-extrabold sm:text-5xl">
-            Pour tous les commerces qui vivent des habitués.
+            Vos clients reviennent encore et encore grâce à Walletiz.
           </h2>
-          <div className="mt-10 flex flex-wrap justify-center gap-3">
-            {[
-              "☕ Cafés",
-              "🥐 Boulangeries",
-              "🍔 Fast-food",
-              "🍕 Pizzérias",
-              "🍣 Restaurants",
-              "🍦 Glaciers",
-              "🍺 Bars",
-              "🍰 Pâtisseries",
-              "💈 Barbiers",
-              "🥗 Traiteurs",
-              "🧋 Bubble tea",
-              "🍜 Ramen",
-            ].map((t) => (
-              <span
-                key={t}
-                className="rounded-full border border-white/20 bg-white/5 px-5 py-2 text-sm font-medium backdrop-blur"
-              >
-                {t}
-              </span>
-            ))}
-          </div>
         </div>
       </section>
 
