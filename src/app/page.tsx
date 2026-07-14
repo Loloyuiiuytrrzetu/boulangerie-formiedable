@@ -202,7 +202,7 @@ export default function Vitrine() {
               },
               {
                 num: "3",
-                emoji: "🎁",
+                lottie: "/welcome.json",
                 titre: "Ils reviennent",
                 desc: "À chaque visite, un tampon. Carte pleine ? Ils choisissent leur récompense — pizza offerte, café gratuit, ce que vous voulez.",
               },
