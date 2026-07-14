@@ -97,7 +97,7 @@ export type TamponHistorique = {
 export type Section = {
   id: string;
   restaurant_id: string;
-  type: "cartes" | "info" | "personnalisee";
+  type: "cartes" | "info" | "personnalisee" | "scan";
   titre: string;
   texte: string | null;
   lien_url: string | null;

@@ -12,6 +12,7 @@ import {
 import { AnimationRecompense } from "./Animation";
 import { AbonnementPush } from "./AbonnementPush";
 import { InstallationIOS } from "./InstallationIOS";
+import { ScannerClient } from "./ScannerClient";
 import { iconeEmoji } from "@/lib/icons";
 import type { RecompenseGagnee, Section } from "@/lib/types";
 
@@ -458,7 +459,7 @@ export function EspaceClient({
   // Fallback : si la table sections est vide (migration incomplète),
   // on affiche quand même les 2 onglets par défaut pour ne jamais avoir
   // une page vide côté client.
-  const sectionsAffichees: Section[] =
+  const sectionsBase: Section[] =
     sections.length > 0
       ? sections
       : [
@@ -488,6 +489,31 @@ export function EspaceClient({
             created_at: "",
           },
         ];
+
+  // Onglet virtuel "Scan" toujours inséré juste après le premier onglet
+  // Cartes — le client peut y scanner lui-même le QR de caisse pour
+  // recevoir un tampon (règles habituelles : 1/jour, mode manuel respecté).
+  const sectionScan: Section = {
+    id: "virtual-scan",
+    restaurant_id: "",
+    type: "scan",
+    titre: "Scan",
+    texte: null,
+    lien_url: null,
+    lien_libelle: null,
+    ordre: 1,
+    supprimable: false,
+    created_at: "",
+  };
+  const indexCartes = sectionsBase.findIndex((s) => s.type === "cartes");
+  const sectionsAffichees: Section[] =
+    indexCartes >= 0
+      ? [
+          ...sectionsBase.slice(0, indexCartes + 1),
+          sectionScan,
+          ...sectionsBase.slice(indexCartes + 1),
+        ]
+      : [sectionScan, ...sectionsBase];
   const [ongletActif, setOngletActif] = useState<string>(sectionsAffichees[0].id);
   const cleRefus = `walletiz_notif_refus_${slug}`;
   const [proposerNotifs, setProposerNotifs] = useState(false);
@@ -678,6 +704,19 @@ function ContenuSection({
             />
           ))
         )}
+      </section>
+    );
+  }
+
+  if (section.type === "scan") {
+    return (
+      <section className="rounded-3xl border border-stone-200 bg-white p-6 shadow-xl">
+        <ScannerClient
+          slug={slug}
+          couleur={couleur}
+          cartes={cartes}
+          onAnimation={() => onAnimation("")}
+        />
       </section>
     );
   }

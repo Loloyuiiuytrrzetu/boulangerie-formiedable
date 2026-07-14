@@ -327,6 +327,29 @@ export async function modifierIdentite(slug: string, formData: FormData) {
   return { ok: true as const };
 }
 
+// --- Scan direct depuis l'onglet "Scan" du client : le client scanne le
+//     QR code du commerce lui-même depuis l'app. On pose le cookie de scan
+//     valide puis on attribue immédiatement 1 tampon sur la carte
+//     sélectionnée (ou la seule carte active si le commerçant n'en a qu'une).
+export async function scannerEtAjouterTampon(slug: string, carteId: string) {
+  const restaurant = await chargerRestaurant(slug);
+  if (!restaurant) return { erreur: "Commerce introuvable." as const };
+
+  // Pose le cookie "scan valide 15 min" comme si le client passait par
+  // /scan/[slug], puis délègue à ajouterTampon qui gère toutes les règles
+  // (anti-fraude, 1 tampon/jour, etc.)
+  const cookieStore = await cookies();
+  cookieStore.set(nomCookieScan(restaurant.id), "1", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 60 * 15,
+    path: "/",
+  });
+
+  return ajouterTampon(slug, carteId);
+}
+
 // --- Désinscription : supprime le compte client complètement.
 //     Les tampons, cartes en cours et récompenses en attente sont perdus.
 //     Le cookie de reconnaissance est effacé pour que le prochain scan
