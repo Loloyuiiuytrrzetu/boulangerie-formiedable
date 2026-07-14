@@ -6,9 +6,45 @@ import type { TamponHistorique } from "@/lib/types";
 // Palette du composant : bordeaux + reprise de la couleur principale.
 const TRAIT = "#7A1E2E";
 
-// Chaîne "YYYY-MM-DD" -> Date locale
-function parseDate(s: string) {
-  return new Date(s + "T00:00:00");
+// ---------------------------------------------------------------------------
+// TIMEZONE — Tout le calcul de "aujourd'hui" et "derniers 7 jours" est fait
+// dans le fuseau horaire DU COMMERCE (pas du navigateur), et la date-clé
+// utilisée est la même chaîne "YYYY-MM-DD" que celle stockée en base
+// (date_attribution). Historiquement, mélanger new Date() côté client
+// (fuseau du navigateur) avec des date_attribution stockées en fuseau
+// commerce faisait "glisser" les tampons d'un jour à l'autre pour tout
+// utilisateur consultant depuis un fuseau différent du commerce.
+// ---------------------------------------------------------------------------
+
+// Date du jour dans un fuseau horaire donné, au format "YYYY-MM-DD".
+function dateDuJour(timezone: string): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+}
+
+// Soustrait n jours à une date ISO "YYYY-MM-DD" (arithmétique UTC pour
+// éviter tout effet de fuseau horaire ou d'heure d'été).
+function isoMoinsJours(iso: string, n: number): string {
+  const [y, m, d] = iso.split("-").map(Number);
+  const t = Date.UTC(y, m - 1, d) - n * 86400000;
+  return new Date(t).toISOString().slice(0, 10);
+}
+
+// Jour de la semaine (0 = dimanche, 6 = samedi) pour une date ISO — calculé
+// en UTC pour rester cohérent quel que soit le navigateur.
+function jourSemaine(iso: string): number {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+}
+
+// Chaîne "YYYY-MM-DD" -> Date UTC (pour extraire année/mois sans dérive)
+function parseDateUTC(s: string): Date {
+  const [y, m, d] = s.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d));
 }
 
 // Formate un nombre pour l'axe / les points :
@@ -136,46 +172,54 @@ function Courbe({
 export function GraphiquesTampons({
   historique,
   couleur = TRAIT,
+  timezone = "Europe/Paris",
 }: {
   historique: TamponHistorique[];
   couleur?: string;
+  timezone?: string;
 }) {
-  // Années disponibles dans l'historique (au moins l'année en cours)
-  const anneeCourante = new Date().getFullYear();
+  // "Aujourd'hui" côté commerce (pas côté navigateur). Toute la suite est
+  // calculée à partir de cette chaîne ISO, jamais d'un objet Date local.
+  const aujourdHuiIso = useMemo(() => dateDuJour(timezone), [timezone]);
+
+  // Années disponibles dans l'historique (au moins l'année en cours au sens
+  // du fuseau du commerce).
+  const anneeCourante = parseDateUTC(aujourdHuiIso).getUTCFullYear();
   const annees = useMemo(() => {
     const set = new Set<number>([anneeCourante]);
-    historique.forEach((h) => set.add(parseDate(h.date_attribution).getFullYear()));
-    return Array.from(set).sort((a, b) => b - a); // descending
+    historique.forEach((h) =>
+      set.add(parseDateUTC(h.date_attribution).getUTCFullYear())
+    );
+    return Array.from(set).sort((a, b) => b - a);
   }, [historique, anneeCourante]);
 
   const [annee, setAnnee] = useState(anneeCourante);
 
-  // Graphique 1 : 7 derniers jours (aujourd'hui inclus)
+  // Graphique 1 : 7 derniers jours (aujourd'hui inclus) — dans le fuseau
+  // du commerce, avec des ISO strictement égales à celles de la base.
   const semaine = useMemo(() => {
     const jours: string[] = [];
     const valeurs: number[] = [];
     const jourNoms = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
-    const aujourdHui = new Date();
     for (let i = 6; i >= 0; i--) {
-      const d = new Date(aujourdHui);
-      d.setDate(d.getDate() - i);
-      const iso = d.toISOString().slice(0, 10);
-      jours.push(jourNoms[d.getDay()]);
+      const iso = isoMoinsJours(aujourdHuiIso, i);
+      jours.push(jourNoms[jourSemaine(iso)]);
       const total = historique
         .filter((h) => h.date_attribution === iso)
         .reduce((s, h) => s + h.nombre, 0);
       valeurs.push(total);
     }
     return { jours, valeurs };
-  }, [historique]);
+  }, [historique, aujourdHuiIso]);
 
-  // Graphique 2 : 12 mois de l'année sélectionnée
+  // Graphique 2 : 12 mois de l'année sélectionnée — mois calculé en UTC
+  // à partir de la date_attribution (elle-même stockée en fuseau commerce).
   const mois = useMemo(() => {
     const noms = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"];
     const valeurs = new Array(12).fill(0) as number[];
     historique.forEach((h) => {
-      const d = parseDate(h.date_attribution);
-      if (d.getFullYear() === annee) valeurs[d.getMonth()] += h.nombre;
+      const d = parseDateUTC(h.date_attribution);
+      if (d.getUTCFullYear() === annee) valeurs[d.getUTCMonth()] += h.nombre;
     });
     return { noms, valeurs };
   }, [historique, annee]);

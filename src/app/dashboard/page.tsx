@@ -51,6 +51,7 @@ export default async function Dashboard() {
   let nbAbonnes = 0;
   let nbClients = 0;
   let nbTampons = 0;
+  let aujourdHui = dateDuJour(restaurant?.timezone ?? "Europe/Paris");
   if (restaurant) {
     const [resCartes, resRecompenses, resClients, resSc, resSections] = await Promise.all([
       supabase
@@ -92,7 +93,7 @@ export default async function Dashboard() {
     // Tampons distribués aujourd'hui uniquement, selon le fuseau horaire du
     // commerce. Chaque jour à minuit local, ce compteur repart de zéro tout
     // seul — sans opération de maintenance, c'est un filtre à la lecture.
-    const aujourdHui = dateDuJour(restaurant.timezone ?? "Europe/Paris");
+    aujourdHui = dateDuJour(restaurant.timezone ?? "Europe/Paris");
     nbTampons = historique
       .filter((h) => h.date_attribution === aujourdHui)
       .reduce((somme, h) => somme + h.nombre, 0);
@@ -213,6 +214,7 @@ export default async function Dashboard() {
                   <GraphiquesTampons
                     historique={historique}
                     couleur={restaurant.couleur}
+                    timezone={restaurant.timezone ?? "Europe/Paris"}
                   />
                 </div>
                 <div id="commerce">
@@ -223,6 +225,7 @@ export default async function Dashboard() {
                     cartes={cartes}
                     recompenses={recompenses}
                     nomCommerce={restaurant.nom}
+                    aujourdHui={aujourdHui}
                   />
                 </div>
                 <div id="sections-page">

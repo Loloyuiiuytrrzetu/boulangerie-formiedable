@@ -357,9 +357,11 @@ function LigneRecompense({ recompense }: { recompense: Recompense }) {
 function BlocCarte({
   carte,
   recompenses,
+  aujourdHui,
 }: {
   carte: Carte;
   recompenses: Recompense[];
+  aujourdHui: string;
 }) {
   const router = useRouter();
   const [ouvert, setOuvert] = useState(false);
@@ -418,9 +420,11 @@ function BlocCarte({
     });
   }
 
+  // "Expirée" = calculé côté fuseau du commerce (jamais côté navigateur),
+  // sinon une carte peut apparaître expirée un jour avant/après selon
+  // l'endroit d'où on consulte.
   const expiree =
-    carte.date_expiration !== null &&
-    carte.date_expiration < new Date().toISOString().slice(0, 10);
+    carte.date_expiration !== null && carte.date_expiration < aujourdHui;
 
   return (
     <div className="rounded-2xl border border-stone-200 bg-white">
@@ -553,10 +557,12 @@ export function CartesSection({
   cartes,
   recompenses,
   nomCommerce,
+  aujourdHui,
 }: {
   cartes: Carte[];
   recompenses: Recompense[];
   nomCommerce: string;
+  aujourdHui: string;
 }) {
   const router = useRouter();
   const [creation, setCreation] = useState(false);
@@ -623,6 +629,7 @@ export function CartesSection({
             key={carte.id}
             carte={carte}
             recompenses={recompenses.filter((r) => r.carte_id === carte.id)}
+            aujourdHui={aujourdHui}
           />
         ))
       )}
