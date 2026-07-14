@@ -26,12 +26,15 @@ export function HeroTampons() {
       <div className="absolute left-1/2 top-1/2 w-72 -translate-x-1/2 -translate-y-1/2 sm:w-80">
         <div className="anim-glow rounded-3xl border border-stone-200 bg-white p-5 shadow-2xl">
           <div className="flex items-center gap-3 border-b border-stone-100 pb-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-bordeaux-800 text-lg text-white">
-              🥐
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/exemple-patir.png"
+              alt="Pâtir"
+              className="h-10 w-10 shrink-0 rounded-xl object-cover"
+            />
             <div>
               <p className="font-bold text-stone-900">Carte de fidélité</p>
-              <p className="text-xs text-stone-500">Café du Coin</p>
+              <p className="text-xs text-stone-500">Pâtir Boulangerie</p>
             </div>
             <span className="ml-auto text-sm font-bold text-bordeaux-800">
               {tampons} / 6
@@ -44,7 +47,7 @@ export function HeroTampons() {
           </div>
           <div className="mt-4 rounded-xl bg-bordeaux-50 p-2.5 text-center">
             <p className="text-xs font-semibold text-bordeaux-800">
-              {tampons === 6 ? "🎉 Récompense débloquée !" : "1 café offert à la 6ème visite"}
+              {tampons === 6 ? "🎉 Récompense débloquée !" : "1 pain offert à la 6ème visite"}
             </p>
           </div>
         </div>
@@ -119,14 +122,23 @@ export function HeroTampons() {
 function Case({ rempli, index }: { rempli: boolean; index: number }) {
   return (
     <div
-      className={`aspect-square rounded-xl border-2 ${
+      className={`relative aspect-square overflow-hidden rounded-xl border-2 ${
         rempli
-          ? "border-bordeaux-800 bg-bordeaux-800"
-          : "border-dashed border-stone-200 bg-stone-50"
-      } flex items-center justify-center text-lg`}
+          ? "border-bordeaux-800"
+          : "border-dashed border-stone-300"
+      } bg-stone-50`}
       key={`${rempli}-${index}`}
     >
-      {rempli && <span className="anim-remplir text-white">✓</span>}
+      {/* Logo Pâtir : gris (grayscale + opacity) quand vide, couleur normale
+          + petite animation "pop" quand la case se remplit. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/exemple-patir.png"
+        alt=""
+        className={`h-full w-full object-cover transition ${
+          rempli ? "anim-remplir" : "opacity-25 grayscale"
+        }`}
+      />
     </div>
   );
 }
@@ -182,16 +194,25 @@ export function MockupCartes() {
         <div className="absolute left-1/2 top-2 h-1.5 w-16 -translate-x-1/2 rounded-full bg-stone-900" />
         <div className="overflow-hidden rounded-[1.8rem]">
           {/* En-tête du commerce */}
-          <div className="bg-bordeaux-800 px-4 py-6 text-center text-white">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-2xl">
-              🥐
-            </div>
-            <p className="mt-2 text-sm font-bold">Boulangerie du Coin</p>
+          <div
+            className="px-4 py-6 text-center text-white"
+            style={{ backgroundColor: "#0d4b3e" }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/exemple-patir.png"
+              alt="Pâtir"
+              className="mx-auto h-14 w-14 rounded-2xl border-2 border-white/20 object-cover"
+            />
+            <p className="mt-2 text-sm font-bold">Pâtir Boulangerie</p>
           </div>
 
           {/* Onglets */}
           <div className="bg-stone-100 p-1.5">
-            <div className="rounded-xl bg-bordeaux-800 py-1.5 text-center text-xs font-semibold text-white">
+            <div
+              className="rounded-xl py-1.5 text-center text-xs font-semibold text-white"
+              style={{ backgroundColor: "#0d4b3e" }}
+            >
               Cartes de fidélité
             </div>
           </div>
@@ -199,8 +220,8 @@ export function MockupCartes() {
           {/* Carte */}
           <div className="p-4">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-bold text-stone-900">Carte café</p>
-              <span className="text-xs font-bold text-bordeaux-800">
+              <p className="text-sm font-bold text-stone-900">Carte pain</p>
+              <span className="text-xs font-bold" style={{ color: "#0d4b3e" }}>
                 {progression} / 8
               </span>
             </div>
@@ -208,20 +229,26 @@ export function MockupCartes() {
               {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
                 <div
                   key={`${i}-${i < progression}`}
-                  className={`aspect-square rounded-lg border-2 ${
-                    i < progression
-                      ? "border-bordeaux-800 bg-bordeaux-800"
-                      : "border-dashed border-stone-200 bg-stone-50"
-                  } flex items-center justify-center text-xs`}
+                  className={`relative aspect-square overflow-hidden rounded-lg border-2 ${
+                    i < progression ? "border-[#0d4b3e]" : "border-dashed border-stone-300"
+                  } bg-stone-50`}
                 >
-                  {i < progression && (
-                    <span className="anim-remplir text-white">☕</span>
-                  )}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/exemple-patir.png"
+                    alt=""
+                    className={`h-full w-full object-cover transition ${
+                      i < progression ? "anim-remplir" : "opacity-25 grayscale"
+                    }`}
+                  />
                 </div>
               ))}
             </div>
-            <div className="mt-3 rounded-lg bg-bordeaux-50 py-1.5 text-center text-xs font-semibold text-bordeaux-800">
-              {progression === 8 ? "🎉 Récompense !" : "1 café offert à la 8ème"}
+            <div
+              className="mt-3 rounded-lg py-1.5 text-center text-xs font-semibold text-white"
+              style={{ backgroundColor: "#0d4b3e" }}
+            >
+              {progression === 8 ? "🎉 Récompense !" : "1 pain offert à la 8ème"}
             </div>
           </div>
         </div>
