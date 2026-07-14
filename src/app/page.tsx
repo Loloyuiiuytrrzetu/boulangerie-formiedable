@@ -535,8 +535,7 @@ export default function Vitrine() {
                 href={CALENDLY}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-auto flex w-full items-center justify-center gap-2 rounded-xl border-2 border-bordeaux-800 bg-white px-6 py-4 text-base font-bold text-bordeaux-800 transition hover:bg-bordeaux-50"
-                style={{ marginTop: "2rem" }}
+                className="mt-auto flex w-full items-center justify-center gap-2 rounded-xl border-2 border-bordeaux-800 bg-white px-6 py-4 text-base font-bold text-bordeaux-800 transition hover:bg-bordeaux-50 lg:pt-4"
               >
                 Choisir le mensuel
               </a>
@@ -545,7 +544,7 @@ export default function Vitrine() {
             {/* -------- Plan Pro annuel (RECOMMANDÉ) -------- */}
             <div className="anim-glow relative flex flex-col rounded-3xl border-2 border-bordeaux-800 bg-gradient-to-br from-white via-bordeaux-50/50 to-white p-8 shadow-2xl sm:p-10">
               <span className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-bordeaux-800 px-5 py-1.5 text-xs font-bold uppercase tracking-widest text-white shadow-lg">
-                ⭐ Recommandé
+                Recommandé
               </span>
               <div className="absolute -right-6 -top-6 h-32 w-32 rounded-full bg-bordeaux-100 opacity-40 blur-2xl" />
 
@@ -583,7 +582,6 @@ export default function Vitrine() {
                 {[
                   "20% de réduction sur l'année",
                   "Priorité sur les demandes de support",
-                  "Facture unique pour votre comptabilité",
                 ].map((a) => (
                   <li key={a} className="flex items-start gap-2">
                     <span className="mt-0.5 text-bordeaux-700">✓</span>
@@ -597,7 +595,6 @@ export default function Vitrine() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-auto flex w-full items-center justify-center gap-2 rounded-xl bg-bordeaux-800 px-6 py-4 text-base font-bold text-white shadow-lg transition hover:bg-bordeaux-700"
-                style={{ marginTop: "2rem" }}
               >
                 📅 Choisir l&apos;annuel <span>→</span>
               </a>
