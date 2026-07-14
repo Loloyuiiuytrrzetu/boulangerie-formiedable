@@ -266,8 +266,9 @@ export default function Vitrine() {
               <li className="flex items-start gap-3">
                 <span className="mt-0.5 text-bordeaux-700">✓</span>
                 <span>
-                  <strong>Anti-triche</strong> : 1 tampon max par jour, reset à
-                  minuit heure locale de votre commerce.
+                  <strong>Vous êtes aux commandes</strong> : choisissez qu&apos;un
+                  scan donne <strong>un tampon pour une carte</strong>, ou{" "}
+                  <strong>un tampon pour toutes vos cartes</strong> à la fois.
                 </span>
               </li>
               <li className="flex items-start gap-3">
