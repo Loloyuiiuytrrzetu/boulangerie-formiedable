@@ -13,6 +13,8 @@ import { AnimationRecompense } from "./Animation";
 import { AbonnementPush } from "./AbonnementPush";
 import { InstallationIOS } from "./InstallationIOS";
 import { ScannerClient } from "./ScannerClient";
+import { useLangue } from "@/lib/langue";
+import { LANGUES } from "@/lib/i18n";
 import { iconeEmoji } from "@/lib/icons";
 import type { RecompenseGagnee, Section } from "@/lib/types";
 
@@ -745,8 +747,8 @@ function ContenuSection({
             </p>
           </>
         )}
+        <SelecteurLangue />
         <ModifierIdentite slug={slug} identiteActuelle={identiteClient} />
-        <DesactivationNotifs slug={slug} restaurantId={restaurantId} />
         <BoutonDesinscription slug={slug} couleur={couleur} />
       </section>
     );
@@ -1087,6 +1089,31 @@ function BoutonDesinscription({
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// Sélecteur de langue — tout en haut de l'onglet Info (au-dessus du nom
+// et prénom). Le choix est mémorisé dans localStorage et appliqué
+// instantanément à toute la page côté client.
+function SelecteurLangue() {
+  const { langue, setLangue } = useLangue();
+  return (
+    <div className="mb-2">
+      <label className="mb-1.5 block text-sm font-medium text-stone-700">
+        Langue / Language / Idioma
+      </label>
+      <select
+        value={langue}
+        onChange={(e) => setLangue(e.target.value as (typeof LANGUES)[number]["code"])}
+        className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:outline-none"
+      >
+        {LANGUES.map((l) => (
+          <option key={l.code} value={l.code}>
+            {l.drapeau} {l.nom}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }

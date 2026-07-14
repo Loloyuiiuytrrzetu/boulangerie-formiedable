@@ -341,7 +341,7 @@ function HistoriqueEnvoyees({
         >
           {ouvert
             ? "Masquer les anciennes notifications"
-            : `Voir les ${anciens.length} anciennes notification${anciens.length > 1 ? "s" : ""}`}
+            : "Voir les anciennes notifications"}
         </button>
       )}
     </div>
