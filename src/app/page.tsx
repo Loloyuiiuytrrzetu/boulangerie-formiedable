@@ -531,6 +531,28 @@ export default function Vitrine() {
                 </p>
               </div>
 
+              {/* Offre annuelle : -20% sur l'abonnement mensuel */}
+              <div className="mt-4 rounded-2xl border-2 border-green-300 bg-green-50 p-5">
+                <div className="flex items-center gap-2">
+                  <span className="rounded-full bg-green-600 px-3 py-1 text-xs font-bold uppercase tracking-widest text-white">
+                    -20%
+                  </span>
+                  <p className="text-sm font-semibold text-green-900">
+                    Ou payez à l&apos;année
+                  </p>
+                </div>
+                <p className="mt-3 text-3xl font-black text-green-900 sm:text-4xl">
+                  {Math.round(PRIX_ABO * 12 * 0.8)}€{" "}
+                  <span className="text-base font-medium text-green-800/70">
+                    / an
+                  </span>
+                </p>
+                <p className="mt-1 text-xs text-green-800/80">
+                  Soit <strong>{Math.round(PRIX_ABO * 0.8)}€/mois</strong> —
+                  vous économisez {Math.round(PRIX_ABO * 12 * 0.2)}€ par an.
+                </p>
+              </div>
+
               <ul className="mt-6 space-y-2.5 text-sm text-stone-700">
                 {[
                   "Cartes de fidélité illimitées",
@@ -539,9 +561,7 @@ export default function Vitrine() {
                   "Sous-compte employé inclus",
                   "Statistiques temps réel",
                   "7 langues côté client",
-                  "Système manuel anti-fraude",
                   "Support par email et téléphone",
-                  "Mises à jour et améliorations offertes",
                 ].map((a) => (
                   <li key={a} className="flex items-start gap-2">
                     <span className="mt-0.5 text-bordeaux-700">✓</span>
