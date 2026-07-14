@@ -17,7 +17,7 @@ export default function Vitrine() {
   return (
     <main className="min-h-screen bg-white text-stone-800">
       {/* ==================== NAV ==================== */}
-      <nav className="sticky top-0 z-40 border-b border-stone-100 bg-white/85 backdrop-blur-md">
+      <nav className="sticky top-0 z-40 border-b border-stone-100 bg-white/95 shadow-sm backdrop-blur-md supports-[backdrop-filter]:bg-white/85">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
           <Link href="/" className="flex items-center gap-2.5">
             {/* eslint-disable-next-line @next/next/no-img-element */}

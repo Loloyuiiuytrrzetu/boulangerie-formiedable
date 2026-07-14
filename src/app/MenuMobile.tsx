@@ -62,14 +62,11 @@ export function MenuMobile() {
             className="absolute inset-0 bg-stone-900/30 backdrop-blur-md"
           />
 
-          {/* Panneau verre dépoli (glassmorphism) qui glisse depuis la droite.
+          {/* Panneau bordeaux plein qui glisse depuis la droite.
               inset-y-0 + h-dvh évite le bug h-full sur iOS Safari (barre d'URL
               dynamique qui réduit la hauteur du panneau). */}
-          <div
-            className="anim-slide-right absolute inset-y-0 right-0 flex h-dvh w-[85%] max-w-sm flex-col border-l border-white/50 bg-white/75 shadow-2xl backdrop-blur-2xl"
-            style={{ WebkitBackdropFilter: "blur(24px)" }}
-          >
-            <div className="flex items-center justify-between border-b border-white/40 px-5 py-4">
+          <div className="anim-slide-right absolute inset-y-0 right-0 flex h-dvh w-[85%] max-w-sm flex-col bg-bordeaux-800 text-white shadow-2xl">
+            <div className="flex items-center justify-between border-b border-white/15 px-5 py-4">
               <div className="flex items-center gap-2.5">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -77,7 +74,7 @@ export function MenuMobile() {
                   alt="Walletiz"
                   className="h-9 w-9 rounded-xl object-cover"
                 />
-                <span className="text-lg font-extrabold text-bordeaux-800">
+                <span className="text-lg font-extrabold text-white">
                   Walletiz
                 </span>
               </div>
@@ -85,7 +82,7 @@ export function MenuMobile() {
                 type="button"
                 aria-label="Fermer"
                 onClick={() => setOuvert(false)}
-                className="flex h-10 w-10 items-center justify-center rounded-lg text-stone-600 transition hover:bg-white/50 hover:text-stone-900"
+                className="flex h-10 w-10 items-center justify-center rounded-lg text-white/70 transition hover:bg-white/10 hover:text-white"
               >
                 <svg
                   width="20"
@@ -108,7 +105,7 @@ export function MenuMobile() {
                   key={l.href}
                   href={l.href}
                   onClick={() => setOuvert(false)}
-                  className="mb-1 flex items-center gap-3 rounded-xl border border-white/40 bg-white/40 px-4 py-3.5 text-base font-semibold text-stone-900 shadow-sm transition active:bg-white/70 hover:bg-white/70 hover:text-bordeaux-800"
+                  className="mb-1 flex items-center gap-3 rounded-xl px-4 py-3.5 text-base font-semibold text-white/90 transition hover:bg-white/10 hover:text-white active:bg-white/15"
                 >
                   <span className="text-xl">{l.icone}</span>
                   <span>{l.label}</span>
@@ -116,13 +113,13 @@ export function MenuMobile() {
               ))}
             </nav>
 
-            <div className="border-t border-white/40 p-4">
+            <div className="border-t border-white/15 p-4">
               <a
                 href="https://calendly.com/walletiz.fr"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setOuvert(false)}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-bordeaux-800 px-4 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-bordeaux-700"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-bold text-bordeaux-800 shadow-lg transition hover:bg-stone-100"
               >
                 📅 Prendre rendez-vous
               </a>
