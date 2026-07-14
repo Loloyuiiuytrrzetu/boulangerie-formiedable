@@ -62,9 +62,12 @@ export function MenuMobile() {
             className="absolute inset-0 bg-stone-900/30 backdrop-blur-md"
           />
 
-          {/* Panneau verre dépoli (glassmorphism) qui glisse depuis la droite */}
+          {/* Panneau verre dépoli (glassmorphism) qui glisse depuis la droite.
+              inset-y-0 + h-dvh évite le bug h-full sur iOS Safari (barre d'URL
+              dynamique qui réduit la hauteur du panneau). */}
           <div
-            className="anim-slide-right absolute right-0 top-0 flex h-full w-[85%] max-w-sm flex-col border-l border-white/40 bg-white/60 shadow-2xl backdrop-blur-2xl backdrop-saturate-150"
+            className="anim-slide-right absolute inset-y-0 right-0 flex h-dvh w-[85%] max-w-sm flex-col border-l border-white/50 bg-white/75 shadow-2xl backdrop-blur-2xl"
+            style={{ WebkitBackdropFilter: "blur(24px)" }}
           >
             <div className="flex items-center justify-between border-b border-white/40 px-5 py-4">
               <div className="flex items-center gap-2.5">
@@ -105,7 +108,7 @@ export function MenuMobile() {
                   key={l.href}
                   href={l.href}
                   onClick={() => setOuvert(false)}
-                  className="flex items-center gap-3 rounded-xl px-4 py-3.5 text-base font-semibold text-stone-800 transition hover:bg-white/60 hover:text-bordeaux-800"
+                  className="mb-1 flex items-center gap-3 rounded-xl border border-white/40 bg-white/40 px-4 py-3.5 text-base font-semibold text-stone-900 shadow-sm transition active:bg-white/70 hover:bg-white/70 hover:text-bordeaux-800"
                 >
                   <span className="text-xl">{l.icone}</span>
                   <span>{l.label}</span>
