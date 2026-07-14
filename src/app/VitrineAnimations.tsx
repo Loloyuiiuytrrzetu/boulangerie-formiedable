@@ -241,17 +241,24 @@ export function MockupCartes() {
       </div>
 
       {/* En-tête du commerce */}
+      {/* En-tête du commerce : photo de la boulangerie en fond avec voile
+          sombre pour garder le logo + nom lisibles en blanc. */}
       <div
-        className="px-4 pb-6 pt-8 text-center text-white"
-        style={{ backgroundColor: "#0d4b3e" }}
+        className="relative px-4 pb-6 pt-8 text-center text-white"
+        style={{
+          backgroundImage:
+            "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 100%), url('/patir-fond.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/exemple-patir.png"
           alt="Pâtir"
-          className="mx-auto h-14 w-14 rounded-2xl border-2 border-white/20 object-cover"
+          className="relative mx-auto h-14 w-14 rounded-2xl border-2 border-white/40 object-cover shadow-lg"
         />
-        <p className="mt-2 text-sm font-bold">Pâtir Boulangerie</p>
+        <p className="relative mt-2 text-sm font-bold drop-shadow">Pâtir Boulangerie</p>
       </div>
 
       {/* Onglets */}
