@@ -115,7 +115,7 @@ export function MenuMobile() {
 
             <div className="border-t border-white/15 p-4">
               <a
-                href="https://calendly.com/walletiz.fr"
+                href="https://calendly.com/walletiz-fr"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setOuvert(false)}

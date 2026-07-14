@@ -9,7 +9,7 @@ import { MenuMobile } from "./MenuMobile";
 const EMAIL = "contact@walletiz.fr";
 const TEL_AFFICHE = "+590 690 98 85 38";
 const TEL_LIEN = "+590690988538";
-const CALENDLY = "https://calendly.com/walletiz.fr";
+const CALENDLY = "https://calendly.com/walletiz-fr";
 const PRIX_SETUP = 120;
 const PRIX_ABO = 64;
 
@@ -682,7 +682,7 @@ export default function Vitrine() {
                 On vous appelle à l&apos;heure choisie pour une démo.
               </p>
               <p className="mt-3 text-sm font-semibold text-bordeaux-700 group-hover:underline">
-                calendly.com/walletiz.fr →
+                calendly.com/walletiz-fr →
               </p>
             </a>
 
