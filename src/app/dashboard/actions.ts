@@ -45,7 +45,7 @@ async function restaurantCourant() {
 
   const { data: restaurant } = await supabase
     .from("restaurants")
-    .select("id, slug")
+    .select("id, slug, nom, timezone")
     .eq("owner_id", effectif.userId)
     .maybeSingle();
 
@@ -423,20 +423,8 @@ export async function supprimerRecompense(recompenseId: string) {
 // ============================================================
 
 // Retourne le restaurant du restaurateur courant
-async function restaurantDuRestaurateur() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-  const { data: restaurant } = await supabase
-    .from("restaurants")
-    .select("id, nom, slug, timezone")
-    .eq("owner_id", user.id)
-    .maybeSingle();
-  return { supabase, user, restaurant };
-}
-
 export async function creerSousCompte(formData: FormData) {
-  const { restaurant } = await restaurantDuRestaurateur();
+  const { restaurant } = await restaurantCourant();
   if (!restaurant) return { erreur: "Aucun commerce associé à ce compte." };
 
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
@@ -488,7 +476,7 @@ export async function creerSousCompte(formData: FormData) {
 }
 
 export async function supprimerSousCompte() {
-  const { restaurant } = await restaurantDuRestaurateur();
+  const { restaurant } = await restaurantCourant();
   if (!restaurant) return { erreur: "Aucun commerce associé à ce compte." };
 
   const admin = createAdminClient();
@@ -506,7 +494,7 @@ export async function supprimerSousCompte() {
 }
 
 export async function basculerSousCompte(actif: boolean) {
-  const { restaurant } = await restaurantDuRestaurateur();
+  const { restaurant } = await restaurantCourant();
   if (!restaurant) return { erreur: "Aucun commerce associé à ce compte." };
 
   const admin = createAdminClient();
@@ -790,7 +778,7 @@ export async function supprimerSection(sectionId: string) {
 // SOUS-COMPTE : changer le mot de passe
 // ============================================================
 export async function changerMotDePasseSousCompte(formData: FormData) {
-  const { restaurant } = await restaurantDuRestaurateur();
+  const { restaurant } = await restaurantCourant();
   if (!restaurant) return { erreur: "Aucun commerce." };
 
   const motDePasse = String(formData.get("mot_de_passe") ?? "");

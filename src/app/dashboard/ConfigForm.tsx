@@ -46,10 +46,12 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
   const classesFichier =
     "block w-full text-sm text-stone-500 file:mr-3 file:rounded-lg file:border-0 file:bg-bordeaux-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-bordeaux-800 hover:file:bg-bordeaux-100";
 
-  // key sur restaurant.id : force la ré-initialisation quand les données changent
+  // key inclut animation_recompense : après une sauvegarde, si le champ a
+  // changé en base, le form est remonté et le <select> reprend la nouvelle
+  // valeur au lieu de garder l'ancien defaultValue.
   return (
     <form
-      key={restaurant.id}
+      key={`${restaurant.id}-${restaurant.animation_recompense ?? "rayons"}`}
       action={soumettre}
       className="rounded-2xl border border-stone-200 bg-white p-6"
     >
