@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { inscrireClient } from "./actions";
 import { abonnerAuxNotifications } from "@/lib/abonnement-push";
+import { useLangue, useT } from "@/lib/langue";
+import { LANGUES } from "@/lib/i18n";
 
 // Première visite : téléphone + nom + acceptation des notifications
 // (obligatoire — pour recevoir les promotions et alertes de récompenses).
@@ -19,11 +21,23 @@ export function FormulaireInscription({
   restaurantId: string;
   vapidPublicKey: string | null;
 }) {
+  const t = useT();
+  const { langue, setLangue } = useLangue();
   const router = useRouter();
   const [erreur, setErreur] = useState<string | null>(null);
   const [avertissement, setAvertissement] = useState<string | null>(null);
   const [enCours, startTransition] = useTransition();
   const [notifs, setNotifs] = useState(true);
+  const [langueChoix, setLangueChoix] = useState(langue);
+
+  useEffect(() => {
+    setLangueChoix(langue);
+  }, [langue]);
+
+  function changerLangue(l: (typeof LANGUES)[number]["code"]) {
+    setLangueChoix(l);
+    setLangue(l); // application immédiate → toutes les strings du form changent
+  }
 
   function soumettre(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -39,7 +53,6 @@ export function FormulaireInscription({
 
     startTransition(async () => {
       const resAbonnement = await promesseAbonnement;
-      // On mémorise le choix côté client pour ne plus reproposer la bannière
       if (typeof window !== "undefined") {
         if (resAbonnement.statut === "abonne")
           localStorage.removeItem(`walletiz_notif_refus_${slug}`);
@@ -53,16 +66,10 @@ export function FormulaireInscription({
         return;
       }
 
-      // Message informatif si l'abonnement n'a pas fonctionné, mais on
-      // laisse quand même le client continuer vers sa page.
       if (resAbonnement.statut === "ios-install") {
-        setAvertissement(
-          "Pour recevoir les notifications sur iPhone, ajoutez ensuite cette page à votre écran d'accueil (bouton Partager → « Sur l'écran d'accueil »)."
-        );
+        setAvertissement(t("ios_install_pour_notifs"));
       } else if (resAbonnement.statut === "non-supporte") {
-        setAvertissement(
-          "Votre navigateur ne supporte pas les notifications. Vous ne recevrez pas les promotions du commerce."
-        );
+        setAvertissement(t("notifs_impossible"));
       }
       router.refresh();
     });
@@ -70,7 +77,9 @@ export function FormulaireInscription({
 
   return (
     <div className="rounded-3xl border border-stone-200 bg-white p-8 shadow-xl">
-      <h2 className="text-lg font-bold text-stone-900">Bienvenue ! 👋</h2>
+      <h2 className="text-lg font-bold text-stone-900">
+        {t("bienvenue")} 👋
+      </h2>
 
       <form onSubmit={soumettre} className="mt-5 space-y-4">
         <div>
@@ -78,7 +87,7 @@ export function FormulaireInscription({
             htmlFor="telephone"
             className="mb-1.5 block text-sm font-medium text-stone-700"
           >
-            Numéro de téléphone
+            {t("telephone")}
           </label>
           <input
             id="telephone"
@@ -87,7 +96,7 @@ export function FormulaireInscription({
             required
             inputMode="tel"
             autoComplete="tel"
-            placeholder="06 12 34 56 78"
+            placeholder={t("telephone_placeholder")}
             className="w-full rounded-xl border border-stone-300 px-4 py-3 text-lg tracking-wide outline-none transition focus:ring-2"
             style={{ caretColor: couleur }}
           />
@@ -98,7 +107,7 @@ export function FormulaireInscription({
             htmlFor="identite"
             className="mb-1.5 block text-sm font-medium text-stone-700"
           >
-            Nom et prénom
+            {t("nom_prenom")}
           </label>
           <input
             id="identite"
@@ -107,10 +116,39 @@ export function FormulaireInscription({
             required
             autoComplete="name"
             maxLength={80}
-            placeholder="Nom Prénom (ou juste l'un des deux)"
+            placeholder={t("nom_prenom_placeholder")}
             className="w-full rounded-xl border border-stone-300 px-4 py-3 outline-none transition focus:ring-2"
             style={{ caretColor: couleur }}
           />
+        </div>
+
+        {/* Sélecteur de langue — sous nom/prénom.
+            Français par défaut, mais l'utilisateur peut choisir avant
+            l'inscription : tout le formulaire s'adapte instantanément. */}
+        <div>
+          <label
+            htmlFor="inscription-langue"
+            className="mb-1.5 block text-sm font-medium text-stone-700"
+          >
+            {t("langue")} / Language / Idioma
+          </label>
+          <select
+            id="inscription-langue"
+            value={langueChoix}
+            onChange={(e) =>
+              changerLangue(
+                e.target.value as (typeof LANGUES)[number]["code"]
+              )
+            }
+            className="w-full rounded-xl border border-stone-300 px-4 py-3 outline-none transition focus:ring-2"
+            style={{ caretColor: couleur }}
+          >
+            {LANGUES.map((l) => (
+              <option key={l.code} value={l.code}>
+                {l.drapeau} {l.nom}
+              </option>
+            ))}
+          </select>
         </div>
 
         <label className="flex items-start gap-2 rounded-xl border border-stone-200 bg-stone-50 p-3 text-sm text-stone-700">
@@ -122,8 +160,7 @@ export function FormulaireInscription({
             className="mt-0.5 h-4 w-4 shrink-0 accent-stone-800"
           />
           <span>
-            J&apos;accepte de recevoir les notifications de promotions et
-            événements de ce commerce. <em>(Obligatoire pour vous inscrire.)</em>
+            {t("accepter_notifs")} <em>{t("accepter_notifs_obligatoire")}</em>
           </span>
         </label>
 
@@ -142,7 +179,7 @@ export function FormulaireInscription({
           className="w-full rounded-xl px-4 py-3.5 font-semibold text-white shadow-md transition hover:opacity-90 disabled:opacity-60"
           style={{ backgroundColor: couleur }}
         >
-          {enCours ? "Création…" : "Créer ma carte de fidélité"}
+          {enCours ? t("creation_en_cours") : t("creer_carte")}
         </button>
       </form>
     </div>

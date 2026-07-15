@@ -12,7 +12,7 @@ import {
 import { AnimationRecompense } from "./Animation";
 import { InstallationIOS, BanniereInstallationIOS } from "./InstallationIOS";
 import { ScannerClient } from "./ScannerClient";
-import { useLangue } from "@/lib/langue";
+import { useLangue, useT } from "@/lib/langue";
 import { LANGUES } from "@/lib/i18n";
 import { iconeEmoji } from "@/lib/icons";
 import type { RecompenseGagnee, Section } from "@/lib/types";
@@ -254,6 +254,7 @@ function BlocCarte({
   tamponRestaurateurOnly: boolean;
   onRecompenseObtenue: (animation: string) => void;
 }) {
+  const t = useT();
   const [erreur, setErreur] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [choix, setChoix] = useState(false);
@@ -341,7 +342,7 @@ function BlocCarte({
             choix && recompenses.length > 0 ? (
               <div className="space-y-2">
                 <p className="text-center text-sm font-semibold text-stone-800">
-                  Choisissez votre récompense :
+                  {t("choisissez_votre_recompense")}
                 </p>
                 {recompenses.map((r) => (
                   <button
@@ -369,7 +370,7 @@ function BlocCarte({
                   onClick={() => setChoix(false)}
                   className="w-full rounded-xl px-4 py-2 text-sm font-medium text-stone-500 hover:bg-stone-50"
                 >
-                  Plus tard
+                  {t("plus_tard")}
                 </button>
               </div>
             ) : (
@@ -379,14 +380,14 @@ function BlocCarte({
                 className="w-full animate-pulse rounded-xl px-4 py-3.5 font-bold text-white shadow-md transition hover:opacity-90 disabled:opacity-60"
                 style={{ backgroundColor: couleur }}
               >
-                🎉 Choisir ma récompense
+                {t("choisir_recompense")}
               </button>
             )
           ) : tamponRestaurateurOnly ? (
             <div className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-center text-sm text-stone-600">
               {carte.tampon_pris_aujourdhui
-                ? "Tampon du jour déjà pris ✓"
-                : "Présentez votre QR code personnel au commerçant pour recevoir votre tampon."}
+                ? t("tampon_deja_pris")
+                : t("presentez_qr_personnel")}
             </div>
           ) : (
             <>
@@ -397,15 +398,15 @@ function BlocCarte({
                 style={{ backgroundColor: couleur }}
               >
                 {!scanRecent
-                  ? "📷 Scannez le QR code en caisse"
+                  ? t("scannez_qr_caisse")
                   : carte.tampon_pris_aujourdhui
-                    ? "Tampon du jour déjà pris ✓"
+                    ? t("tampon_deja_pris")
                     : enCours
-                      ? "Un instant…"
-                      : `${emoji} Prendre mon tampon du jour`}
+                      ? t("un_instant")
+                      : `${emoji} ${t("prendre_tampon_du_jour")}`}
               </button>
               <p className="mt-2 text-center text-xs text-stone-400">
-                1 tampon maximum par jour
+                {t("un_tampon_max")}
               </p>
             </>
           )}
@@ -457,6 +458,7 @@ export function EspaceClient({
   nomCommerce: string;
   identiteClient: string;
 }) {
+  const t = useT();
   // Fallback : si la table sections est vide (migration incomplète),
   // on affiche quand même les 2 onglets par défaut pour ne jamais avoir
   // une page vide côté client.
@@ -547,7 +549,13 @@ export function EspaceClient({
                   color: actif ? "#fff" : "#57534E",
                 }}
               >
-                {s.titre}
+                {s.type === "cartes"
+                  ? t("cartes_de_fidelite")
+                  : s.type === "scan"
+                    ? t("scan")
+                    : s.type === "info"
+                      ? t("info")
+                      : s.titre}
               </button>
             );
           })}
@@ -560,7 +568,7 @@ export function EspaceClient({
       {recompensesEnAttente.length > 0 && (
         <section className="space-y-3">
           <h2 className="px-1 text-lg font-extrabold text-stone-900">
-            🏆 Mes récompenses à récupérer ({recompensesEnAttente.length})
+            {t("mes_recompenses")} ({recompensesEnAttente.length})
           </h2>
           {recompensesEnAttente.length === 1 ? (
             <RecompenseAttenteCard
@@ -641,6 +649,7 @@ function ContenuSection({
   nomCommerce: string;
   onAnimation: (a: string) => void;
 }) {
+  const t = useT();
   if (section.type === "cartes") {
     return (
       <section className="space-y-4">
@@ -698,8 +707,7 @@ function ContenuSection({
               />
             </div>
             <p className="mt-3 text-center text-xs text-stone-400">
-              Présentez ce QR code uniquement si le commerçant vous le
-              demande.
+              {t("presentez_qr_uniquement")}
             </p>
           </>
         )}
@@ -909,6 +917,7 @@ function ModifierIdentite({
   slug: string;
   identiteActuelle: string;
 }) {
+  const t = useT();
   const router = useRouter();
   const [valeur, setValeur] = useState(identiteActuelle);
   const [succes, setSucces] = useState(false);
@@ -936,7 +945,7 @@ function ModifierIdentite({
   return (
     <div className="mt-8 border-t border-stone-100 pt-4">
       <label className="mb-1.5 block text-sm font-medium text-stone-700">
-        Nom et prénom
+        {t("modifier_nom_prenom")}
       </label>
       <input
         type="text"
@@ -953,11 +962,11 @@ function ModifierIdentite({
           disabled={!modifie || enCours || !valeur.trim()}
           className="rounded-lg bg-stone-800 px-4 py-2 text-xs font-semibold text-white transition hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          {enCours ? "…" : "Enregistrer"}
+          {enCours ? "…" : t("enregistrer")}
         </button>
         {succes && (
           <span className="text-xs font-medium text-green-600">
-            ✓ Modifié
+            {t("modifie")}
           </span>
         )}
       </div>
@@ -975,6 +984,7 @@ function BoutonDesinscription({
   slug: string;
   couleur: string;
 }) {
+  const t = useT();
   const router = useRouter();
   const [confirmation, setConfirmation] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
@@ -999,7 +1009,7 @@ function BoutonDesinscription({
         onClick={() => setConfirmation(true)}
         className="text-xs font-medium text-stone-500 underline hover:text-red-600"
       >
-        Se désinscrire de ce commerce
+        {t("se_desinscrire")}
       </button>
 
       {confirmation && (
@@ -1012,12 +1022,10 @@ function BoutonDesinscription({
             onClick={(e) => e.stopPropagation()}
           >
             <p className="text-lg font-bold text-stone-900">
-              Se désinscrire ?
+              {t("confirmation_desinscription")}
             </p>
             <p className="mt-2 text-sm text-stone-600">
-              Toutes vos cartes de fidélité, tampons et récompenses en attente
-              seront <strong>définitivement supprimés</strong>. Vous pourrez
-              vous réinscrire en scannant à nouveau le QR code du commerce.
+              {t("toutes_cartes_supprimees")}
             </p>
             {erreur && (
               <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700">
@@ -1031,7 +1039,7 @@ function BoutonDesinscription({
                 disabled={enCours}
                 className="rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-60"
               >
-                {enCours ? "Désinscription…" : "Oui, me désinscrire"}
+                {enCours ? t("desinscription_en_cours") : t("oui_desinscrire")}
               </button>
               <button
                 type="button"
@@ -1040,7 +1048,7 @@ function BoutonDesinscription({
                 className="rounded-xl border border-stone-300 px-4 py-2.5 text-sm font-medium text-stone-600 transition hover:bg-stone-50"
                 style={{ color: couleur, borderColor: `${couleur}55` }}
               >
-                Annuler
+                {t("annuler")}
               </button>
             </div>
           </div>
@@ -1050,27 +1058,51 @@ function BoutonDesinscription({
   );
 }
 
-// Sélecteur de langue — tout en haut de l'onglet Info (au-dessus du nom
-// et prénom). Le choix est mémorisé dans localStorage et appliqué
-// instantanément à toute la page côté client.
+// Sélecteur de langue — tout en haut de l'onglet Info.
+// Le client choisit d'abord dans le <select>, puis clique sur Enregistrer.
+// Un feedback visuel confirme l'enregistrement pendant 2 secondes.
 function SelecteurLangue() {
   const { langue, setLangue } = useLangue();
+  const t = useT();
+  const [choix, setChoix] = useState(langue);
+  const [enregistre, setEnregistre] = useState(false);
+  useEffect(() => {
+    setChoix(langue);
+  }, [langue]);
+  function sauvegarder() {
+    setLangue(choix);
+    setEnregistre(true);
+    setTimeout(() => setEnregistre(false), 2000);
+  }
+  const modifie = choix !== langue;
   return (
     <div className="mb-2">
       <label className="mb-1.5 block text-sm font-medium text-stone-700">
-        Langue / Language / Idioma
+        {t("langue")} / Language / Idioma
       </label>
-      <select
-        value={langue}
-        onChange={(e) => setLangue(e.target.value as (typeof LANGUES)[number]["code"])}
-        className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:outline-none"
-      >
-        {LANGUES.map((l) => (
-          <option key={l.code} value={l.code}>
-            {l.drapeau} {l.nom}
-          </option>
-        ))}
-      </select>
+      <div className="flex gap-2">
+        <select
+          value={choix}
+          onChange={(e) =>
+            setChoix(e.target.value as (typeof LANGUES)[number]["code"])
+          }
+          className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm focus:outline-none"
+        >
+          {LANGUES.map((l) => (
+            <option key={l.code} value={l.code}>
+              {l.drapeau} {l.nom}
+            </option>
+          ))}
+        </select>
+        <button
+          type="button"
+          onClick={sauvegarder}
+          disabled={!modifie && !enregistre}
+          className="rounded-lg bg-bordeaux-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-bordeaux-700 disabled:cursor-not-allowed disabled:bg-stone-300"
+        >
+          {enregistre ? t("modifie") : t("enregistrer")}
+        </button>
+      </div>
     </div>
   );
 }
