@@ -492,6 +492,9 @@ export default function Vitrine() {
               (facturés séparément de l&apos;abonnement), puis choisissez votre
               rythme. Pas de coût caché, pas de commission.
             </p>
+            <p className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full border border-green-300 bg-green-50 px-4 py-2 text-sm font-semibold text-green-900">
+              🚀 Votre site en ligne en <strong>moins de 72h</strong> après le paiement
+            </p>
           </div>
 
           <div className="mx-auto mt-14 grid max-w-5xl gap-6 lg:grid-cols-2 lg:items-stretch">
