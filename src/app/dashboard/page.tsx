@@ -23,6 +23,9 @@ import { NavigationSidebar } from "./NavigationSidebar";
 import { NotificationsPushSection, type NotificationPush } from "./NotificationsPushSection";
 import { AbonnementSection } from "./AbonnementSection";
 import { getVapidPublicKey } from "@/lib/push";
+import { LangueDashboardProvider } from "@/lib/langue-dashboard";
+import type { Langue } from "@/lib/i18n";
+import { tDash } from "@/lib/i18n-dashboard";
 
 export default async function Dashboard() {
   const effectif = await utilisateurEffectif();
@@ -158,10 +161,21 @@ export default async function Dashboard() {
       })
     : null;
 
+  // Langue du dashboard : lue depuis restaurant.langue pour le rendu
+  // serveur des strings statiques (les composants client utilisent le
+  // provider ci-dessous via useTDash).
+  const langueDash = ((restaurant?.langue ?? "fr") as Langue);
+  const td = (cle: Parameters<typeof tDash>[0], vars?: Parameters<typeof tDash>[2]) =>
+    tDash(cle, langueDash, vars);
+
   return (
+    <LangueDashboardProvider langueInitiale={langueDash}>
     <main className="min-h-screen bg-stone-100">
       {effectif.impersonation && <BandeauImpersonation />}
-      <NavigationSidebar userEmail={effectif.email} />
+      <NavigationSidebar
+        userEmail={effectif.email}
+        langueInitiale={((restaurant?.langue ?? "fr") as Langue)}
+      />
 
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:ml-64 lg:max-w-none lg:px-8">
         {!restaurant ? (
@@ -170,8 +184,7 @@ export default async function Dashboard() {
           <>
             {!restaurant.actif && (
               <p className="mb-6 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                Votre commerce est actuellement <strong>désactivé</strong> : la page
-                client n&apos;est plus accessible. Contactez l&apos;équipe Walletiz.
+                {td("commerce_desactive")}
               </p>
             )}
 
@@ -179,17 +192,17 @@ export default async function Dashboard() {
               <div className="space-y-8">
                 <div className="mb-2 grid grid-cols-2 gap-4 sm:grid-cols-3">
                   <div className="rounded-2xl border border-stone-200 bg-white p-5">
-                    <p className="text-sm text-stone-500">Clients fidélisés</p>
+                    <p className="text-sm text-stone-500">{td("clients_fidelises")}</p>
                     <p className="mt-1 text-3xl font-bold text-bordeaux-800">{nbClients}</p>
                   </div>
                   <div className="rounded-2xl border border-stone-200 bg-white p-5">
                     <p className="text-sm text-stone-500">
-                      Tampons distribués aujourd&apos;hui
+                      {td("tampons_distribues_aujourdhui")}
                     </p>
                     <p className="mt-1 text-3xl font-bold text-bordeaux-800">{nbTampons}</p>
                   </div>
                   <div className="col-span-2 rounded-2xl border border-stone-200 bg-white p-5 sm:col-span-1">
-                    <p className="text-sm text-stone-500">Votre page client</p>
+                    <p className="text-sm text-stone-500">{td("votre_page_client")}</p>
                     <a
                       href={urlPublique!}
                       target="_blank"
@@ -205,7 +218,7 @@ export default async function Dashboard() {
                     href="/dashboard/scanner"
                     className="flex items-center justify-between rounded-xl bg-bordeaux-800 px-4 py-3 font-semibold text-white transition hover:bg-bordeaux-700"
                   >
-                    <span>🎯 Attribuer des tampons à un client</span>
+                    <span>{td("attribuer_tampons_client")}</span>
                     <span>→</span>
                   </Link>
                 </div>
@@ -251,11 +264,8 @@ export default async function Dashboard() {
                   id="qr-code"
                   className="h-fit rounded-2xl border border-stone-200 bg-white p-6 text-center"
                 >
-                <h2 className="font-bold text-stone-900">Votre QR code</h2>
-                <p className="mt-1 text-sm text-stone-500">
-                  Imprimez-le et affichez-le en caisse : vos clients le scannent
-                  pour ouvrir leurs cartes de fidélité.
-                </p>
+                <h2 className="font-bold text-stone-900">{td("qr_code_titre")}</h2>
+                <p className="mt-1 text-sm text-stone-500">{td("qr_code_desc")}</p>
                 {qrDataUrl && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -269,7 +279,7 @@ export default async function Dashboard() {
                   download={`qrcode-${restaurant.slug}.png`}
                   className="mt-4 inline-block rounded-lg bg-bordeaux-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-bordeaux-700"
                 >
-                  Télécharger le QR code
+                  {td("telecharger_qr")}
                 </a>
               </aside>
               </div>
@@ -278,5 +288,6 @@ export default async function Dashboard() {
         )}
       </div>
     </main>
+    </LangueDashboardProvider>
   );
 }

@@ -50,6 +50,7 @@ export async function creerRestaurateur(formData: FormData) {
   const nomCommerce = String(formData.get("nom_commerce") ?? "").trim();
   const timezone = String(formData.get("timezone") ?? "Europe/Paris");
   const abonnementType = String(formData.get("abonnement_type") ?? "mensuel");
+  const langue = String(formData.get("langue") ?? "fr");
 
   if (!email || !motDePasse || !nomCommerce)
     return { erreur: "Tous les champs sont obligatoires." };
@@ -59,6 +60,8 @@ export async function creerRestaurateur(formData: FormData) {
     return { erreur: "Région / fuseau horaire invalide." };
   if (abonnementType !== "mensuel" && abonnementType !== "annuel")
     return { erreur: "Plan invalide (mensuel ou annuel attendu)." };
+  if (!["fr", "en", "es", "de", "zh", "ar", "ru"].includes(langue))
+    return { erreur: "Langue invalide." };
 
   const admin = createAdminClient();
 
@@ -122,6 +125,7 @@ export async function creerRestaurateur(formData: FormData) {
     animation_recompense: "rayons",
     abonnement_statut: "essai",
     abonnement_type: abonnementType,
+    langue,
     essai_fin_le: essaiFin.toISOString(),
   });
   if (erreurResto) {

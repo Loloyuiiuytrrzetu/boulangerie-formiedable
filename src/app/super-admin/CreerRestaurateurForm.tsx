@@ -48,6 +48,33 @@ export function CreerRestaurateurForm() {
           <input id="email" name="email" type="email" required className={classesInput} placeholder="contact@cafedesarts.fr" />
         </div>
         <div>
+          <label
+            htmlFor="langue"
+            className="mb-1.5 block text-sm font-medium text-stone-700"
+          >
+            Langue du dashboard
+          </label>
+          <select
+            id="langue"
+            name="langue"
+            required
+            defaultValue="fr"
+            className={classesInput}
+          >
+            <option value="fr">🇫🇷 Français</option>
+            <option value="en">🇬🇧 English</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="de">🇩🇪 Deutsch</option>
+            <option value="zh">🇨🇳 中文</option>
+            <option value="ar">🇸🇦 العربية</option>
+            <option value="ru">🇷🇺 Русский</option>
+          </select>
+          <p className="mt-1 text-xs text-stone-400">
+            Le restaurateur pourra la changer lui-même depuis son dashboard.
+          </p>
+        </div>
+
+        <div>
           <label htmlFor="timezone" className="mb-1.5 block text-sm font-medium text-stone-700">
             Région du commerce
           </label>

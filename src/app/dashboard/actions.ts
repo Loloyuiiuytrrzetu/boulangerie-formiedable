@@ -32,6 +32,23 @@ export async function deconnexion() {
   redirect("/login");
 }
 
+// Change la langue du dashboard (sauvegardée en base pour que ce soit
+// persistant sur tous les appareils, pas seulement le navigateur courant).
+export async function changerLangue(langue: string) {
+  const { supabase, restaurant, user } = await restaurantCourant();
+  if (!restaurant) return { erreur: "Aucun commerce." };
+  if (!["fr", "en", "es", "de", "zh", "ar", "ru"].includes(langue))
+    return { erreur: "Langue invalide." };
+  const { error } = await supabase
+    .from("restaurants")
+    .update({ langue })
+    .eq("id", restaurant.id)
+    .eq("owner_id", user.id);
+  if (error) return { erreur: "Échec de la mise à jour." };
+  revalidatePath("/dashboard");
+  return { ok: true };
+}
+
 // Récupère l'utilisateur connecté + son restaurant.
 // Supporte l'impersonation super admin : les writes utilisent alors le
 // client admin (service_role) avec l'owner_id du restaurateur ciblé.
