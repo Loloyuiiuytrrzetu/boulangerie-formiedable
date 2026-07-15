@@ -13,6 +13,7 @@ import { AnimationRecompense } from "./Animation";
 import { InstallationIOS, BanniereInstallationIOS } from "./InstallationIOS";
 import { ScannerClient } from "./ScannerClient";
 import { useLangue, useT } from "@/lib/langue";
+import { AutoTraduit } from "@/lib/auto-traduction";
 import { LANGUES } from "@/lib/i18n";
 import { iconeEmoji } from "@/lib/icons";
 import type { RecompenseGagnee, Section } from "@/lib/types";
@@ -191,7 +192,7 @@ function CarrouselRecompenses({
               🎁
             </div>
           )}
-          <p className="p-3 text-center text-sm font-bold text-stone-900">{r.texte}</p>
+          <p className="p-3 text-center text-sm font-bold text-stone-900"><AutoTraduit texte={r.texte} /></p>
         </div>
       </div>
     );
@@ -224,7 +225,7 @@ function CarrouselRecompenses({
               </div>
             )}
             <p className="p-2 text-center text-xs font-semibold text-stone-900">
-              {r.texte}
+              <AutoTraduit texte={r.texte} />
             </p>
           </div>
         ))}
@@ -292,7 +293,7 @@ function BlocCarte({
   return (
     <div className="rounded-3xl border border-stone-200 bg-white p-5 shadow-xl sm:p-6">
       <div className="flex items-baseline justify-between gap-3">
-        <h3 className="font-bold text-stone-900">{carte.titre}</h3>
+        <h3 className="font-bold text-stone-900"><AutoTraduit texte={carte.titre} /></h3>
         <span className="shrink-0 text-sm font-semibold" style={{ color: couleur }}>
           {Math.min(carte.tampons_actuels, requis)} / {requis}
         </span>
@@ -362,7 +363,7 @@ function BlocCarte({
                         🎁
                       </span>
                     )}
-                    <span className="flex-1 text-sm font-semibold text-stone-900">{r.texte}</span>
+                    <span className="flex-1 text-sm font-semibold text-stone-900"><AutoTraduit texte={r.texte} /></span>
                     <span style={{ color: couleur }}>›</span>
                   </button>
                 ))}
@@ -415,7 +416,7 @@ function BlocCarte({
 
       {carte.texte_bas && (
         <p className="mt-4 border-t border-stone-100 pt-3 text-center text-xs italic text-stone-500">
-          {carte.texte_bas}
+          <AutoTraduit texte={carte.texte_bas} />
         </p>
       )}
     </div>
@@ -754,12 +755,13 @@ function RecompenseAttenteCard({
   recompense: RecompenseGagnee;
   onAnimation?: () => void;
 }) {
+  const t = useT();
   const [erreur, setErreur] = useState<string | null>(null);
   const [enCours, startTransition] = useTransition();
   const [utilisee, setUtilisee] = useState(false);
 
   function utiliser() {
-    if (!window.confirm("Confirmer l'utilisation de cette récompense ? À faire uniquement devant le commerçant.")) return;
+    if (!window.confirm(t("confirmer_utilisation"))) return;
     setErreur(null);
     startTransition(async () => {
       const r = await utiliserRecompense(slug, recompense.id);
@@ -794,10 +796,10 @@ function RecompenseAttenteCard({
         )}
         <div className="min-w-0 flex-1">
           <p className="text-base font-extrabold" style={{ color: couleur }}>
-            {recompense.texte_recompense}
+            <AutoTraduit texte={recompense.texte_recompense} />
           </p>
           <p className="text-xs text-stone-500">
-            Obtenue le {new Date(recompense.date_gagnee).toLocaleDateString("fr-FR")}
+            {t("obtenue_le")} {new Date(recompense.date_gagnee).toLocaleDateString()}
           </p>
         </div>
       </div>
