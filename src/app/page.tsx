@@ -11,6 +11,8 @@ const EMAIL = "contact@walletiz.fr";
 const TEL_AFFICHE = "+590 690 98 85 38";
 const TEL_LIEN = "+590690988538";
 const CALENDLY = "https://calendly.com/walletiz-fr";
+const STRIPE_MENSUEL = "https://buy.stripe.com/4gMeVd5Plcw70LGdUUejK00";
+const STRIPE_ANNUEL = "https://buy.stripe.com/5kQ8wP5Pl67J1PKaIIejK01";
 const PRIX_SETUP = 120;
 const PRIX_ABO = 64;
 
@@ -532,7 +534,7 @@ export default function Vitrine() {
               </ul>
 
               <a
-                href={CALENDLY}
+                href={STRIPE_MENSUEL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-auto flex w-full items-center justify-center gap-2 rounded-xl border-2 border-bordeaux-800 bg-white px-6 py-4 text-base font-bold text-bordeaux-800 transition hover:bg-bordeaux-50 lg:pt-4"
@@ -591,12 +593,12 @@ export default function Vitrine() {
               </ul>
 
               <a
-                href={CALENDLY}
+                href={STRIPE_ANNUEL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-auto flex w-full items-center justify-center gap-2 rounded-xl bg-bordeaux-800 px-6 py-4 text-base font-bold text-white shadow-lg transition hover:bg-bordeaux-700"
               >
-                📅 Choisir l&apos;annuel <span>→</span>
+                Choisir l&apos;annuel <span>→</span>
               </a>
             </div>
           </div>
