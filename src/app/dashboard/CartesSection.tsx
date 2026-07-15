@@ -43,11 +43,12 @@ function ApercuForme({ forme, actif }: { forme: string; actif: boolean }) {
   );
 }
 
-const FORMES: { cle: "carre" | "cercle" | "hexagone" | "etoile"; nom: string }[] = [
-  { cle: "carre", nom: "Carré" },
-  { cle: "cercle", nom: "Cercle" },
-  { cle: "hexagone", nom: "Hexagone" },
-  { cle: "etoile", nom: "Étoile" },
+// Formes du tampon. Le libellé est traduit via useTDash au moment du rendu.
+const FORMES: { cle: "carre" | "cercle" | "hexagone" | "etoile" }[] = [
+  { cle: "carre" },
+  { cle: "cercle" },
+  { cle: "hexagone" },
+  { cle: "etoile" },
 ];
 
 function ChampsCarte({
@@ -57,6 +58,7 @@ function ChampsCarte({
   carte?: Carte;
   titreDefaut?: string;
 }) {
+  const t = useTDash();
   const [icone, setIcone] = useState(carte?.tampon_icone ?? "cafe");
   const [emojiCustom, setEmojiCustom] = useState(
     carte?.tampon_icone?.startsWith("custom:") ? carte.tampon_icone.slice(7) : ""
@@ -69,7 +71,7 @@ function ChampsCarte({
     <div className="space-y-4">
       <div>
         <label className="mb-1.5 block text-sm font-medium text-stone-700">
-          Titre de la carte
+          {t("titre_carte")}
         </label>
         <input
           name="titre"
@@ -82,7 +84,7 @@ function ChampsCarte({
 
       <div>
         <span className="mb-1.5 block text-sm font-medium text-stone-700">
-          Icône du tampon
+          {t("icone_tampon")}
         </span>
         <input type="hidden" name="tampon_icone" value={icone} />
         {carte?.tampon_image_url && (
@@ -186,7 +188,7 @@ function ChampsCarte({
 
       <div>
         <span className="mb-1.5 block text-sm font-medium text-stone-700">
-          Forme du tampon
+          {t("forme_tampon")}
         </span>
         <input type="hidden" name="tampon_forme" value={forme} />
         <div className="grid grid-cols-4 gap-2">
@@ -202,7 +204,7 @@ function ChampsCarte({
               }`}
             >
               <ApercuForme forme={f.cle} actif={forme === f.cle} />
-              <span>{f.nom}</span>
+              <span>{t(f.cle)}</span>
             </button>
           ))}
         </div>
@@ -211,7 +213,7 @@ function ChampsCarte({
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className="mb-1.5 block text-sm font-medium text-stone-700">
-            Nombre de tampons <span className="text-stone-400">(1 à 20)</span>
+            {t("nombre_tampons_requis")} <span className="text-stone-400">(1-20)</span>
           </label>
           <input
             name="nombre_tampons_requis"
@@ -225,7 +227,7 @@ function ChampsCarte({
         </div>
         <div>
           <label className="mb-1.5 block text-sm font-medium text-stone-700">
-            Date d&apos;expiration <span className="text-stone-400">(optionnel)</span>
+            {t("date_expiration")}
           </label>
           <input
             name="date_expiration"
@@ -242,7 +244,7 @@ function ChampsCarte({
 
       <div>
         <label className="mb-1.5 block text-sm font-medium text-stone-700">
-          Petit texte en bas de la carte <span className="text-stone-400">(optionnel)</span>
+          {t("texte_bas_carte")}
         </label>
         <input
           name="texte_bas"
@@ -258,6 +260,7 @@ function ChampsCarte({
 
 // --- Ligne d'une récompense existante avec bouton image ---
 function LigneRecompense({ recompense }: { recompense: Recompense }) {
+  const t = useTDash();
   const router = useRouter();
   const formImage = useRef<HTMLFormElement>(null);
   const [enCours, startTransition] = useTransition();
@@ -316,7 +319,7 @@ function LigneRecompense({ recompense }: { recompense: Recompense }) {
           disabled={enCours}
           className="shrink-0 rounded-lg px-2 py-1 text-xs font-medium text-red-600 transition hover:bg-red-50"
         >
-          Retirer
+          {t("supprimer")}
         </button>
       </div>
 
@@ -336,7 +339,7 @@ function LigneRecompense({ recompense }: { recompense: Recompense }) {
           disabled={enCours}
           className="rounded-lg bg-bordeaux-800 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-bordeaux-700 disabled:opacity-60"
         >
-          {recompense.image_url ? "Remplacer l'image" : "Ajouter une image"}
+          {t("image_recompense")}
         </button>
         {recompense.image_url && (
           <button
@@ -345,7 +348,7 @@ function LigneRecompense({ recompense }: { recompense: Recompense }) {
             disabled={enCours}
             className="rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-600 transition hover:bg-stone-100"
           >
-            Retirer l&apos;image
+            {t("supprimer")}
           </button>
         )}
       </form>
@@ -364,6 +367,7 @@ function BlocCarte({
   recompenses: Recompense[];
   aujourdHui: string;
 }) {
+  const t = useTDash();
   const router = useRouter();
   const [ouvert, setOuvert] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
@@ -386,12 +390,7 @@ function BlocCarte({
   }
 
   function supprimer() {
-    if (
-      !window.confirm(
-        `Supprimer la carte « ${carte.titre} » ?\n\nSes récompenses et les tampons accumulés par vos clients sur cette carte seront effacés.`
-      )
-    )
-      return;
+    if (!window.confirm(t("confirmer_suppression_carte"))) return;
     startTransition(async () => {
       const r = await supprimerCarte(carte.id);
       if (r?.erreur) setErreur(r.erreur);
@@ -448,11 +447,10 @@ function BlocCarte({
           <div>
             <p className="font-semibold text-stone-900">{carte.titre}</p>
             <p className="text-xs text-stone-500">
-              {carte.nombre_tampons_requis} tampons · {recompenses.length} récompense
-              {recompenses.length > 1 ? "s" : ""}
+              {carte.nombre_tampons_requis} · {recompenses.length} {t("recompenses").toLowerCase()}
               {carte.date_expiration &&
-                ` · expire le ${new Date(carte.date_expiration + "T00:00:00").toLocaleDateString("fr-FR")}`}
-              {expiree && " ⚠️ expirée"}
+                ` · ${t("expire_le")} ${new Date(carte.date_expiration + "T00:00:00").toLocaleDateString()}`}
+              {expiree && ` ${t("expiree")}`}
             </p>
           </div>
         </div>
@@ -469,7 +467,7 @@ function BlocCarte({
                 disabled={enCours}
                 className="rounded-lg bg-bordeaux-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-bordeaux-700 disabled:opacity-60"
               >
-                Enregistrer la carte
+                {t("enregistrer")}
               </button>
               {carte.tampon_image_url && (
                 <button
@@ -478,7 +476,7 @@ function BlocCarte({
                   disabled={enCours}
                   className="rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-stone-600 transition hover:bg-stone-100 disabled:opacity-60"
                 >
-                  Retirer l&apos;image
+                  {t("supprimer")}
                 </button>
               )}
               <button
@@ -487,25 +485,21 @@ function BlocCarte({
                 disabled={enCours}
                 className="rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-60"
               >
-                Supprimer
+                {t("supprimer")}
               </button>
-              {succes && <span className="text-sm text-green-600">Enregistré ✓</span>}
+              {succes && <span className="text-sm text-green-600">{t("enregistre")}</span>}
             </div>
           </form>
 
           {/* ----- Récompenses de la carte ----- */}
           <div className="mt-6 rounded-xl bg-stone-50 p-4">
             <h4 className="text-sm font-bold text-stone-900">
-              🎁 Récompenses de cette carte
+              🎁 {t("recompenses")}
             </h4>
-            <p className="mt-0.5 text-xs text-stone-500">
-              Si plusieurs récompenses, le client choisit celle qu&apos;il veut
-              (ce n&apos;est pas cumulé).
-            </p>
 
             {recompenses.length === 0 ? (
               <p className="mt-2 text-sm text-stone-500">
-                Aucune récompense pour l&apos;instant — ajoutez-en une ci-dessous.
+                —
               </p>
             ) : (
               <ul className="mt-3 space-y-2">
@@ -535,12 +529,9 @@ function BlocCarte({
                   disabled={enCours}
                   className="rounded-lg bg-bordeaux-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-bordeaux-700 disabled:opacity-60"
                 >
-                  Ajouter
+                  {t("ajouter_recompense")}
                 </button>
               </div>
-              <p className="text-xs text-stone-400">
-                Image optionnelle (4 Mo max) — vous pourrez la changer plus tard.
-              </p>
             </form>
           </div>
 
