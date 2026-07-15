@@ -10,8 +10,10 @@ import {
   basculerSousCompte,
 } from "./actions";
 import type { SousCompte } from "@/lib/types";
+import { useTDash } from "@/lib/langue-dashboard";
 
 export function SousCompteSection({ sousCompte }: { sousCompte: SousCompte | null }) {
+  const t = useTDash();
   const router = useRouter();
   const [creation, setCreation] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
@@ -50,11 +52,8 @@ export function SousCompteSection({ sousCompte }: { sousCompte: SousCompte | nul
 
   return (
     <section className="rounded-2xl border border-stone-200 bg-white p-6">
-      <h2 className="text-lg font-bold text-stone-900">Sous-compte</h2>
-      <p className="mt-1 text-sm text-stone-500">
-        Un employé peut avoir un accès limité qui sert <strong>uniquement</strong> à
-        attribuer des tampons aux clients — pas à modifier votre configuration.
-      </p>
+      <h2 className="text-lg font-bold text-stone-900">{t("sous_compte")}</h2>
+      <p className="mt-1 text-sm text-stone-500">{t("sous_compte_desc")}</p>
 
       {identifiants && (
         <div className="mt-4 rounded-xl border border-green-200 bg-green-50 p-4">
@@ -84,7 +83,7 @@ export function SousCompteSection({ sousCompte }: { sousCompte: SousCompte | nul
 
         <form action={creer} className="mt-4 space-y-3">
           <label className="block text-sm font-medium text-stone-700">
-            Email de l&apos;employé
+            {t("email_employe")}
             <input
               name="email"
               type="email"
@@ -93,17 +92,16 @@ export function SousCompteSection({ sousCompte }: { sousCompte: SousCompte | nul
               className="mt-1 w-full rounded-lg border border-stone-300 px-3.5 py-2.5 outline-none transition focus:border-bordeaux-700 focus:ring-2 focus:ring-bordeaux-200"
             />
             <span className="mt-1 block text-xs font-normal text-stone-500">
-              Il servira à se connecter et à récupérer son mot de passe.
+              {t("email_employe_desc")}
             </span>
           </label>
           <label className="block text-sm font-medium text-stone-700">
-            Mot de passe initial
+            {t("mot_de_passe_initial")}
             <input
               name="mot_de_passe"
               type="text"
               required
               minLength={8}
-              placeholder="8 caractères minimum"
               className="mt-1 w-full rounded-lg border border-stone-300 px-3.5 py-2.5 outline-none transition focus:border-bordeaux-700 focus:ring-2 focus:ring-bordeaux-200"
             />
           </label>
@@ -113,14 +111,14 @@ export function SousCompteSection({ sousCompte }: { sousCompte: SousCompte | nul
               disabled={enCours}
               className="rounded-lg bg-bordeaux-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-bordeaux-700 disabled:opacity-60"
             >
-              {enCours ? "Création…" : "Créer le sous-compte"}
+              {enCours ? "…" : t("creer_sous_compte")}
             </button>
             <button
               type="button"
               onClick={() => setCreation(false)}
               className="rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-stone-600 hover:bg-stone-50"
             >
-              Annuler
+              {t("annuler")}
             </button>
           </div>
           {erreur && (
@@ -133,7 +131,7 @@ export function SousCompteSection({ sousCompte }: { sousCompte: SousCompte | nul
           onClick={() => setCreation(true)}
           className="mt-4 rounded-lg bg-bordeaux-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-bordeaux-700"
         >
-          + Créer un sous-compte
+          + {t("creer_sous_compte")}
         </button>
       )}
 
@@ -155,6 +153,7 @@ function BlocSousCompteExistant({
   onSupprimer: () => void;
   enCours: boolean;
 }) {
+  const t = useTDash();
   const formRef = useRef<HTMLFormElement>(null);
   const [changeMdp, setChangeMdp] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
@@ -203,14 +202,14 @@ function BlocSousCompteExistant({
           disabled={enCours || pending}
           className="rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-600 transition hover:bg-white disabled:opacity-60"
         >
-          {sousCompte.actif ? "Désactiver" : "Réactiver"}
+          {sousCompte.actif ? t("desactiver_sous_compte") : t("activer_sous_compte")}
         </button>
         <button
           onClick={onSupprimer}
           disabled={enCours || pending}
           className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-60"
         >
-          Supprimer
+          {t("supprimer")}
         </button>
       </div>
 
@@ -229,7 +228,7 @@ function BlocSousCompteExistant({
             disabled={pending}
             className="rounded-lg bg-bordeaux-800 px-3 py-2 text-sm font-semibold text-white transition hover:bg-bordeaux-700 disabled:opacity-60"
           >
-            {pending ? "Mise à jour…" : "Enregistrer"}
+            {pending ? "…" : t("enregistrer")}
           </button>
         </form>
       )}

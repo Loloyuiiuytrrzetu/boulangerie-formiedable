@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { annulerAbonnement, reactiverAbonnement } from "./abonnement-actions";
 import type { Restaurant } from "@/lib/types";
+import { useTDash } from "@/lib/langue-dashboard";
 
 const PRIX_ABO = 64;
 
@@ -24,6 +25,7 @@ function formatDate(iso: string | null, timezone: string): string {
 }
 
 export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
+  const t = useTDash();
   const router = useRouter();
   const [enCours, startTransition] = useTransition();
   const [confirmation, setConfirmation] = useState(false);
@@ -59,10 +61,10 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-lg font-bold text-stone-900">
-            💳 Mon abonnement
+            💳 {t("mon_abonnement")}
           </h2>
           <p className="mt-1 text-sm text-stone-500">
-            Plan Pro Walletiz — {PRIX_ABO}€ par mois, sans engagement.
+            {t("abonnement_desc")}
           </p>
         </div>
         <StatutBadge statut={statut} />
@@ -145,7 +147,7 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
             disabled={enCours}
             className="rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-stone-600 transition hover:bg-stone-50 disabled:opacity-60"
           >
-            Annuler l&apos;abonnement
+            {t("annuler_abonnement")}
           </button>
         )}
         {statut === "annule" && (
@@ -155,7 +157,7 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
             disabled={enCours}
             className="rounded-lg bg-bordeaux-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-bordeaux-700 disabled:opacity-60"
           >
-            {enCours ? "…" : "Réactiver mon abonnement"}
+            {enCours ? "…" : t("reactiver_abonnement")}
           </button>
         )}
       </div>
@@ -176,17 +178,10 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
             onClick={(e) => e.stopPropagation()}
           >
             <p className="text-lg font-bold text-stone-900">
-              Annuler l&apos;abonnement ?
+              {t("confirmer_annulation_abonnement")}
             </p>
             <p className="mt-2 text-sm text-stone-600">
-              Votre commerce restera{" "}
-              <strong>accessible jusqu&apos;au{" "}
-              {formatDate(
-                restaurant.abonnement_prochaine_facture_le ??
-                  restaurant.essai_fin_le,
-                tz
-              )}</strong>. Aucun prélèvement ne sera fait. Vous pouvez réactiver
-              à tout moment.
+              {t("annulation_abonnement_desc")}
             </p>
             <div className="mt-5 flex flex-col gap-2 sm:flex-row-reverse">
               <button
@@ -195,7 +190,7 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
                 disabled={enCours}
                 className="rounded-xl bg-stone-800 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-stone-700 disabled:opacity-60 sm:flex-1"
               >
-                {enCours ? "Annulation…" : "Oui, annuler"}
+                {enCours ? "…" : t("annuler_abonnement")}
               </button>
               <button
                 type="button"
@@ -203,7 +198,7 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
                 disabled={enCours}
                 className="rounded-xl border border-stone-300 px-4 py-2.5 text-sm font-medium text-stone-600 transition hover:bg-stone-50 sm:flex-1"
               >
-                Non, garder
+                {t("annuler")}
               </button>
             </div>
           </div>
@@ -214,11 +209,12 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
 }
 
 function StatutBadge({ statut }: { statut: Restaurant["abonnement_statut"] }) {
+  const t = useTDash();
   const config = {
-    essai: { label: "Essai gratuit", classes: "bg-green-100 text-green-800" },
-    actif: { label: "Actif", classes: "bg-bordeaux-100 text-bordeaux-800" },
-    annule: { label: "Annulé", classes: "bg-amber-100 text-amber-800" },
-    expire: { label: "Expiré", classes: "bg-red-100 text-red-800" },
+    essai: { label: t("essai_gratuit"), classes: "bg-green-100 text-green-800" },
+    actif: { label: t("plan_pro"), classes: "bg-bordeaux-100 text-bordeaux-800" },
+    annule: { label: t("annule"), classes: "bg-amber-100 text-amber-800" },
+    expire: { label: t("expire"), classes: "bg-red-100 text-red-800" },
   }[statut];
   return (
     <span

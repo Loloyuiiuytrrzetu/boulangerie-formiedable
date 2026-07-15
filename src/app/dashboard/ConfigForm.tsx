@@ -7,9 +7,11 @@ import { SelecteurCouleur } from "./SelecteurCouleur";
 import { ApercuAnimation } from "./ApercuAnimation";
 import type { Restaurant } from "@/lib/types";
 import { compresserChampsImage } from "@/lib/compresser-image";
+import { useTDash } from "@/lib/langue-dashboard";
 
 // Identité du commerce : nom, logo, image de fond, couleurs
 export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
+  const t = useTDash();
   const router = useRouter();
   const [erreur, setErreur] = useState<string | null>(null);
   const [succes, setSucces] = useState(false);
@@ -55,15 +57,15 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
       action={soumettre}
       className="rounded-2xl border border-stone-200 bg-white p-6"
     >
-      <h2 className="text-lg font-bold text-stone-900">Mon commerce</h2>
+      <h2 className="text-lg font-bold text-stone-900">{t("mon_commerce")}</h2>
       <p className="mt-1 text-sm text-stone-500">
-        L&apos;identité visuelle de votre page client.
+        {t("identite_visuelle")}
       </p>
 
       <div className="mt-6 space-y-6">
         <div>
           <label htmlFor="nom" className="mb-1.5 block text-sm font-medium text-stone-700">
-            Nom du commerce
+            {t("nom_du_commerce")}
           </label>
           <input
             id="nom"
@@ -78,7 +80,7 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
             <label htmlFor="logo" className="mb-1.5 block text-sm font-medium text-stone-700">
-              Logo
+              {t("logo")}
             </label>
             {(apercuLogo || restaurant.logo_url) && (
               // eslint-disable-next-line @next/next/no-img-element
@@ -99,7 +101,7 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
           </div>
           <div>
             <label htmlFor="fond" className="mb-1.5 block text-sm font-medium text-stone-700">
-              Image de fond
+              {t("image_de_fond")}
             </label>
             {(apercuFond || restaurant.fond_url) && (
               // eslint-disable-next-line @next/next/no-img-element
@@ -127,21 +129,18 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
         <SelecteurCouleur
           name="couleur"
           initial={restaurant.couleur}
-          label="Couleur principale"
-          description="Utilisée pour vos tampons, boutons et détails."
+          label={t("couleur_principale")}
+          description=""
         />
 
         <SelecteurCouleur
           name="couleur_qr"
           initial={restaurant.couleur_qr ?? "#380B15"}
-          label="Couleur de votre QR code"
-          description="La couleur des carrés du QR code affiché en caisse."
+          label={t("couleur_qr")}
+          description=""
         />
 
         <div className="rounded-xl border border-stone-200 bg-stone-50 p-4">
-          <p className="mb-2 text-sm font-medium text-stone-700">
-            Tampon accordé
-          </p>
           <label className="flex items-start gap-3">
             <input
               type="checkbox"
@@ -150,17 +149,14 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
               className="mt-0.5 h-4 w-4 shrink-0 accent-bordeaux-800"
             />
             <span className="text-sm text-stone-600">
-              <strong>1 tampon par carte de fidélité</strong> à chaque visite.
-              Décochez pour <strong>1 seul tampon toutes cartes confondues</strong> par
-              jour (le client choisit sur quelle carte).
+              <strong>{t("un_tampon_par_carte")}</strong>
+              <br />
+              {t("un_tampon_par_carte_desc")}
             </span>
           </label>
         </div>
 
         <div className="rounded-xl border border-stone-200 bg-stone-50 p-4">
-          <p className="mb-2 text-sm font-medium text-stone-700">
-            Système manuel
-          </p>
           <label className="flex items-start gap-3">
             <input
               type="checkbox"
@@ -169,10 +165,9 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
               className="mt-0.5 h-4 w-4 shrink-0 accent-bordeaux-800"
             />
             <span className="text-sm text-stone-600">
-              <strong>Seul moi (ou mon sous-compte) peux attribuer les tampons.</strong>{" "}
-              Le bouton « Prendre mon tampon » disparaît côté client — le
-              tampon n&apos;est donné qu&apos;en scannant le QR code personnel
-              du client depuis le scanner du dashboard.
+              <strong>{t("tampon_manuel_uniquement")}</strong>
+              <br />
+              {t("tampon_manuel_uniquement_desc")}
             </span>
           </label>
         </div>
@@ -182,10 +177,10 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
             htmlFor="animation_recompense"
             className="mb-1.5 block text-sm font-medium text-stone-700"
           >
-            Animation à la récompense
+            {t("animation_recompense")}
           </label>
           <p className="mb-2 text-xs text-stone-400">
-            L&apos;effet qui s&apos;affiche quand le client choisit sa récompense.
+            {t("animation_recompense_desc")}
           </p>
           <select
             id="animation_recompense"
@@ -193,16 +188,16 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
             defaultValue={restaurant.animation_recompense ?? "rayons"}
             className="w-full rounded-lg border border-stone-300 px-3.5 py-2.5 outline-none transition focus:border-bordeaux-700 focus:ring-2 focus:ring-bordeaux-200"
           >
-            <option value="aucune">Aucune animation</option>
-            <option value="etoiles">Étoiles scintillantes</option>
-            <option value="ondes">Ondes lumineuses</option>
-            <option value="rayons">Rayons éclatants</option>
-            <option value="vague">Vague colorée</option>
+            <option value="aucune">{t("aucune_animation")}</option>
+            <option value="etoiles">{t("etoiles_scintillantes")}</option>
+            <option value="ondes">{t("ondes_lumineuses")}</option>
+            <option value="rayons">{t("rayons_eclatants")}</option>
+            <option value="vague">{t("vague_coloree")}</option>
           </select>
 
           <div className="mt-3">
             <label className="mb-1 block text-xs font-medium text-stone-700">
-              Couleur de l&apos;animation
+              {t("couleur_animation")}
             </label>
             <div className="flex items-center gap-3">
               <input
@@ -234,7 +229,7 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
       )}
       {succes && (
         <p className="mt-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
-          Enregistré ✓
+          {t("enregistre")}
         </p>
       )}
 
@@ -243,7 +238,7 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
         disabled={enCours}
         className="mt-6 rounded-lg bg-bordeaux-800 px-6 py-2.5 font-semibold text-white transition hover:bg-bordeaux-700 disabled:opacity-60"
       >
-        {enCours ? "Enregistrement…" : "Enregistrer"}
+        {enCours ? "…" : t("enregistrer")}
       </button>
     </form>
   );

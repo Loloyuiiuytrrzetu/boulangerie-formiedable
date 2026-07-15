@@ -15,6 +15,7 @@ import {
 import { TAMPON_ICONES, iconeEmoji } from "@/lib/icons";
 import type { Carte, Recompense } from "@/lib/types";
 import { compresserChampsImage } from "@/lib/compresser-image";
+import { useTDash } from "@/lib/langue-dashboard";
 
 const classesInput =
   "w-full rounded-lg border border-stone-300 px-3.5 py-2.5 outline-none transition focus:border-bordeaux-700 focus:ring-2 focus:ring-bordeaux-200";
@@ -564,6 +565,7 @@ export function CartesSection({
   nomCommerce: string;
   aujourdHui: string;
 }) {
+  const t = useTDash();
   const router = useRouter();
   const [creation, setCreation] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
@@ -586,17 +588,14 @@ export function CartesSection({
     <section className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-bold text-stone-900">Mes cartes de fidélité</h2>
-          <p className="text-sm text-stone-500">
-            Créez une carte de fidélité dès maintenant.
-          </p>
+          <h2 className="text-lg font-bold text-stone-900">{t("cartes_de_fidelite")}</h2>
         </div>
         <button
           type="button"
           onClick={() => setCreation(!creation)}
           className="rounded-lg bg-bordeaux-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-bordeaux-700"
         >
-          {creation ? "Annuler" : "+ Nouvelle carte"}
+          {creation ? t("annuler") : t("nouvelle_carte")}
         </button>
       </div>
 
@@ -611,17 +610,14 @@ export function CartesSection({
             disabled={enCours}
             className="mt-4 rounded-lg bg-bordeaux-800 px-5 py-2 text-sm font-semibold text-white transition hover:bg-bordeaux-700 disabled:opacity-60"
           >
-            {enCours ? "Création…" : "Créer la carte"}
+            {enCours ? "…" : t("creer")}
           </button>
-          <p className="mt-2 text-xs text-stone-400">
-            Vous pourrez ajouter ses récompenses juste après la création.
-          </p>
         </form>
       )}
 
       {cartes.length === 0 && !creation ? (
         <p className="rounded-2xl border border-stone-200 bg-white px-5 py-6 text-sm text-stone-500">
-          Aucune carte pour l&apos;instant. Cliquez sur « + Nouvelle carte » pour créer la première.
+          {t("aucune_carte_creee")}
         </p>
       ) : (
         cartes.map((carte) => (

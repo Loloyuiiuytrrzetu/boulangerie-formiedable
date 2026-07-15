@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { TamponHistorique } from "@/lib/types";
+import { useTDash } from "@/lib/langue-dashboard";
 
 // Palette du composant : bordeaux + reprise de la couleur principale.
 const TRAIT = "#7A1E2E";
@@ -226,27 +227,28 @@ export function GraphiquesTampons({
 
   const totalSemaine = semaine.valeurs.reduce((s, v) => s + v, 0);
   const totalAnnee = mois.valeurs.reduce((s, v) => s + v, 0);
+  const t = useTDash();
 
   return (
     <section className="space-y-4">
       {/* Graphique semaine */}
       <div className="rounded-2xl border border-stone-200 bg-white p-5">
         <div className="mb-2 flex items-baseline justify-between">
-          <h3 className="text-sm font-bold text-stone-900">Tampons cette semaine</h3>
+          <h3 className="text-sm font-bold text-stone-900">{t("tampons_cette_semaine")}</h3>
           <span className="text-xs text-stone-500">
-            Total : <strong style={{ color: couleur }}>{totalSemaine}</strong>
+            {t("total")} : <strong style={{ color: couleur }}>{totalSemaine}</strong>
           </span>
         </div>
         <Courbe labels={semaine.jours} valeurs={semaine.valeurs} couleur={couleur} />
         <p className="mt-1 text-xs text-stone-400">
-          Les 7 derniers jours (aujourd&apos;hui à droite).
+          {t("sept_derniers_jours")}
         </p>
       </div>
 
       {/* Graphique mois de l'année */}
       <div className="rounded-2xl border border-stone-200 bg-white p-5">
         <div className="mb-2 flex items-baseline justify-between gap-2">
-          <h3 className="text-sm font-bold text-stone-900">Tampons par mois</h3>
+          <h3 className="text-sm font-bold text-stone-900">{t("tampons_par_mois")}</h3>
           <div className="flex items-center gap-2">
             <select
               value={annee}
@@ -260,13 +262,13 @@ export function GraphiquesTampons({
               ))}
             </select>
             <span className="text-xs text-stone-500">
-              Total : <strong style={{ color: couleur }}>{totalAnnee}</strong>
+              {t("total")} : <strong style={{ color: couleur }}>{totalAnnee}</strong>
             </span>
           </div>
         </div>
         <Courbe labels={mois.noms} valeurs={mois.valeurs} couleur={couleur} />
         <p className="mt-1 text-xs text-stone-400">
-          Historique conservé — vous pouvez revenir sur les années précédentes.
+          {t("historique_conserve")}
         </p>
       </div>
     </section>

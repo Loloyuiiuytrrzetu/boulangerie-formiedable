@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AnimationRecompense } from "@/app/c/[slug]/Animation";
+import { useTDash } from "@/lib/langue-dashboard";
 
 // Bouton "Voir l'aperçu" à côté du sélecteur d'animation dans le dashboard.
 // Lit la valeur du <select> voisin (par id) pour choisir l'animation à jouer.
@@ -12,6 +13,7 @@ export function ApercuAnimation({
   selectId: string;
   couleur?: string;
 }) {
+  const t = useTDash();
   const [animation, setAnimation] = useState<string | null>(null);
 
   function lancer() {
@@ -32,7 +34,7 @@ export function ApercuAnimation({
         onClick={lancer}
         className="mt-2 rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-semibold text-stone-600 transition hover:bg-stone-100"
       >
-        Voir l&apos;aperçu
+        {t("voir_apercu")}
       </button>
       {animation && (
         <AnimationRecompense

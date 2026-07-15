@@ -6,6 +6,7 @@ import {
   programmerNotification,
   supprimerNotification,
 } from "./notifications-actions";
+import { useTDash } from "@/lib/langue-dashboard";
 
 export type NotificationPush = {
   id: string;
@@ -58,6 +59,7 @@ export function NotificationsPushSection({
   nbClientsTotal: number;
   pushConfigure: boolean;
 }) {
+  const t = useTDash();
   const [ongletActif, setOngletActif] = useState<"immediat" | "programme">("immediat");
   const [msgImmediat, setMsgImmediat] = useState<string | null>(null);
   const [msgProgramme, setMsgProgramme] = useState<string | null>(null);
@@ -105,10 +107,9 @@ export function NotificationsPushSection({
   return (
     <section className="space-y-6 rounded-2xl border border-stone-200 bg-white p-6">
       <div>
-        <h2 className="text-lg font-bold text-stone-900">🔔 Notifications push</h2>
+        <h2 className="text-lg font-bold text-stone-900">🔔 {t("notifications_push")}</h2>
         <p className="mt-1 text-sm text-stone-600">
-          Envoyez un message à tous vos clients abonnés — il apparaîtra comme
-          une notification sur leur téléphone avec le logo de votre commerce.
+          {t("notifications_push_desc")}
         </p>
         <p className="mt-2 text-xs text-stone-500">
           <strong>{nbAbonnes}</strong> client{nbAbonnes > 1 ? "s" : ""}{" "}
@@ -146,7 +147,7 @@ export function NotificationsPushSection({
               : "text-stone-500 hover:text-stone-700"
           }`}
         >
-          Envoi immédiat
+          {t("envoyer_maintenant")}
         </button>
         <button
           onClick={() => setOngletActif("programme")}
@@ -156,14 +157,14 @@ export function NotificationsPushSection({
               : "text-stone-500 hover:text-stone-700"
           }`}
         >
-          Programmer
+          {t("programmer_envoi")}
         </button>
       </div>
 
       {ongletActif === "immediat" ? (
         <form action={submitImmediat} className="space-y-3">
           <div>
-            <label className="text-xs font-semibold text-stone-600">Message</label>
+            <label className="text-xs font-semibold text-stone-600">{t("corps_notif")}</label>
             <textarea
               name="message"
               required
@@ -178,14 +179,14 @@ export function NotificationsPushSection({
             disabled={enCours}
             className="rounded-lg bg-bordeaux-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-bordeaux-700 disabled:opacity-60"
           >
-            {enCours ? "Envoi…" : "Envoyer maintenant"}
+            {enCours ? "…" : t("envoyer_maintenant")}
           </button>
           {msgImmediat && <p className="text-sm">{msgImmediat}</p>}
         </form>
       ) : (
         <form action={submitProgramme} className="space-y-3">
           <div>
-            <label className="text-xs font-semibold text-stone-600">Message</label>
+            <label className="text-xs font-semibold text-stone-600">{t("corps_notif")}</label>
             <textarea
               name="message"
               required
@@ -214,7 +215,7 @@ export function NotificationsPushSection({
             disabled={enCours}
             className="rounded-lg bg-bordeaux-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-bordeaux-700 disabled:opacity-60"
           >
-            {enCours ? "…" : "Programmer"}
+            {enCours ? "…" : t("programmer_envoi")}
           </button>
           {msgProgramme && <p className="text-sm">{msgProgramme}</p>}
         </form>
@@ -222,7 +223,7 @@ export function NotificationsPushSection({
 
       {programmees.length > 0 && (
         <div>
-          <h3 className="mb-2 text-sm font-bold text-stone-800">Programmées</h3>
+          <h3 className="mb-2 text-sm font-bold text-stone-800">{t("programmer_envoi")}</h3>
           <ul className="space-y-2">
             {programmees.map((n) => (
               <li
@@ -244,7 +245,7 @@ export function NotificationsPushSection({
                     type="submit"
                     className="text-xs font-semibold text-red-600 hover:text-red-800"
                   >
-                    Annuler
+                    {t("annuler_envoi_programme")}
                   </button>
                 </form>
               </li>
@@ -270,6 +271,7 @@ function HistoriqueEnvoyees({
   envoyees: NotificationPush[];
   timezone: string;
 }) {
+  const t = useTDash();
   const [ouvert, setOuvert] = useState(false);
   const dernier = envoyees[0];
   const anciens = envoyees.slice(1, 10);
@@ -340,8 +342,8 @@ function HistoriqueEnvoyees({
           className="mt-2 text-xs font-medium text-bordeaux-700 hover:underline"
         >
           {ouvert
-            ? "Masquer les anciennes notifications"
-            : "Voir les anciennes notifications"}
+            ? t("cacher_anciennes_notifications")
+            : t("voir_anciennes_notifications")}
         </button>
       )}
     </div>

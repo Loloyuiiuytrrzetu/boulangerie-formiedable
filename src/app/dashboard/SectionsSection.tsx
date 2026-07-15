@@ -4,15 +4,17 @@ import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { creerSection, modifierSection, supprimerSection } from "./actions";
 import type { Section } from "@/lib/types";
+import { useTDash } from "@/lib/langue-dashboard";
 
 const classesInput =
   "w-full rounded-lg border border-stone-300 px-3.5 py-2.5 outline-none transition focus:border-bordeaux-700 focus:ring-2 focus:ring-bordeaux-200";
 
 function ChampsSection({ section }: { section?: Partial<Section> }) {
+  const t = useTDash();
   return (
     <div className="space-y-3">
       <div>
-        <label className="mb-1 block text-sm font-medium text-stone-700">Titre de la section</label>
+        <label className="mb-1 block text-sm font-medium text-stone-700">{t("titre_section")}</label>
         <input
           name="titre"
           required
@@ -24,20 +26,19 @@ function ChampsSection({ section }: { section?: Partial<Section> }) {
       </div>
       <div>
         <label className="mb-1 block text-sm font-medium text-stone-700">
-          Texte <span className="text-stone-400">(optionnel)</span>
+          {t("texte_section")}
         </label>
         <textarea
           name="texte"
           rows={3}
           defaultValue={section?.texte ?? ""}
-          placeholder="Ex : Laissez-nous un avis sur votre passage."
           className={classesInput}
         />
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <div>
           <label className="mb-1 block text-sm font-medium text-stone-700">
-            Lien URL <span className="text-stone-400">(optionnel)</span>
+            {t("lien_url")}
           </label>
           <input
             name="lien_url"
@@ -49,7 +50,7 @@ function ChampsSection({ section }: { section?: Partial<Section> }) {
         </div>
         <div>
           <label className="mb-1 block text-sm font-medium text-stone-700">
-            Libellé du bouton
+            {t("lien_libelle")}
           </label>
           <input
             name="lien_libelle"
@@ -65,6 +66,7 @@ function ChampsSection({ section }: { section?: Partial<Section> }) {
 }
 
 function BlocSection({ section }: { section: Section }) {
+  const t = useTDash();
   const router = useRouter();
   const [ouvert, setOuvert] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
@@ -91,10 +93,10 @@ function BlocSection({ section }: { section: Section }) {
 
   const badgeType =
     section.type === "cartes"
-      ? "💳 Cartes"
+      ? `💳 ${t("cartes_de_fidelite")}`
       : section.type === "info"
-        ? "ℹ️ Info + QR code"
-        : "📝 Personnalisée";
+        ? `ℹ️ ${t("info_qr")}`
+        : `📝 ${t("personnalisee")}`;
 
   return (
     <div className="rounded-2xl border border-stone-200 bg-white">
@@ -107,7 +109,7 @@ function BlocSection({ section }: { section: Section }) {
           <p className="font-semibold text-stone-900">{section.titre}</p>
           <p className="text-xs text-stone-500">
             {badgeType}
-            {!section.supprimable && " · non supprimable"}
+            {!section.supprimable && ` · ${t("non_supprimable")}`}
           </p>
         </div>
         <span className="text-stone-400">{ouvert ? "▲" : "▼"}</span>
@@ -119,7 +121,7 @@ function BlocSection({ section }: { section: Section }) {
             <form action={enregistrer} className="space-y-3">
               <div>
                 <label className="mb-1 block text-sm font-medium text-stone-700">
-                  Titre de la section
+                  {t("titre_section")}
                 </label>
                 <input
                   name="titre"
@@ -138,7 +140,7 @@ function BlocSection({ section }: { section: Section }) {
             <form action={enregistrer} className="space-y-3">
               <div>
                 <label className="mb-1 block text-sm font-medium text-stone-700">
-                  Titre de la section
+                  {t("titre_section")}
                 </label>
                 <input
                   name="titre"
@@ -183,7 +185,7 @@ function BlocSection({ section }: { section: Section }) {
               }}
               className="rounded-lg bg-bordeaux-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-bordeaux-700 disabled:opacity-60"
             >
-              Enregistrer
+              {t("enregistrer")}
             </button>
             {section.supprimable && (
               <button
@@ -192,10 +194,10 @@ function BlocSection({ section }: { section: Section }) {
                 disabled={enCours}
                 className="rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-60"
               >
-                Supprimer
+                {t("supprimer")}
               </button>
             )}
-            {succes && <span className="text-sm text-green-600">Enregistré ✓</span>}
+            {succes && <span className="text-sm text-green-600">{t("enregistre")}</span>}
           </div>
 
           {erreur && (
@@ -208,6 +210,7 @@ function BlocSection({ section }: { section: Section }) {
 }
 
 export function SectionsSection({ sections }: { sections: Section[] }) {
+  const t = useTDash();
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [creation, setCreation] = useState(false);
@@ -231,10 +234,9 @@ export function SectionsSection({ sections }: { sections: Section[] }) {
     <section className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-bold text-stone-900">Sections de ma page</h2>
+          <h2 className="text-lg font-bold text-stone-900">{t("sections_de_ma_page")}</h2>
           <p className="text-sm text-stone-500">
-            Rajouter des onglets à la page d&apos;accueil de vos clients pour
-            faire passer une information ou annoncer un événement.
+            {t("sections_desc")}
           </p>
         </div>
         <button
@@ -242,7 +244,7 @@ export function SectionsSection({ sections }: { sections: Section[] }) {
           onClick={() => setCreation(!creation)}
           className="rounded-lg bg-bordeaux-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-bordeaux-700"
         >
-          {creation ? "Annuler" : "+ Nouvelle section"}
+          {creation ? t("annuler") : t("nouvelle_section")}
         </button>
       </div>
 
@@ -257,7 +259,7 @@ export function SectionsSection({ sections }: { sections: Section[] }) {
             disabled={enCours}
             className="mt-4 rounded-lg bg-bordeaux-800 px-5 py-2 text-sm font-semibold text-white transition hover:bg-bordeaux-700 disabled:opacity-60"
           >
-            {enCours ? "Création…" : "Créer la section"}
+            {enCours ? "…" : t("creer")}
           </button>
         </form>
       )}
