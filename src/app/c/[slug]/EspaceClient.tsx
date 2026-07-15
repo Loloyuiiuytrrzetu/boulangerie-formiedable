@@ -10,7 +10,6 @@ import {
   utiliserRecompense,
 } from "./actions";
 import { AnimationRecompense } from "./Animation";
-import { AbonnementPush } from "./AbonnementPush";
 import { InstallationIOS, BanniereInstallationIOS } from "./InstallationIOS";
 import { ScannerClient } from "./ScannerClient";
 import { useLangue } from "@/lib/langue";
@@ -517,23 +516,7 @@ export function EspaceClient({
         ]
       : [sectionScan, ...sectionsBase];
   const [ongletActif, setOngletActif] = useState<string>(sectionsAffichees[0].id);
-  const cleRefus = `walletiz_notif_refus_${slug}`;
-  const [proposerNotifs, setProposerNotifs] = useState(false);
   const [animationEnCours, setAnimationEnCours] = useState<string | null>(null);
-
-  useEffect(() => {
-    setProposerNotifs(
-      !notificationsActives &&
-        typeof Notification !== "undefined" &&
-        Notification.permission !== "denied" &&
-        localStorage.getItem(cleRefus) !== "1"
-    );
-  }, [notificationsActives, cleRefus]);
-
-  function refuserNotifs() {
-    localStorage.setItem(cleRefus, "1");
-    setProposerNotifs(false);
-  }
 
   const sectionActive =
     sectionsAffichees.find((s) => s.id === ongletActif) ?? sectionsAffichees[0];
@@ -571,37 +554,7 @@ export function EspaceClient({
         </div>
       </div>
 
-      {proposerNotifs && (
-        <div
-          className="animate-pulse-slow rounded-2xl border-2 px-4 py-4 shadow-xl"
-          style={{
-            borderColor: couleur,
-            backgroundColor: `${couleur}0d`,
-          }}
-        >
-          <p className="mb-1 text-base font-bold" style={{ color: couleur }}>
-            🔔 Dernière étape : activez vos notifications
-          </p>
-          <p className="mb-3 text-xs text-stone-600">
-            Appuyez sur le bouton ci-dessous et autorisez les notifications pour
-            recevoir les promotions et les alertes de récompenses de ce commerce.
-          </p>
-          <AbonnementPush
-            restaurantId={restaurantId}
-            vapidPublicKey={vapidPublicKey}
-            dejaActif={notificationsActives}
-            couleur={couleur}
-          />
-          <button
-            onClick={refuserNotifs}
-            className="mt-2 text-xs font-medium text-stone-500 hover:text-stone-700"
-          >
-            Non merci, plus tard
-          </button>
-        </div>
-      )}
-
-      {/* Récompenses en attente : toujours visibles, indépendantes de l'onglet.
+{/* Récompenses en attente : toujours visibles, indépendantes de l'onglet.
           Si plusieurs, on les affiche dans un carrousel horizontal — le client
           slide vers la gauche pour voir les suivantes. */}
       {recompensesEnAttente.length > 0 && (
