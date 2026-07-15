@@ -17,6 +17,7 @@ export type Restaurant = {
   actif: boolean;
   tampon_restaurateur_only: boolean;
   abonnement_statut: "essai" | "actif" | "annule" | "expire";
+  abonnement_type: "mensuel" | "annuel" | null;
   essai_fin_le: string | null;
   abonnement_debut_le: string | null;
   abonnement_prochaine_facture_le: string | null;

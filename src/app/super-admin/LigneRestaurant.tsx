@@ -61,6 +61,7 @@ export function LigneRestaurant({ restaurant }: { restaurant: RestaurantAvecStat
               </span>
             )}
             <BadgeAbonnement statut={restaurant.abonnement_statut} />
+            <BadgePlan type={restaurant.abonnement_type} />
           </div>
           <p className="mt-0.5 truncate text-xs text-stone-500">
             {restaurant.email} · inscrit le{" "}
@@ -107,6 +108,24 @@ export function LigneRestaurant({ restaurant }: { restaurant: RestaurantAvecStat
       </div>
       {erreur && <p className="mt-2 text-xs text-red-600">{erreur}</p>}
     </li>
+  );
+}
+
+function BadgePlan({
+  type,
+}: {
+  type: RestaurantAvecStats["abonnement_type"];
+}) {
+  if (!type) return null;
+  const config = {
+    mensuel: { label: "Mensuel · 64€/mois", classes: "bg-stone-100 text-stone-700" },
+    annuel: { label: "Annuel · 614€/an", classes: "bg-bordeaux-100 text-bordeaux-800" },
+  } as const;
+  const c = config[type];
+  return (
+    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${c.classes}`}>
+      {c.label}
+    </span>
   );
 }
 

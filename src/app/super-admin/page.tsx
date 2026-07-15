@@ -55,6 +55,31 @@ export default async function SuperAdmin() {
     };
   });
 
+  // ---------------------------------------------------------------------------
+  // REVENUS
+  // - Frais de mise en place : 120€ facturés une fois par restaurant créé
+  // - Abonnement mensuel : 64€/mois
+  // - Abonnement annuel   : 614€/an (614/12 ≈ 51,17€/mois en MRR)
+  // Seuls les abonnements 'essai' ou 'actif' comptent dans les revenus
+  // récurrents (les 'annule' ou 'expire' sont exclus).
+  // ---------------------------------------------------------------------------
+  const PRIX_SETUP = 120;
+  const PRIX_MENSUEL = 64;
+  const PRIX_ANNUEL = 614;
+
+  const actifs = lignes.filter(
+    (r) => r.abonnement_statut === "essai" || r.abonnement_statut === "actif"
+  );
+  const nbMensuels = actifs.filter((r) => r.abonnement_type === "mensuel").length;
+  const nbAnnuels = actifs.filter((r) => r.abonnement_type === "annuel").length;
+
+  const mrr = nbMensuels * PRIX_MENSUEL + nbAnnuels * (PRIX_ANNUEL / 12);
+  const arr = mrr * 12;
+  const totalSetup = lignes.length * PRIX_SETUP;
+
+  const fmt = (n: number) =>
+    new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 }).format(n);
+
   return (
     <main className="min-h-screen bg-stone-50">
       <header className="border-b border-stone-200 bg-white">
@@ -76,6 +101,47 @@ export default async function SuperAdmin() {
       </header>
 
       <div className="mx-auto max-w-6xl px-6 py-8">
+        {/* ============ REVENUS ============ */}
+        <section className="mb-8 grid gap-4 sm:grid-cols-3">
+          <div className="rounded-2xl border border-stone-200 bg-white p-5">
+            <p className="text-xs font-bold uppercase tracking-widest text-stone-500">
+              Clients (restaurants)
+            </p>
+            <p className="mt-2 text-4xl font-black text-bordeaux-800">
+              {lignes.length}
+            </p>
+            <p className="mt-1 text-xs text-stone-500">
+              dont <strong>{nbMensuels}</strong> mensuels ·{" "}
+              <strong>{nbAnnuels}</strong> annuels
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-stone-200 bg-white p-5">
+            <p className="text-xs font-bold uppercase tracking-widest text-stone-500">
+              Revenus récurrents
+            </p>
+            <p className="mt-2 text-4xl font-black text-bordeaux-800">
+              {fmt(mrr)}€
+              <span className="text-base font-medium text-stone-500"> / mois</span>
+            </p>
+            <p className="mt-1 text-xs text-stone-500">
+              Soit <strong>{fmt(arr)}€ / an</strong> (ARR)
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-stone-200 bg-white p-5">
+            <p className="text-xs font-bold uppercase tracking-widest text-stone-500">
+              Frais de service encaissés
+            </p>
+            <p className="mt-2 text-4xl font-black text-bordeaux-800">
+              {fmt(totalSetup)}€
+            </p>
+            <p className="mt-1 text-xs text-stone-500">
+              {lignes.length} × {PRIX_SETUP}€ (frais de mise en place)
+            </p>
+          </div>
+        </section>
+
         <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
           <section className="rounded-2xl border border-stone-200 bg-white">
             <h2 className="border-b border-stone-100 px-6 py-4 font-bold text-stone-900">

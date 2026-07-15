@@ -81,6 +81,42 @@ export function CreerRestaurateurForm() {
           <input id="mot_de_passe" name="mot_de_passe" type="text" required minLength={8} className={classesInput} placeholder="8 caractères minimum" />
         </div>
 
+        <div>
+          <label className="mb-1.5 block text-sm font-medium text-stone-700">
+            Plan souscrit
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-stone-300 px-3 py-2.5 transition hover:border-bordeaux-500 has-[:checked]:border-bordeaux-700 has-[:checked]:bg-bordeaux-50">
+              <input
+                type="radio"
+                name="abonnement_type"
+                value="mensuel"
+                required
+                defaultChecked
+                className="accent-bordeaux-800"
+              />
+              <span className="text-sm font-semibold text-stone-800">
+                Mensuel <span className="text-xs font-normal text-stone-500">(64€/mois)</span>
+              </span>
+            </label>
+            <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-stone-300 px-3 py-2.5 transition hover:border-bordeaux-500 has-[:checked]:border-bordeaux-700 has-[:checked]:bg-bordeaux-50">
+              <input
+                type="radio"
+                name="abonnement_type"
+                value="annuel"
+                className="accent-bordeaux-800"
+              />
+              <span className="text-sm font-semibold text-stone-800">
+                Annuel <span className="text-xs font-normal text-stone-500">(614€/an)</span>
+              </span>
+            </label>
+          </div>
+          <p className="mt-1 text-xs text-stone-400">
+            Les frais de mise en place de <strong>120€</strong> sont
+            automatiquement ajoutés en revenus « frais de service ».
+          </p>
+        </div>
+
         {erreur && (
           <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{erreur}</p>
         )}
