@@ -67,3 +67,15 @@ export function useT() {
     vars?: Parameters<typeof t>[2]
   ) => t(cle, langue, vars);
 }
+
+// Hook pour la VITRINE walletiz.fr (dictionnaire séparé, i18n-vitrine.ts).
+// Partage le même LangueProvider : si l'utilisateur choisit une langue sur
+// la vitrine, elle est aussi appliquée à la page client s'il en visite une.
+import { tV } from "./i18n-vitrine";
+export function useTV() {
+  const { langue } = useLangue();
+  return (
+    cle: Parameters<typeof tV>[0],
+    vars?: Parameters<typeof tV>[2]
+  ) => tV(cle, langue, vars);
+}
