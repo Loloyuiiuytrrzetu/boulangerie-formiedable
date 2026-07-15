@@ -489,8 +489,8 @@ export default function Vitrine() {
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-stone-600">
               Frais de mise en place unique de <strong>{PRIX_SETUP}€</strong>{" "}
-              (programmation, configuration, création de votre commerce), puis
-              choisissez votre rythme. Pas de coût caché, pas de commission.
+              (facturés séparément de l&apos;abonnement), puis choisissez votre
+              rythme. Pas de coût caché, pas de commission.
             </p>
           </div>
 
@@ -515,6 +515,26 @@ export default function Vitrine() {
                 aucun prélèvement si vous annulez avant la fin de la semaine
                 d&apos;essai.
               </p>
+
+              {/* Frais de mise en place, facturés séparément */}
+              <div className="mt-6 rounded-xl border border-stone-200 bg-stone-50 p-4">
+                <div className="flex items-baseline justify-between gap-2">
+                  <p className="text-sm font-bold text-stone-900">
+                    + Frais de mise en place
+                  </p>
+                  <p className="whitespace-nowrap text-lg font-bold text-bordeaux-800">
+                    {PRIX_SETUP}€ <span className="text-xs font-medium text-stone-500">une fois</span>
+                  </p>
+                </div>
+                <p className="mt-2 text-xs leading-relaxed text-stone-600">
+                  Comprend : configuration complète du compte commerçant,
+                  personnalisation de la page client (logo, couleurs, image de
+                  fond), création des cartes de fidélité et des récompenses,
+                  génération du QR code prêt à imprimer, session de formation
+                  en visio si demandée, et support prioritaire les 7 premiers
+                  jours.
+                </p>
+              </div>
 
               <ul className="mt-6 space-y-2.5 text-sm text-stone-700">
                 {[
@@ -575,6 +595,26 @@ export default function Vitrine() {
                 Annulable à tout moment. Aucun prélèvement pendant votre semaine
                 d&apos;essai.
               </p>
+
+              {/* Frais de mise en place, facturés séparément */}
+              <div className="mt-6 rounded-xl border border-bordeaux-100 bg-white/70 p-4">
+                <div className="flex items-baseline justify-between gap-2">
+                  <p className="text-sm font-bold text-stone-900">
+                    + Frais de mise en place
+                  </p>
+                  <p className="whitespace-nowrap text-lg font-bold text-bordeaux-800">
+                    {PRIX_SETUP}€ <span className="text-xs font-medium text-stone-500">une fois</span>
+                  </p>
+                </div>
+                <p className="mt-2 text-xs leading-relaxed text-stone-600">
+                  Comprend : configuration complète du compte commerçant,
+                  personnalisation de la page client (logo, couleurs, image de
+                  fond), création des cartes de fidélité et des récompenses,
+                  génération du QR code prêt à imprimer, session de formation
+                  en visio si demandée, et support prioritaire les 7 premiers
+                  jours.
+                </p>
+              </div>
 
               <ul className="mt-6 space-y-2.5 text-sm text-stone-700">
                 <li className="flex items-start gap-2 font-semibold text-bordeaux-800">
