@@ -119,7 +119,7 @@ export async function creerRestaurateur(formData: FormData) {
     nom: nomCommerce,
     slug,
     timezone,
-    animation_recompense: "etoiles",
+    animation_recompense: "rayons",
     abonnement_statut: "essai",
     abonnement_type: abonnementType,
     essai_fin_le: essaiFin.toISOString(),
