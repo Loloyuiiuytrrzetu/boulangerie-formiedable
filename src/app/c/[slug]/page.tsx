@@ -178,6 +178,14 @@ export default async function PageCommerce({
     const progressions = (resProgressions.data as CarteClient[]) ?? [];
     recompensesEnAttente = (resGagnees.data as RecompenseGagnee[]) ?? [];
 
+    // Si le restaurateur a coché "1 tampon par jour toutes cartes confondues",
+    // toutes les cartes doivent afficher "déjà pris aujourd'hui" dès qu'une
+    // carte a reçu son tampon du jour (sinon le client voit un bouton actif
+    // qui échouera au clic).
+    const tamponGlobalPrisAujourdHui =
+      restaurant.tampon_par_carte === false &&
+      client.date_dernier_tampon === aujourdHui;
+
     cartesAffichees = cartes
       // Cartes sans date d'expiration : toujours visibles.
       // Cartes expirées : masquées sauf si le client a des tampons dessus.
@@ -189,6 +197,8 @@ export default async function PageCommerce({
       })
       .map((c) => {
         const progression = progressions.find((p) => p.carte_id === c.id);
+        const prisSurCetteCarte =
+          progression?.date_dernier_tampon === aujourdHui;
         return {
           id: c.id,
           titre: c.titre,
@@ -201,7 +211,7 @@ export default async function PageCommerce({
           expiree: c.date_expiration !== null && c.date_expiration < aujourdHui,
           tampons_actuels: progression?.tampons_actuels ?? 0,
           recompenses_reclamees: progression?.recompenses_reclamees ?? 0,
-          tampon_pris_aujourdhui: progression?.date_dernier_tampon === aujourdHui,
+          tampon_pris_aujourdhui: tamponGlobalPrisAujourdHui || prisSurCetteCarte,
         };
       });
 
