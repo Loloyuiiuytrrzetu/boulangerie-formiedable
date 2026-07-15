@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { attribuerTampons } from "../actions";
 import { iconeEmoji } from "@/lib/icons";
 import type { Carte } from "@/lib/types";
@@ -27,8 +27,16 @@ export function ScannerForm({
     requis: number;
     recompenses_creees: number;
   }>(null);
-  const [saisieManuelle, setSaisieManuelle] = useState(false);
   const [enCours, startTransition] = useTransition();
+  const [carteChoisie, setCarteChoisie] = useState<Carte | null>(cartes[0] ?? null);
+
+  useEffect(() => {
+    // Si la liste des cartes change (nouvelle carte créée), on resynchronise
+    // la sélection sur la première carte disponible.
+    if (!cartes.find((c) => c.id === carteChoisie?.id)) {
+      setCarteChoisie(cartes[0] ?? null);
+    }
+  }, [cartes, carteChoisie]);
 
   function envoyer(formData: FormData) {
     setErreur(null);
@@ -56,6 +64,7 @@ export function ScannerForm({
     return (
       <form ref={formRef} action={envoyer} className="mt-6 space-y-4">
         <input type="hidden" name="telephone" value={telephonePrecharge} />
+        <input type="hidden" name="carte_id" value={carteChoisie?.id ?? ""} />
         <div className="rounded-xl bg-green-50 px-4 py-3 text-sm">
           <p className="font-semibold text-green-800">✅ Client identifié</p>
           {identitePrecharge && (
@@ -69,16 +78,16 @@ export function ScannerForm({
         </div>
 
         <div>
-          <label htmlFor="carte_id" className="mb-1.5 block text-sm font-medium text-stone-700">
+          <label className="mb-1.5 block text-sm font-medium text-stone-700">
             Carte
           </label>
-          <select id="carte_id" name="carte_id" required className={classesInput}>
-            {cartes.map((c) => (
-              <option key={c.id} value={c.id}>
-                {iconeEmoji(c.tampon_icone)} {c.titre} ({c.nombre_tampons_requis} tampons)
-              </option>
-            ))}
-          </select>
+          {/* Dropdown custom pour pouvoir afficher les images uploadées
+              (l'élément natif <option> ne rend jamais d'images). */}
+          <SelecteurCarte
+            cartes={cartes}
+            valeur={carteChoisie}
+            onChange={setCarteChoisie}
+          />
         </div>
 
         <div>
@@ -117,7 +126,7 @@ export function ScannerForm({
 
         <button
           type="submit"
-          disabled={enCours}
+          disabled={enCours || !carteChoisie}
           className="w-full rounded-xl bg-bordeaux-800 px-6 py-3 font-semibold text-white transition hover:bg-bordeaux-700 disabled:opacity-60"
         >
           {enCours ? "Attribution…" : "🎯 Attribuer les tampons"}
@@ -138,5 +147,107 @@ export function ScannerForm({
     <div className="mt-6 space-y-6">
       <ScannerCamera />
     </div>
+  );
+}
+
+// Dropdown custom : identique visuellement à un <select> mais capable de
+// rendre l'image de tampon uploadée par le restaurateur (vignette 32×32).
+// Si la carte utilise juste une icône emoji, on affiche l'emoji.
+function SelecteurCarte({
+  cartes,
+  valeur,
+  onChange,
+}: {
+  cartes: Carte[];
+  valeur: Carte | null;
+  onChange: (c: Carte) => void;
+}) {
+  const [ouvert, setOuvert] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!ouvert) return;
+    function onClickOutside(e: MouseEvent) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
+        setOuvert(false);
+      }
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, [ouvert]);
+
+  return (
+    <div ref={containerRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setOuvert(!ouvert)}
+        className="flex w-full items-center justify-between gap-3 rounded-lg border border-stone-300 bg-white px-3 py-2.5 text-left text-base outline-none transition hover:border-bordeaux-400 focus:border-bordeaux-700 focus:ring-2 focus:ring-bordeaux-200"
+      >
+        {valeur ? (
+          <VignetteEtLibelle carte={valeur} />
+        ) : (
+          <span className="text-stone-500">—</span>
+        )}
+        <span className="shrink-0 text-stone-400">{ouvert ? "▲" : "▼"}</span>
+      </button>
+
+      {ouvert && (
+        <ul
+          role="listbox"
+          className="absolute z-20 mt-1 max-h-72 w-full overflow-y-auto rounded-lg border border-stone-200 bg-white shadow-xl"
+        >
+          {cartes.map((c) => {
+            const actif = c.id === valeur?.id;
+            return (
+              <li key={c.id}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onChange(c);
+                    setOuvert(false);
+                  }}
+                  className={`flex w-full items-center gap-3 px-3 py-2.5 text-left transition ${
+                    actif
+                      ? "bg-bordeaux-50 text-bordeaux-900"
+                      : "hover:bg-stone-50"
+                  }`}
+                >
+                  <VignetteEtLibelle carte={c} />
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+// Vignette 32×32 (image uploadée si présente, sinon emoji) + titre + tampons.
+function VignetteEtLibelle({ carte }: { carte: Carte }) {
+  return (
+    <span className="flex min-w-0 flex-1 items-center gap-3">
+      {carte.tampon_image_url ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={carte.tampon_image_url}
+          alt=""
+          className="h-8 w-8 shrink-0 rounded-md border border-stone-200 object-cover"
+        />
+      ) : (
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-stone-100 text-lg">
+          {iconeEmoji(carte.tampon_icone)}
+        </span>
+      )}
+      <span className="min-w-0 flex-1 truncate text-sm font-medium text-stone-900">
+        {carte.titre}
+      </span>
+      <span className="shrink-0 text-xs font-semibold text-stone-500">
+        {carte.nombre_tampons_requis} tampons
+      </span>
+    </span>
   );
 }
