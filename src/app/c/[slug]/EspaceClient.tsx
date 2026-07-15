@@ -11,7 +11,7 @@ import {
 } from "./actions";
 import { AnimationRecompense } from "./Animation";
 import { AbonnementPush } from "./AbonnementPush";
-import { InstallationIOS } from "./InstallationIOS";
+import { InstallationIOS, BanniereInstallationIOS } from "./InstallationIOS";
 import { ScannerClient } from "./ScannerClient";
 import { useLangue } from "@/lib/langue";
 import { LANGUES } from "@/lib/i18n";
@@ -652,6 +652,7 @@ export function EspaceClient({
           tamponRestaurateurOnly={tamponRestaurateurOnly}
           restaurantId={restaurantId}
           identiteClient={identiteClient}
+          nomCommerce={nomCommerce}
           onAnimation={(a) => setAnimationEnCours(a || animation)}
         />
       )}
@@ -670,6 +671,7 @@ function ContenuSection({
   tamponRestaurateurOnly,
   restaurantId,
   identiteClient,
+  nomCommerce,
   onAnimation,
 }: {
   section: Section;
@@ -683,6 +685,7 @@ function ContenuSection({
   tamponRestaurateurOnly: boolean;
   restaurantId: string;
   identiteClient: string;
+  nomCommerce: string;
   onAnimation: (a: string) => void;
 }) {
   if (section.type === "cartes") {
@@ -748,6 +751,7 @@ function ContenuSection({
           </>
         )}
         <SelecteurLangue />
+        <BanniereInstallationIOS couleur={couleur} nomCommerce={nomCommerce} />
         <ModifierIdentite slug={slug} identiteActuelle={identiteClient} />
         <BoutonDesinscription slug={slug} couleur={couleur} />
       </section>
