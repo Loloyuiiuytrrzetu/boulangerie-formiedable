@@ -557,7 +557,7 @@ export function EspaceClient({
                     ? t("scan")
                     : s.type === "info"
                       ? t("info")
-                      : s.titre}
+                      : (<AutoTraduit texte={s.titre} />)}
               </button>
             );
           })}
@@ -695,7 +695,7 @@ function ContenuSection({
       <section className="rounded-3xl border border-stone-200 bg-white p-6 shadow-xl">
         {section.texte && (
           <p className="whitespace-pre-line text-center text-sm text-stone-600">
-            {section.texte}
+            <AutoTraduit texte={section.texte} />
           </p>
         )}
         {qrClientDataUrl && (
@@ -724,10 +724,12 @@ function ContenuSection({
   // Section personnalisée : titre + texte + lien optionnel
   return (
     <section className="rounded-3xl border border-stone-200 bg-white p-6 shadow-xl">
-      <h2 className="text-lg font-bold text-stone-900">{section.titre}</h2>
+      <h2 className="text-lg font-bold text-stone-900">
+        <AutoTraduit texte={section.titre} />
+      </h2>
       {section.texte && (
         <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-stone-600">
-          {section.texte}
+          <AutoTraduit texte={section.texte} />
         </p>
       )}
       {section.lien_url && (
@@ -738,7 +740,12 @@ function ContenuSection({
           className="mt-5 inline-block rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:opacity-90"
           style={{ backgroundColor: couleur }}
         >
-          {section.lien_libelle || "Ouvrir le lien"} →
+          {section.lien_libelle ? (
+            <AutoTraduit texte={section.lien_libelle} />
+          ) : (
+            "→"
+          )}{" "}
+          →
         </a>
       )}
     </section>
