@@ -3,6 +3,7 @@
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { inscrireClient } from "./actions";
+import { reinitialiserPromptInstallation } from "./InstallationIOS";
 import { abonnerAuxNotifications } from "@/lib/abonnement-push";
 import { useLangue, useT } from "@/lib/langue";
 import { LANGUES } from "@/lib/i18n";
@@ -65,6 +66,11 @@ export function FormulaireInscription({
         setErreur(resultat.erreur);
         return;
       }
+
+      // Le client vient de s'inscrire → on force l'onboarding PWA à réapparaître
+      // (popup « Ajouter à l'écran d'accueil »). Qu'il la passe ou non, elle
+      // reste ensuite accessible depuis l'onglet Info.
+      reinitialiserPromptInstallation();
 
       if (resAbonnement.statut === "ios-install") {
         setAvertissement(t("ios_install_pour_notifs"));

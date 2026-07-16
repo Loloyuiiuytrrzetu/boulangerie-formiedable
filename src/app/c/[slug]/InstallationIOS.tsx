@@ -64,6 +64,15 @@ function ecrireEtat(e: EtatPwa) {
   else localStorage.setItem(PWA_STATE_KEY, e);
 }
 
+// Réinitialise l'onboarding PWA pour qu'il réapparaisse : appelé juste après
+// l'inscription d'un client, afin que la popup « Ajouter à l'écran d'accueil »
+// s'affiche à coup sûr même si un visiteur anonyme l'avait déjà fermée avant.
+export function reinitialiserPromptInstallation() {
+  if (typeof localStorage === "undefined") return;
+  localStorage.removeItem(PWA_STATE_KEY);
+  localStorage.removeItem("walletiz_ios_install_seen");
+}
+
 // ---------------------------------------------------------------------------
 // POPUP plein écran — s'affiche uniquement si l'utilisateur n'a JAMAIS vu
 // l'onboarding, sur iOS et pas en mode standalone.
