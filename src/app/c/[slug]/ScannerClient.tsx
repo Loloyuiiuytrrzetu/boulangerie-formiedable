@@ -4,6 +4,8 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import jsQR from "jsqr";
 import { scannerEtAjouterTampon } from "./actions";
 import type { CarteAffichee } from "./EspaceClient";
+import { useT } from "@/lib/langue";
+import { useAutoTraduitListe } from "@/lib/auto-traduction";
 
 // Scanner accessible depuis l'onglet "Scan" côté client : le client scanne
 // lui-même le QR code affiché en caisse du commerce. Si le QR correspond
@@ -20,6 +22,7 @@ export function ScannerClient({
   cartes: CarteAffichee[];
   onAnimation: () => void;
 }) {
+  const t = useT();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [ouvert, setOuvert] = useState(false);
@@ -28,6 +31,8 @@ export function ScannerClient({
   const [carteId, setCarteId] = useState<string>(cartes[0]?.id ?? "");
   const [enCours, startTransition] = useTransition();
   const carteChoisie = cartes.find((c) => c.id === carteId) ?? cartes[0];
+  // Noms de cartes traduits automatiquement dans la langue du client
+  const titresTraduits = useAutoTraduitListe(cartes.map((c) => c.titre));
 
   useEffect(() => {
     if (!ouvert) return;
@@ -100,9 +105,7 @@ export function ScannerClient({
             valide = false;
           }
           if (!valide) {
-            setErreur(
-              "Ce QR code ne correspond pas à ce commerce. Scannez le QR affiché en caisse."
-            );
+            setErreur(t("qr_ne_correspond_pas"));
             return;
           }
 
@@ -114,7 +117,7 @@ export function ScannerClient({
             const r = await scannerEtAjouterTampon(slug, carteId);
             if (r?.erreur) setErreur(r.erreur);
             else if ("ok" in r && r.ok) {
-              setSucces("✅ Tampon ajouté !");
+              setSucces(t("tampon_ajoute"));
               if ("recompense" in r && r.recompense) {
                 onAnimation();
               }
@@ -122,9 +125,7 @@ export function ScannerClient({
           });
         }, 300);
       } catch (e) {
-        setErreur(
-          "Impossible d'accéder à la caméra. Autorisez l'accès dans les réglages du navigateur."
-        );
+        setErreur(t("camera_impossible"));
         console.error(e);
       }
     })();
@@ -134,12 +135,13 @@ export function ScannerClient({
       if (interval) clearInterval(interval);
       if (stream) stream.getTracks().forEach((t) => t.stop());
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ouvert, slug, carteId, onAnimation]);
 
   if (cartes.length === 0) {
     return (
       <div className="rounded-2xl bg-stone-50 p-6 text-center text-sm text-stone-500">
-        Aucune carte de fidélité disponible pour le moment.
+        {t("aucune_carte")}
       </div>
     );
   }
@@ -147,22 +149,22 @@ export function ScannerClient({
   return (
     <div className="space-y-4">
       <p className="text-center text-sm text-stone-600">
-        Scannez le QR code affiché en caisse pour recevoir votre tampon du jour.
+        {t("scannez_pour_recevoir")}
       </p>
 
       {cartes.length > 1 && (
         <div>
           <label className="mb-1.5 block text-xs font-semibold text-stone-600">
-            Sur quelle carte ?
+            {t("sur_quelle_carte")}
           </label>
           <select
             value={carteId}
             onChange={(e) => setCarteId(e.target.value)}
             className="w-full rounded-xl border border-stone-300 px-3 py-2.5 text-sm focus:outline-none"
           >
-            {cartes.map((c) => (
+            {cartes.map((c, i) => (
               <option key={c.id} value={c.id}>
-                {c.titre} ({c.tampons_actuels}/{c.nombre_tampons_requis})
+                {titresTraduits[i] || c.titre} ({c.tampons_actuels}/{c.nombre_tampons_requis})
               </option>
             ))}
           </select>
@@ -171,7 +173,7 @@ export function ScannerClient({
 
       {carteChoisie?.tampon_pris_aujourdhui ? (
         <div className="rounded-xl bg-stone-50 px-4 py-3 text-center text-sm text-stone-600">
-          Tampon du jour déjà pris sur cette carte ✓
+          {t("tampon_deja_pris")}
         </div>
       ) : (
         <button
@@ -185,7 +187,7 @@ export function ScannerClient({
           className="w-full rounded-2xl px-6 py-6 text-lg font-bold text-white shadow-lg transition hover:opacity-90 disabled:opacity-60"
           style={{ backgroundColor: couleur }}
         >
-          {enCours ? "Ajout du tampon…" : "📷 Scanner le QR code du commerce"}
+          {enCours ? t("ajout_tampon_en_cours") : t("scanner_qr_commerce")}
         </button>
       )}
 
@@ -223,10 +225,10 @@ export function ScannerClient({
               onClick={() => setOuvert(false)}
               className="absolute right-2 top-2 rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-stone-900"
             >
-              ✕ Fermer
+              {t("fermer")}
             </button>
             <p className="p-3 text-center text-sm text-white">
-              Pointez la caméra vers le QR code affiché en caisse
+              {t("pointez_camera")}
             </p>
           </div>
         </div>

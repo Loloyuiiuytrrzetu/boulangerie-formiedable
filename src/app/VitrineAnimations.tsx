@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTV, useLangue } from "@/lib/langue";
 
 // Grande scène animée du hero : logo qui pulse + cartes de fidélité qui
 // flottent, avec tampons qui apparaissent en temps réel.
 export function HeroTampons() {
+  const tv = useTV();
   const [tampons, setTampons] = useState(0);
 
   useEffect(() => {
@@ -33,7 +35,7 @@ export function HeroTampons() {
               className="h-10 w-10 shrink-0 rounded-xl object-cover"
             />
             <div>
-              <p className="font-bold text-stone-900">Carte de fidélité</p>
+              <p className="font-bold text-stone-900">{tv("demo_carte_fidelite")}</p>
               <p className="text-xs text-stone-500">Pâtir Boulangerie</p>
             </div>
             <span className="ml-auto text-sm font-bold text-bordeaux-800">
@@ -47,7 +49,7 @@ export function HeroTampons() {
           </div>
           <div className="mt-4 rounded-xl bg-bordeaux-50 p-2.5 text-center">
             <p className="text-xs font-semibold text-bordeaux-800">
-              {tampons === 6 ? "🎉 Récompense débloquée !" : "1 pain offert à la 6ème visite"}
+              {tampons === 6 ? tv("demo_recompense_debloquee") : tv("demo_pain_6eme")}
             </p>
           </div>
         </div>
@@ -60,7 +62,7 @@ export function HeroTampons() {
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-100 text-sm">
               🍕
             </div>
-            <p className="text-xs font-bold text-stone-900">Pizzéria</p>
+            <p className="text-xs font-bold text-stone-900">{tv("demo_pizzeria")}</p>
           </div>
           <div className="mt-2 flex gap-1">
             {[0, 1, 2, 3, 4].map((i) => (
@@ -82,7 +84,7 @@ export function HeroTampons() {
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-pink-100 text-sm">
               🍰
             </div>
-            <p className="text-xs font-bold text-stone-900">Pâtisserie</p>
+            <p className="text-xs font-bold text-stone-900">{tv("demo_patisserie")}</p>
           </div>
           <div className="mt-2 grid grid-cols-4 gap-1">
             {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
@@ -109,7 +111,7 @@ export function HeroTampons() {
                 Boulangerie Bio
               </p>
               <p className="mt-0.5 truncate text-xs text-stone-600">
-                Croissants -30% ce midi !
+                {tv("demo_promo_croissants_court")}
               </p>
             </div>
           </div>
@@ -219,6 +221,7 @@ export function IPhoneFrame({
 // Mockup d'un téléphone montrant une carte qui se remplit — pour la
 // section "temps réel". iPhone complet.
 export function MockupCartes() {
+  const tv = useTV();
   const [progression, setProgression] = useState(3);
 
   useEffect(() => {
@@ -267,14 +270,14 @@ export function MockupCartes() {
           className="rounded-xl py-1.5 text-center text-xs font-semibold text-white"
           style={{ backgroundColor: "#0d4b3e" }}
         >
-          Cartes de fidélité
+          {tv("demo_carte_fidelite")}
         </div>
       </div>
 
       {/* Carte */}
       <div className="p-4 pb-8">
         <div className="flex items-center justify-between">
-          <p className="text-sm font-bold text-stone-900">Carte pain</p>
+          <p className="text-sm font-bold text-stone-900">{tv("demo_carte_pain")}</p>
           <span className="text-xs font-bold" style={{ color: "#0d4b3e" }}>
             {progression} / 8
           </span>
@@ -302,7 +305,7 @@ export function MockupCartes() {
           className="mt-3 rounded-lg py-1.5 text-center text-xs font-semibold text-white"
           style={{ backgroundColor: "#0d4b3e" }}
         >
-          {progression === 8 ? "🎉 Récompense !" : "1 pain offert à la 8ème"}
+          {progression === 8 ? tv("demo_recompense") : tv("demo_pain_8eme")}
         </div>
       </div>
     </IPhoneFrame>
@@ -429,11 +432,22 @@ function Courbe({
 }
 
 export function GrapheAnime() {
-  // Chiffres gonflés pour la vitrine (gros commerce imaginaire)
-  const semaineJours = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
-  const semaineValeurs = [820, 1420, 1180, 1560, 1780, 2340, 2010];
+  const tv = useTV();
+  const { langue } = useLangue();
 
-  const moisNoms = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"];
+  // Noms des jours / mois localisés (abrégés) selon la langue choisie
+  const fmtJour = new Intl.DateTimeFormat(langue, { weekday: "short" });
+  const fmtMois = new Intl.DateTimeFormat(langue, { month: "short" });
+  // 2024-01-07 = dimanche → Dim..Sam dans l'ordre affiché
+  const semaineJours = [0, 1, 2, 3, 4, 5, 6].map((i) =>
+    fmtJour.format(new Date(2024, 0, 7 + i))
+  );
+  const moisNoms = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) =>
+    fmtMois.format(new Date(2024, i, 1))
+  );
+
+  // Chiffres gonflés pour la vitrine (gros commerce imaginaire)
+  const semaineValeurs = [820, 1420, 1180, 1560, 1780, 2340, 2010];
   const moisValeurs = [4200, 4800, 5600, 6300, 7100, 7900, 8600, 8200, 7400, 6800, 6100, 5300];
 
   const totalSemaine = semaineValeurs.reduce((s, v) => s + v, 0);
@@ -443,32 +457,32 @@ export function GrapheAnime() {
     <section className="w-full max-w-xl space-y-4">
       <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-xl">
         <div className="mb-2 flex items-baseline justify-between">
-          <h3 className="text-sm font-bold text-stone-900">Tampons cette semaine</h3>
+          <h3 className="text-sm font-bold text-stone-900">{tv("demo_tampons_semaine")}</h3>
           <span className="text-xs text-stone-500">
-            Total : <strong style={{ color: TRAIT }}>{formatNb(totalSemaine)}</strong>
+            {tv("demo_total")} <strong style={{ color: TRAIT }}>{formatNb(totalSemaine)}</strong>
           </span>
         </div>
         <Courbe labels={semaineJours} valeurs={semaineValeurs} />
         <p className="mt-1 text-xs text-stone-400">
-          Les 7 derniers jours (aujourd&apos;hui à droite).
+          {tv("demo_7_derniers_jours")}
         </p>
       </div>
 
       <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-xl">
         <div className="mb-2 flex items-baseline justify-between gap-2">
-          <h3 className="text-sm font-bold text-stone-900">Tampons par mois</h3>
+          <h3 className="text-sm font-bold text-stone-900">{tv("demo_tampons_mois")}</h3>
           <div className="flex items-center gap-2">
             <span className="rounded-lg border border-stone-300 bg-white px-2 py-1 text-xs font-semibold text-stone-700">
               2026
             </span>
             <span className="text-xs text-stone-500">
-              Total : <strong style={{ color: TRAIT }}>{formatNb(totalAnnee)}</strong>
+              {tv("demo_total")} <strong style={{ color: TRAIT }}>{formatNb(totalAnnee)}</strong>
             </span>
           </div>
         </div>
         <Courbe labels={moisNoms} valeurs={moisValeurs} />
         <p className="mt-1 text-xs text-stone-400">
-          Historique conservé — vous pouvez revenir sur les années précédentes.
+          {tv("demo_historique_conserve")}
         </p>
       </div>
     </section>
@@ -477,6 +491,13 @@ export function GrapheAnime() {
 
 // Téléphone qui reçoit des notifications push — iPhone complet.
 export function NotifsAnimees() {
+  const tv = useTV();
+  const { langue } = useLangue();
+  const dateLock = new Intl.DateTimeFormat(langue, {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  }).format(new Date(2024, 6, 14));
   return (
     <IPhoneFrame>
       {/* Écran verrouillé sombre */}
@@ -493,14 +514,14 @@ export function NotifsAnimees() {
 
         <div className="mt-8 px-4 pb-4">
           <p className="text-center text-xs font-medium text-white/70">
-            lun. 14 juil.
+            {dateLock}
           </p>
           <p className="text-center text-6xl font-thin text-white">14:30</p>
         </div>
 
         <div className="space-y-2 px-3">
-          <NotifCard delay={0} logoImg="/exemple-patir.png" nom="Pâtir Boulangerie" msg="Croissants -30% ce midi jusqu'à 14h !" />
-          <NotifCard delay={2.5} logoImg="/exemple-patir.png" nom="Pâtir Boulangerie" msg="Votre récompense vous attend ✨" />
+          <NotifCard delay={0} logoImg="/exemple-patir.png" nom="Pâtir Boulangerie" msg={tv("demo_promo_croissants_long")} />
+          <NotifCard delay={2.5} logoImg="/exemple-patir.png" nom="Pâtir Boulangerie" msg={tv("demo_recompense_attend")} />
         </div>
       </div>
     </IPhoneFrame>

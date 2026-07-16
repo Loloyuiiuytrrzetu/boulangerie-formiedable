@@ -94,7 +94,11 @@ type Cle =
   | "ajouter_a_ecran_titre"
   | "ajouter_a_ecran_desc_court"
   | "comment_faire"
-  | "ne_plus_afficher";
+  | "ne_plus_afficher"
+  | "tampon_ajoute_merci"
+  | "push_non_supporte"
+  | "echec_inscription"
+  | "erreur_inconnue";
 
 type Traductions = Record<Cle, string>;
 
@@ -194,6 +198,10 @@ const FR: Traductions = {
     "Pour recevoir nos promotions et alertes de récompenses par notification.",
   comment_faire: "Comment faire ?",
   ne_plus_afficher: "Ne plus afficher",
+  tampon_ajoute_merci: "Tampon ajouté, merci de votre visite ! 🎉",
+  push_non_supporte: "Votre navigateur ne supporte pas les notifications push.",
+  echec_inscription: "Échec de l'inscription.",
+  erreur_inconnue: "Erreur inconnue.",
 };
 
 const EN: Traductions = {
@@ -291,6 +299,10 @@ const EN: Traductions = {
     "To receive our promotions and reward alerts by notification.",
   comment_faire: "How to?",
   ne_plus_afficher: "Don't show again",
+  tampon_ajoute_merci: "Stamp added, thanks for your visit! 🎉",
+  push_non_supporte: "Your browser does not support push notifications.",
+  echec_inscription: "Subscription failed.",
+  erreur_inconnue: "Unknown error.",
 };
 
 const ES: Traductions = {
@@ -389,6 +401,10 @@ const ES: Traductions = {
     "Para recibir nuestras promociones y avisos de recompensas por notificación.",
   comment_faire: "¿Cómo hacerlo?",
   ne_plus_afficher: "No mostrar más",
+  tampon_ajoute_merci: "¡Sello añadido, gracias por tu visita! 🎉",
+  push_non_supporte: "Tu navegador no admite notificaciones push.",
+  echec_inscription: "Error al suscribirse.",
+  erreur_inconnue: "Error desconocido.",
 };
 
 const DE: Traductions = {
@@ -488,6 +504,10 @@ const DE: Traductions = {
     "Um unsere Aktionen und Belohnungshinweise per Benachrichtigung zu erhalten.",
   comment_faire: "Wie geht das?",
   ne_plus_afficher: "Nicht mehr anzeigen",
+  tampon_ajoute_merci: "Stempel hinzugefügt, danke für Ihren Besuch! 🎉",
+  push_non_supporte: "Ihr Browser unterstützt keine Push-Benachrichtigungen.",
+  echec_inscription: "Anmeldung fehlgeschlagen.",
+  erreur_inconnue: "Unbekannter Fehler.",
 };
 
 const ZH: Traductions = {
@@ -572,6 +592,10 @@ const ZH: Traductions = {
   ajouter_a_ecran_desc_court: "以通过通知接收我们的促销和奖励提醒。",
   comment_faire: "怎么做?",
   ne_plus_afficher: "不再显示",
+  tampon_ajoute_merci: "印章已添加，感谢您的光临！🎉",
+  push_non_supporte: "您的浏览器不支持推送通知。",
+  echec_inscription: "订阅失败。",
+  erreur_inconnue: "未知错误。",
 };
 
 const AR: Traductions = {
@@ -663,6 +687,10 @@ const AR: Traductions = {
     "لتلقي عروضنا وتنبيهات المكافآت عبر الإشعارات.",
   comment_faire: "كيف؟",
   ne_plus_afficher: "عدم العرض مجدداً",
+  tampon_ajoute_merci: "تمت إضافة الختم، شكراً لزيارتك! 🎉",
+  push_non_supporte: "متصفحك لا يدعم إشعارات الدفع.",
+  echec_inscription: "فشل الاشتراك.",
+  erreur_inconnue: "خطأ غير معروف.",
 };
 
 const RU: Traductions = {
@@ -759,6 +787,10 @@ const RU: Traductions = {
     "Чтобы получать наши акции и уведомления о наградах.",
   comment_faire: "Как это сделать?",
   ne_plus_afficher: "Больше не показывать",
+  tampon_ajoute_merci: "Печать добавлена, спасибо за визит! 🎉",
+  push_non_supporte: "Ваш браузер не поддерживает push-уведомления.",
+  echec_inscription: "Не удалось подписаться.",
+  erreur_inconnue: "Неизвестная ошибка.",
 };
 
 const TRADUCTIONS: Record<Langue, Traductions> = {

@@ -104,6 +104,39 @@ async function traduire(
   }
 }
 
+// Hook : traduit un tableau de chaînes (utile là où on ne peut pas monter
+// un composant, ex. le libellé d'une <option>). Renvoie les textes traduits
+// dans le même ordre ; fallback instantané sur l'original pendant le chargement.
+export function useAutoTraduitListe(textes: (string | null | undefined)[]): string[] {
+  const { langue } = useLangue();
+  const source = useContext(LangueSourceContext);
+  const cle = textes.join("");
+  const [affiches, setAffiches] = useState<string[]>(() =>
+    textes.map((t) => t ?? "")
+  );
+
+  useEffect(() => {
+    const base = textes.map((t) => t ?? "");
+    if (langue === source) {
+      setAffiches(base);
+      return;
+    }
+    let annule = false;
+    setAffiches(base); // fallback instantané
+    Promise.all(base.map((t) => (t ? traduire(t, langue, source) : Promise.resolve(t)))).then(
+      (res) => {
+        if (!annule) setAffiches(res);
+      }
+    );
+    return () => {
+      annule = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cle, langue, source]);
+
+  return affiches;
+}
+
 // Composant : affiche `texte` traduit de la langue source du contenu
 // (LangueSourceProvider) vers la langue courante du client.
 export function AutoTraduit({ texte }: { texte: string | null | undefined }) {

@@ -173,7 +173,24 @@ type CleV =
   | "ct_tel_appeler"
   | "ct_tel_desc"
   // Footer
-  | "footer_desc";
+  | "footer_desc"
+  // Démos animées (mockups hero / sections)
+  | "demo_carte_fidelite"
+  | "demo_recompense_debloquee"
+  | "demo_pain_6eme"
+  | "demo_pizzeria"
+  | "demo_patisserie"
+  | "demo_promo_croissants_court"
+  | "demo_carte_pain"
+  | "demo_recompense"
+  | "demo_pain_8eme"
+  | "demo_tampons_semaine"
+  | "demo_tampons_mois"
+  | "demo_total"
+  | "demo_7_derniers_jours"
+  | "demo_historique_conserve"
+  | "demo_promo_croissants_long"
+  | "demo_recompense_attend";
 
 type T = Record<CleV, string>;
 
@@ -334,6 +351,23 @@ const FR: T = {
   ct_tel_appeler: "Appelez-nous",
   ct_tel_desc: "Du lundi au samedi, réponse rapide.",
   footer_desc: "Cartes de fidélité digitales",
+  demo_carte_fidelite: "Carte de fidélité",
+  demo_recompense_debloquee: "🎉 Récompense débloquée !",
+  demo_pain_6eme: "1 pain offert à la 6ème visite",
+  demo_pizzeria: "Pizzéria",
+  demo_patisserie: "Pâtisserie",
+  demo_promo_croissants_court: "Croissants -30% ce midi !",
+  demo_carte_pain: "Carte pain",
+  demo_recompense: "🎉 Récompense !",
+  demo_pain_8eme: "1 pain offert à la 8ème",
+  demo_tampons_semaine: "Tampons cette semaine",
+  demo_tampons_mois: "Tampons par mois",
+  demo_total: "Total :",
+  demo_7_derniers_jours: "Les 7 derniers jours (aujourd'hui à droite).",
+  demo_historique_conserve:
+    "Historique conservé — vous pouvez revenir sur les années précédentes.",
+  demo_promo_croissants_long: "Croissants -30% ce midi jusqu'à 14h !",
+  demo_recompense_attend: "Votre récompense vous attend ✨",
 };
 
 const EN: T = {
@@ -493,6 +527,23 @@ const EN: T = {
   ct_tel_appeler: "Call us",
   ct_tel_desc: "Monday to Saturday, quick reply.",
   footer_desc: "Digital loyalty cards",
+  demo_carte_fidelite: "Loyalty card",
+  demo_recompense_debloquee: "🎉 Reward unlocked!",
+  demo_pain_6eme: "1 free bread on the 6th visit",
+  demo_pizzeria: "Pizzeria",
+  demo_patisserie: "Pastry shop",
+  demo_promo_croissants_court: "Croissants -30% today!",
+  demo_carte_pain: "Bread card",
+  demo_recompense: "🎉 Reward!",
+  demo_pain_8eme: "1 free bread on the 8th",
+  demo_tampons_semaine: "Stamps this week",
+  demo_tampons_mois: "Stamps per month",
+  demo_total: "Total:",
+  demo_7_derniers_jours: "The last 7 days (today on the right).",
+  demo_historique_conserve:
+    "History kept — you can go back to previous years.",
+  demo_promo_croissants_long: "Croissants -30% today until 2pm!",
+  demo_recompense_attend: "Your reward is waiting ✨",
 };
 
 const ES: T = {
@@ -652,6 +703,23 @@ const ES: T = {
   ct_tel_appeler: "Llámanos",
   ct_tel_desc: "De lunes a sábado, respuesta rápida.",
   footer_desc: "Tarjetas de fidelidad digitales",
+  demo_carte_fidelite: "Tarjeta de fidelidad",
+  demo_recompense_debloquee: "🎉 ¡Recompensa desbloqueada!",
+  demo_pain_6eme: "1 pan gratis en la 6ª visita",
+  demo_pizzeria: "Pizzería",
+  demo_patisserie: "Pastelería",
+  demo_promo_croissants_court: "¡Croissants -30% hoy!",
+  demo_carte_pain: "Tarjeta de pan",
+  demo_recompense: "🎉 ¡Recompensa!",
+  demo_pain_8eme: "1 pan gratis en la 8ª",
+  demo_tampons_semaine: "Sellos esta semana",
+  demo_tampons_mois: "Sellos por mes",
+  demo_total: "Total:",
+  demo_7_derniers_jours: "Los últimos 7 días (hoy a la derecha).",
+  demo_historique_conserve:
+    "Historial guardado — puedes volver a años anteriores.",
+  demo_promo_croissants_long: "¡Croissants -30% hoy hasta las 14h!",
+  demo_recompense_attend: "Tu recompensa te espera ✨",
 };
 
 const DE: T = {
@@ -811,6 +879,23 @@ const DE: T = {
   ct_tel_appeler: "Rufen Sie uns an",
   ct_tel_desc: "Montag bis Samstag, schnelle Antwort.",
   footer_desc: "Digitale Treuekarten",
+  demo_carte_fidelite: "Treuekarte",
+  demo_recompense_debloquee: "🎉 Belohnung freigeschaltet!",
+  demo_pain_6eme: "1 Brot gratis beim 6. Besuch",
+  demo_pizzeria: "Pizzeria",
+  demo_patisserie: "Konditorei",
+  demo_promo_croissants_court: "Croissants -30% heute!",
+  demo_carte_pain: "Brotkarte",
+  demo_recompense: "🎉 Belohnung!",
+  demo_pain_8eme: "1 Brot gratis beim 8.",
+  demo_tampons_semaine: "Stempel diese Woche",
+  demo_tampons_mois: "Stempel pro Monat",
+  demo_total: "Gesamt:",
+  demo_7_derniers_jours: "Die letzten 7 Tage (heute rechts).",
+  demo_historique_conserve:
+    "Verlauf gespeichert — Sie können zu früheren Jahren zurückkehren.",
+  demo_promo_croissants_long: "Croissants -30% heute bis 14 Uhr!",
+  demo_recompense_attend: "Ihre Belohnung wartet ✨",
 };
 
 const ZH: T = {
@@ -970,6 +1055,22 @@ const ZH: T = {
   ct_tel_appeler: "给我们打电话",
   ct_tel_desc: "周一至周六,快速回复。",
   footer_desc: "数字会员卡",
+  demo_carte_fidelite: "会员卡",
+  demo_recompense_debloquee: "🎉 已解锁奖励！",
+  demo_pain_6eme: "第6次到店赠送1个面包",
+  demo_pizzeria: "披萨店",
+  demo_patisserie: "糕点店",
+  demo_promo_croissants_court: "牛角包今天7折！",
+  demo_carte_pain: "面包卡",
+  demo_recompense: "🎉 奖励！",
+  demo_pain_8eme: "第8次赠送1个面包",
+  demo_tampons_semaine: "本周印章",
+  demo_tampons_mois: "每月印章",
+  demo_total: "合计：",
+  demo_7_derniers_jours: "最近7天（今天在右侧）。",
+  demo_historique_conserve: "保留历史记录 — 您可以查看往年数据。",
+  demo_promo_croissants_long: "牛角包今天7折，截至14点！",
+  demo_recompense_attend: "您的奖励在等着您 ✨",
 };
 
 const AR: T = {
@@ -1129,6 +1230,22 @@ const AR: T = {
   ct_tel_appeler: "اتصل بنا",
   ct_tel_desc: "من الاثنين إلى السبت، رد سريع.",
   footer_desc: "بطاقات ولاء رقمية",
+  demo_carte_fidelite: "بطاقة ولاء",
+  demo_recompense_debloquee: "🎉 تم فتح المكافأة!",
+  demo_pain_6eme: "خبز مجاني عند الزيارة السادسة",
+  demo_pizzeria: "بيتزيريا",
+  demo_patisserie: "محل حلويات",
+  demo_promo_croissants_court: "كرواسون -30% اليوم!",
+  demo_carte_pain: "بطاقة الخبز",
+  demo_recompense: "🎉 مكافأة!",
+  demo_pain_8eme: "خبز مجاني عند الزيارة الثامنة",
+  demo_tampons_semaine: "الأختام هذا الأسبوع",
+  demo_tampons_mois: "الأختام شهرياً",
+  demo_total: "الإجمالي:",
+  demo_7_derniers_jours: "آخر 7 أيام (اليوم على اليمين).",
+  demo_historique_conserve: "السجل محفوظ — يمكنك العودة إلى السنوات السابقة.",
+  demo_promo_croissants_long: "كرواسون -30% اليوم حتى الساعة 14!",
+  demo_recompense_attend: "مكافأتك في انتظارك ✨",
 };
 
 const RU: T = {
@@ -1288,6 +1405,23 @@ const RU: T = {
   ct_tel_appeler: "Позвоните нам",
   ct_tel_desc: "С понедельника по субботу, быстрый ответ.",
   footer_desc: "Цифровые карты лояльности",
+  demo_carte_fidelite: "Карта лояльности",
+  demo_recompense_debloquee: "🎉 Награда разблокирована!",
+  demo_pain_6eme: "1 хлеб в подарок на 6-й визит",
+  demo_pizzeria: "Пиццерия",
+  demo_patisserie: "Кондитерская",
+  demo_promo_croissants_court: "Круассаны -30% сегодня!",
+  demo_carte_pain: "Хлебная карта",
+  demo_recompense: "🎉 Награда!",
+  demo_pain_8eme: "1 хлеб в подарок на 8-й",
+  demo_tampons_semaine: "Печати за неделю",
+  demo_tampons_mois: "Печати за месяц",
+  demo_total: "Итого:",
+  demo_7_derniers_jours: "Последние 7 дней (сегодня справа).",
+  demo_historique_conserve:
+    "История сохраняется — вы можете вернуться к прошлым годам.",
+  demo_promo_croissants_long: "Круассаны -30% сегодня до 14:00!",
+  demo_recompense_attend: "Ваша награда ждёт вас ✨",
 };
 
 const TRAD: Record<Langue, T> = { fr: FR, en: EN, es: ES, de: DE, zh: ZH, ar: AR, ru: RU };

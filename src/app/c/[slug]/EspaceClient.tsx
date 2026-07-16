@@ -272,7 +272,7 @@ function BlocCarte({
     startTransition(async () => {
       const resultat = await ajouterTampon(slug, carte.id);
       if (resultat?.erreur) setErreur(resultat.erreur);
-      else setMessage("Tampon ajouté, merci de votre visite ! 🎉");
+      else setMessage(t("tampon_ajoute_merci"));
     });
   }
 
@@ -657,7 +657,7 @@ function ContenuSection({
       <section className="space-y-4">
         {cartes.length === 0 ? (
           <p className="rounded-3xl border border-stone-200 bg-white p-6 text-center text-sm text-stone-500 shadow-xl">
-            Aucune carte disponible pour le moment.
+            {t("aucune_carte")}
           </p>
         ) : (
           cartes.map((carte) => (

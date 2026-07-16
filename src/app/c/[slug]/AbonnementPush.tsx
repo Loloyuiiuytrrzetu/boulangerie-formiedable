@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useT } from "@/lib/langue";
 
 // Convertit une clé VAPID base64 URL-safe en Uint8Array (requis par
 // pushManager.subscribe).
@@ -24,6 +25,7 @@ export function AbonnementPush({
   dejaActif: boolean;
   couleur: string;
 }) {
+  const t = useT();
   const [statut, setStatut] = useState<"init" | "actif" | "refuse" | "erreur" | "loading" | "ios-install">(
     dejaActif ? "actif" : "init"
   );
@@ -49,12 +51,12 @@ export function AbonnementPush({
 
   async function activer() {
     if (!vapidPublicKey) {
-      setMessage("Notifications push non configurées sur le serveur.");
+      setMessage(t("notifs_impossible"));
       setStatut("erreur");
       return;
     }
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-      setMessage("Votre navigateur ne supporte pas les notifications push.");
+      setMessage(t("push_non_supporte"));
       setStatut("erreur");
       return;
     }
@@ -84,11 +86,11 @@ export function AbonnementPush({
       });
       if (!res.ok) {
         const j = await res.json().catch(() => ({}));
-        throw new Error(j.erreur ?? "Échec de l'inscription.");
+        throw new Error(j.erreur ?? t("echec_inscription"));
       }
       setStatut("actif");
     } catch (e) {
-      setMessage(e instanceof Error ? e.message : "Erreur inconnue.");
+      setMessage(e instanceof Error ? e.message : t("erreur_inconnue"));
       setStatut("erreur");
     }
   }
@@ -96,36 +98,32 @@ export function AbonnementPush({
   if (statut === "actif") {
     return (
       <div className="rounded-2xl border border-stone-200 bg-white p-4 text-sm text-stone-600">
-        🔔 Vous recevrez les notifications de ce commerce.
+        {t("notifs_actives")}
       </div>
     );
   }
   if (statut === "refuse") {
     return (
       <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-        Les notifications sont désactivées dans votre navigateur. Autorisez-les
-        dans les réglages pour recevoir les messages du commerce.
+        {t("notifs_refusees")}
       </div>
     );
   }
   if (statut === "erreur") {
     return (
       <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-        {message ?? "Impossible d'activer les notifications."}
+        {message ?? t("notifs_impossible")}
       </div>
     );
   }
   if (statut === "ios-install") {
     return (
       <div className="rounded-2xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
-        📱 Pour recevoir les notifications sur iPhone, ajoutez cette page à
-        votre écran d&apos;accueil :
+        {t("ios_install_pour_notifs")}
         <ol className="mt-2 list-inside list-decimal space-y-1 text-xs">
-          <li>Appuyez sur le bouton <strong>Partager</strong> ⬆️ en bas de
-            Safari</li>
-          <li>Choisissez <strong>« Sur l&apos;écran d&apos;accueil »</strong></li>
-          <li>Ouvrez l&apos;app depuis votre écran d&apos;accueil et revenez
-            ici pour activer les notifications</li>
+          <li>{t("ios_install_etape_1").replace(/\*\*/g, "")}</li>
+          <li>{t("ios_install_etape_2").replace(/\*\*/g, "")}</li>
+          <li>{t("ios_install_etape_3").replace(/\*\*/g, "")}</li>
         </ol>
       </div>
     );
@@ -137,7 +135,7 @@ export function AbonnementPush({
       className="w-full rounded-xl px-4 py-3 text-sm font-semibold text-white transition disabled:opacity-60"
       style={{ backgroundColor: couleur }}
     >
-      {statut === "loading" ? "Activation…" : "🔔 Recevoir les notifications"}
+      {statut === "loading" ? t("activation_en_cours") : t("recevoir_notifs")}
     </button>
   );
 }
