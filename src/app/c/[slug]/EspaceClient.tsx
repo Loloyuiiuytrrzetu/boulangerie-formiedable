@@ -11,7 +11,7 @@ import {
 } from "./actions";
 import { AnimationRecompense } from "./Animation";
 import { InstallationIOS, BanniereInstallationIOS } from "./InstallationIOS";
-import { AbonnementPush } from "./AbonnementPush";
+import { AbonnementPush, InvitationNotifications } from "./AbonnementPush";
 import { ScannerClient } from "./ScannerClient";
 import { useLangue, useT } from "@/lib/langue";
 import { AutoTraduit } from "@/lib/auto-traduction";
@@ -528,6 +528,12 @@ export function EspaceClient({
   return (
     <div className="space-y-6">
       <InstallationIOS couleur={couleur} nomCommerce={nomCommerce} />
+      <InvitationNotifications
+        slug={slug}
+        restaurantId={restaurantId}
+        vapidPublicKey={vapidPublicKey}
+        couleur={couleur}
+      />
       {animationEnCours && (
         <AnimationRecompense
           type={animationEnCours}

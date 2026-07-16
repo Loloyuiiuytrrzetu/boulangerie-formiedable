@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useT } from "@/lib/langue";
+import { abonnerAuxNotifications } from "@/lib/abonnement-push";
 
 // Convertit une clé VAPID base64 URL-safe en Uint8Array (requis par
 // pushManager.subscribe).
@@ -155,5 +156,117 @@ export function AbonnementPush({
     >
       {statut === "loading" ? t("activation_en_cours") : t("recevoir_notifs")}
     </button>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// INVITATION en HAUT de la page client — s'affiche automatiquement quand le
+// client ouvre l'app INSTALLÉE (mode standalone) sans être encore abonné.
+//
+// Sur iPhone, l'abonnement aux notifications est impossible tant que la page
+// est dans Safari : cocher la case à l'inscription ne suffit pas. Une fois la
+// PWA installée et rouverte depuis l'écran d'accueil, ce bandeau propose le
+// dernier appui (obligatoire — Apple exige un geste utilisateur). Si la
+// permission a déjà été accordée, on ré-abonne en silence sans rien afficher.
+// ---------------------------------------------------------------------------
+export function InvitationNotifications({
+  slug,
+  restaurantId,
+  vapidPublicKey,
+  couleur,
+}: {
+  slug: string;
+  restaurantId: string;
+  vapidPublicKey: string | null;
+  couleur: string;
+}) {
+  const t = useT();
+  const [etat, setEtat] = useState<
+    "cache" | "proposer" | "abonne" | "refuse" | "loading"
+  >("cache");
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const isStandalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (navigator as unknown as { standalone?: boolean }).standalone === true;
+    // Hors app installée : c'est la popup d'installation qui guide le client.
+    if (!isStandalone) return;
+    if (!("Notification" in window)) return;
+    // Le client a explicitement refusé les notifications → on ne l'embête plus.
+    if (localStorage.getItem(`walletiz_notif_refus_${slug}`) === "1") return;
+
+    if (Notification.permission === "denied") {
+      setEtat("refuse");
+      return;
+    }
+    if (Notification.permission === "granted") {
+      // Permission déjà accordée : on vérifie l'abonnement réel et on
+      // (ré)abonne en silence s'il manque — aucun bandeau nécessaire.
+      navigator.serviceWorker
+        .getRegistration("/sw.js")
+        .then((reg) => reg?.pushManager.getSubscription())
+        .then(async (sub) => {
+          if (sub) return; // déjà abonné
+          await abonnerAuxNotifications(restaurantId, vapidPublicKey);
+        })
+        .catch(() => {});
+      return;
+    }
+    // Permission "default" : l'appui final est requis par iOS → on propose.
+    setEtat("proposer");
+  }, [slug, restaurantId, vapidPublicKey]);
+
+  async function activer() {
+    setEtat("loading");
+    const r = await abonnerAuxNotifications(restaurantId, vapidPublicKey);
+    if (r.statut === "abonne") {
+      setEtat("abonne");
+      setTimeout(() => setEtat("cache"), 4000);
+    } else if (r.statut === "refuse") {
+      setEtat("refuse");
+    } else {
+      setEtat("cache");
+    }
+  }
+
+  if (etat === "cache") return null;
+
+  if (etat === "abonne") {
+    return (
+      <div className="rounded-2xl border border-green-200 bg-green-50 p-4 text-center text-sm font-semibold text-green-800">
+        {t("notifs_actives")}
+      </div>
+    );
+  }
+
+  if (etat === "refuse") {
+    return (
+      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+        {t("notifs_refusees")}
+      </div>
+    );
+  }
+
+  // "proposer" ou "loading"
+  return (
+    <div
+      className="rounded-2xl border p-4"
+      style={{ borderColor: `${couleur}55`, backgroundColor: `${couleur}0d` }}
+    >
+      <p className="text-sm font-bold text-stone-900">
+        {t("derniere_etape_notifs")}
+      </p>
+      <p className="mt-1 text-xs text-stone-600">{t("activer_notifs_desc")}</p>
+      <button
+        type="button"
+        onClick={activer}
+        disabled={etat === "loading"}
+        className="mt-3 w-full rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 disabled:opacity-60"
+        style={{ backgroundColor: couleur }}
+      >
+        {etat === "loading" ? t("activation_en_cours") : t("recevoir_notifs")}
+      </button>
+    </div>
   );
 }
