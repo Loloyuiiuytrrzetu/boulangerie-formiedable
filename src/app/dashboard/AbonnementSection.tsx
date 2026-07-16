@@ -73,19 +73,10 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
       {statut === "essai" && (
         <div className="mt-5 rounded-xl border border-green-200 bg-green-50 p-4">
           <p className="text-sm font-bold text-green-900">
-            🎁 Vous êtes en essai gratuit
-          </p>
-          <p className="mt-1 text-sm text-green-800">
-            {joursEssai === 0
-              ? "Votre essai se termine aujourd'hui."
-              : joursEssai === 1
-                ? "Il vous reste 1 jour d'essai."
-                : `Il vous reste ${joursEssai} jours d'essai.`}
+            🎁 {t("essai_gratuit")}
           </p>
           <p className="mt-2 text-xs text-green-700">
-            Fin de l&apos;essai : <strong>{formatDate(restaurant.essai_fin_le, tz)}</strong>.
-            À cette date, {PRIX_ABO}€ seront prélevés puis chaque mois.
-            Annulez avant pour ne rien payer.
+            {t("fin_essai")} <strong>{formatDate(restaurant.essai_fin_le, tz)}</strong>
           </p>
         </div>
       )}
@@ -93,10 +84,10 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
       {statut === "actif" && (
         <div className="mt-5 rounded-xl border border-bordeaux-200 bg-bordeaux-50 p-4">
           <p className="text-sm font-bold text-bordeaux-900">
-            ✓ Abonnement Pro actif
+            ✓ {t("plan_pro")}
           </p>
           <p className="mt-1 text-sm text-bordeaux-800">
-            Prochain prélèvement : {" "}
+            {t("prochaine_facture")}{" "}
             <strong>
               {formatDate(restaurant.abonnement_prochaine_facture_le, tz)}
             </strong>
@@ -108,10 +99,9 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
       {statut === "annule" && (
         <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
           <p className="text-sm font-bold text-amber-900">
-            ⚠️ Abonnement annulé
+            ⚠️ {t("annule")}
           </p>
           <p className="mt-1 text-sm text-amber-800">
-            Vous gardez l&apos;accès complet jusqu&apos;au{" "}
             <strong>
               {formatDate(
                 restaurant.abonnement_prochaine_facture_le ??
@@ -119,10 +109,6 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
                 tz
               )}
             </strong>
-            . Aucun prélèvement ne sera fait.
-          </p>
-          <p className="mt-2 text-xs text-amber-700">
-            Changé d&apos;avis ? Vous pouvez réactiver à tout moment.
           </p>
         </div>
       )}
@@ -130,10 +116,7 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
       {statut === "expire" && (
         <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4">
           <p className="text-sm font-bold text-red-900">
-            ⛔ Abonnement expiré
-          </p>
-          <p className="mt-1 text-sm text-red-800">
-            Votre abonnement est terminé. Contactez-nous pour le réactiver.
+            ⛔ {t("expire")}
           </p>
         </div>
       )}

@@ -149,7 +149,17 @@ type CleDash =
   // Onglets internes ConfigForm
   | "personnalisation"
   | "regles_tampon"
-  | "animation";
+  | "animation"
+  | "choisir_fichier"
+  | "aucun_fichier"
+  | "images_max_taille"
+  | "couleur_personnalisee"
+  | "choisissez_parmi_couleurs"
+  | "hex_libelle"
+  | "aper_carte_expiree"
+  | "date_valide_jusqu"
+  | "nb_recompenses"
+  | "vous_pouvez_seulement_changer_titre";
 
 type Traductions = Record<CleDash, string>;
 
@@ -288,6 +298,17 @@ const FR: Traductions = {
   personnalisation: "Personnalisation",
   regles_tampon: "Règles du tampon",
   animation: "Animation",
+  choisir_fichier: "Choisir un fichier",
+  aucun_fichier: "Aucun fichier choisi",
+  images_max_taille:
+    "Images, 4 Mo maximum chacune. Si une image de fond est chargée, elle remplace la couleur principale.",
+  couleur_personnalisee: "Personnalisée",
+  choisissez_parmi_couleurs: "Choisissez parmi 24 couleurs :",
+  hex_libelle: "Code hex",
+  aper_carte_expiree: "Carte expirée",
+  date_valide_jusqu: "Valable jusqu'au",
+  nb_recompenses: "récompenses",
+  vous_pouvez_seulement_changer_titre: "Vous pouvez seulement en changer le titre.",
 };
 
 const EN: Traductions = {
@@ -425,6 +446,17 @@ const EN: Traductions = {
   personnalisation: "Personalization",
   regles_tampon: "Stamp rules",
   animation: "Animation",
+  choisir_fichier: "Choose file",
+  aucun_fichier: "No file chosen",
+  images_max_taille:
+    "Images, 4 MB max each. If a background image is uploaded, it replaces the main color.",
+  couleur_personnalisee: "Custom",
+  choisissez_parmi_couleurs: "Pick from 24 colors:",
+  hex_libelle: "Hex code",
+  aper_carte_expiree: "Card expired",
+  date_valide_jusqu: "Valid until",
+  nb_recompenses: "rewards",
+  vous_pouvez_seulement_changer_titre: "You can only change its title.",
 };
 
 const ES: Traductions = {
@@ -562,6 +594,17 @@ const ES: Traductions = {
   personnalisation: "Personalización",
   regles_tampon: "Reglas del sello",
   animation: "Animación",
+  choisir_fichier: "Elegir archivo",
+  aucun_fichier: "Ningún archivo",
+  images_max_taille:
+    "Imágenes, 4 MB máximo cada una. Si se sube una imagen de fondo, reemplaza el color principal.",
+  couleur_personnalisee: "Personalizado",
+  choisissez_parmi_couleurs: "Elige entre 24 colores:",
+  hex_libelle: "Código hex",
+  aper_carte_expiree: "Tarjeta expirada",
+  date_valide_jusqu: "Válida hasta",
+  nb_recompenses: "recompensas",
+  vous_pouvez_seulement_changer_titre: "Solo puedes cambiar el título.",
 };
 
 const DE: Traductions = {
@@ -699,6 +742,17 @@ const DE: Traductions = {
   personnalisation: "Personalisierung",
   regles_tampon: "Stempelregeln",
   animation: "Animation",
+  choisir_fichier: "Datei auswählen",
+  aucun_fichier: "Keine Datei ausgewählt",
+  images_max_taille:
+    "Bilder, je max. 4 MB. Wenn ein Hintergrundbild hochgeladen wird, ersetzt es die Hauptfarbe.",
+  couleur_personnalisee: "Benutzerdefiniert",
+  choisissez_parmi_couleurs: "Wählen Sie aus 24 Farben:",
+  hex_libelle: "Hex-Code",
+  aper_carte_expiree: "Karte abgelaufen",
+  date_valide_jusqu: "Gültig bis",
+  nb_recompenses: "Belohnungen",
+  vous_pouvez_seulement_changer_titre: "Sie können nur den Titel ändern.",
 };
 
 const ZH: Traductions = {
@@ -835,6 +889,16 @@ const ZH: Traductions = {
   personnalisation: "个性化",
   regles_tampon: "印章规则",
   animation: "动画",
+  choisir_fichier: "选择文件",
+  aucun_fichier: "未选择文件",
+  images_max_taille: "图片,每张最大 4 MB。如果上传背景图,将替代主色。",
+  couleur_personnalisee: "自定义",
+  choisissez_parmi_couleurs: "从 24 种颜色中选择:",
+  hex_libelle: "十六进制",
+  aper_carte_expiree: "卡已过期",
+  date_valide_jusqu: "有效期至",
+  nb_recompenses: "奖励",
+  vous_pouvez_seulement_changer_titre: "您只能修改标题。",
 };
 
 const AR: Traductions = {
@@ -971,6 +1035,17 @@ const AR: Traductions = {
   personnalisation: "التخصيص",
   regles_tampon: "قواعد الختم",
   animation: "الحركة",
+  choisir_fichier: "اختر ملفاً",
+  aucun_fichier: "لم يتم اختيار ملف",
+  images_max_taille:
+    "الصور، 4 ميغابايت كحد أقصى لكل واحدة. إذا تم تحميل صورة خلفية، فإنها تحل محل اللون الرئيسي.",
+  couleur_personnalisee: "مخصص",
+  choisissez_parmi_couleurs: "اختر من 24 لوناً:",
+  hex_libelle: "رمز HEX",
+  aper_carte_expiree: "البطاقة منتهية",
+  date_valide_jusqu: "صالحة حتى",
+  nb_recompenses: "مكافآت",
+  vous_pouvez_seulement_changer_titre: "يمكنك فقط تغيير العنوان.",
 };
 
 const RU: Traductions = {
@@ -1108,6 +1183,17 @@ const RU: Traductions = {
   personnalisation: "Персонализация",
   regles_tampon: "Правила печати",
   animation: "Анимация",
+  choisir_fichier: "Выбрать файл",
+  aucun_fichier: "Файл не выбран",
+  images_max_taille:
+    "Изображения, до 4 МБ каждое. Если загружено фоновое изображение, оно заменяет основной цвет.",
+  couleur_personnalisee: "Свой",
+  choisissez_parmi_couleurs: "Выберите из 24 цветов:",
+  hex_libelle: "Hex-код",
+  aper_carte_expiree: "Карта истекла",
+  date_valide_jusqu: "Действительна до",
+  nb_recompenses: "наград",
+  vous_pouvez_seulement_changer_titre: "Вы можете изменить только название.",
 };
 
 const TRADUCTIONS: Record<Langue, Traductions> = {

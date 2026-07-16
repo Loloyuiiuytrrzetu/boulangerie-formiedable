@@ -5,6 +5,7 @@ import { attribuerTampons } from "../actions";
 import { iconeEmoji } from "@/lib/icons";
 import type { Carte } from "@/lib/types";
 import { ScannerCamera } from "./ScannerCamera";
+import { useTDash } from "@/lib/langue-dashboard";
 
 // Deux modes :
 //   1. Client déjà identifié (arrivé via ?c=<token>) → formulaire de tampons
@@ -19,6 +20,7 @@ export function ScannerForm({
   telephonePrecharge?: string;
   identitePrecharge?: string | null;
 }) {
+  const t = useTDash();
   const formRef = useRef<HTMLFormElement>(null);
   const [erreur, setErreur] = useState<string | null>(null);
   const [succes, setSucces] = useState<null | {
@@ -66,7 +68,7 @@ export function ScannerForm({
         <input type="hidden" name="telephone" value={telephonePrecharge} />
         <input type="hidden" name="carte_id" value={carteChoisie?.id ?? ""} />
         <div className="rounded-xl bg-green-50 px-4 py-3 text-sm">
-          <p className="font-semibold text-green-800">✅ Client identifié</p>
+          <p className="font-semibold text-green-800">✅</p>
           {identitePrecharge && (
             <p className="mt-0.5 text-sm font-semibold text-green-900">
               {identitePrecharge}
@@ -79,7 +81,7 @@ export function ScannerForm({
 
         <div>
           <label className="mb-1.5 block text-sm font-medium text-stone-700">
-            Carte
+            {t("cartes_de_fidelite")}
           </label>
           {/* Dropdown custom pour pouvoir afficher les images uploadées
               (l'élément natif <option> ne rend jamais d'images). */}
@@ -92,7 +94,7 @@ export function ScannerForm({
 
         <div>
           <label htmlFor="nombre" className="mb-1.5 block text-sm font-medium text-stone-700">
-            Nombre de tampons à attribuer
+            {t("nombre_tampons_requis")}
           </label>
           <input
             id="nombre"
@@ -109,16 +111,11 @@ export function ScannerForm({
         {erreur && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{erreur}</p>}
         {succes && (
           <div className="rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-800">
-            ✅ <strong>{succes.tampons} tampon{succes.tampons > 1 ? "s" : ""} attribué
-            {succes.tampons > 1 ? "s" : ""}.</strong>
-            <br />
-            Carte : {succes.nouveaux_actuels} / {succes.requis}
+            ✅ <strong>+{succes.tampons}</strong> · {succes.nouveaux_actuels} / {succes.requis}
             {succes.recompenses_creees > 0 && (
               <>
                 <br />
-                🎁 {succes.recompenses_creees} récompense
-                {succes.recompenses_creees > 1 ? "s" : ""} créditée
-                {succes.recompenses_creees > 1 ? "s" : ""} dans le compte du client !
+                🎁 +{succes.recompenses_creees} {t("recompenses")}
               </>
             )}
           </div>
@@ -129,14 +126,14 @@ export function ScannerForm({
           disabled={enCours || !carteChoisie}
           className="w-full rounded-xl bg-bordeaux-800 px-6 py-3 font-semibold text-white transition hover:bg-bordeaux-700 disabled:opacity-60"
         >
-          {enCours ? "Attribution…" : "🎯 Attribuer les tampons"}
+          {enCours ? "…" : `🎯 ${t("attribuer_tampons_client").replace("🎯 ", "")}`}
         </button>
 
         <a
           href="/dashboard/scanner"
           className="block text-center text-sm text-stone-500 hover:text-bordeaux-700"
         >
-          ← Scanner un autre client
+          ← {t("attribuer_tampons_client").replace("🎯 ", "")}
         </a>
       </form>
     );
@@ -246,7 +243,7 @@ function VignetteEtLibelle({ carte }: { carte: Carte }) {
         {carte.titre}
       </span>
       <span className="shrink-0 text-xs font-semibold text-stone-500">
-        {carte.nombre_tampons_requis} tampons
+        {carte.nombre_tampons_requis}
       </span>
     </span>
   );

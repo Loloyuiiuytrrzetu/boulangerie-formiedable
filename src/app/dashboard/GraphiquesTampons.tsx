@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { TamponHistorique } from "@/lib/types";
 import { useTDash } from "@/lib/langue-dashboard";
+import { useLangueDashboard } from "@/lib/langue-dashboard";
 
 // Palette du composant : bordeaux + reprise de la couleur principale.
 const TRAIT = "#7A1E2E";
@@ -195,13 +196,31 @@ export function GraphiquesTampons({
   }, [historique, anneeCourante]);
 
   const [annee, setAnnee] = useState(anneeCourante);
+  const { langue } = useLangueDashboard();
 
-  // Graphique 1 : 7 derniers jours (aujourd'hui inclus) — dans le fuseau
-  // du commerce, avec des ISO strictement égales à celles de la base.
+  // Noms de jours et mois traduits automatiquement via Intl selon la langue
+  // du dashboard (ex : Jan/Feb/… en anglais, Ene/Feb/… en espagnol).
+  const jourNoms = useMemo(() => {
+    const fmt = new Intl.DateTimeFormat(langue, { weekday: "short" });
+    // Dimanche 3 janvier 2021 (dim=0). On génère les 7 jours à partir de ça.
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(Date.UTC(2021, 0, 3 + i));
+      return fmt.format(d);
+    });
+  }, [langue]);
+
+  const moisNoms = useMemo(() => {
+    const fmt = new Intl.DateTimeFormat(langue, { month: "short" });
+    return Array.from({ length: 12 }, (_, i) => {
+      const d = new Date(Date.UTC(2021, i, 1));
+      return fmt.format(d);
+    });
+  }, [langue]);
+
+  // Graphique 1 : 7 derniers jours (aujourd'hui inclus)
   const semaine = useMemo(() => {
     const jours: string[] = [];
     const valeurs: number[] = [];
-    const jourNoms = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
     for (let i = 6; i >= 0; i--) {
       const iso = isoMoinsJours(aujourdHuiIso, i);
       jours.push(jourNoms[jourSemaine(iso)]);
@@ -211,19 +230,18 @@ export function GraphiquesTampons({
       valeurs.push(total);
     }
     return { jours, valeurs };
-  }, [historique, aujourdHuiIso]);
+  }, [historique, aujourdHuiIso, jourNoms]);
 
-  // Graphique 2 : 12 mois de l'année sélectionnée — mois calculé en UTC
-  // à partir de la date_attribution (elle-même stockée en fuseau commerce).
+  // Graphique 2 : 12 mois de l'année sélectionnée
   const mois = useMemo(() => {
-    const noms = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"];
+    const noms = moisNoms;
     const valeurs = new Array(12).fill(0) as number[];
     historique.forEach((h) => {
       const d = parseDateUTC(h.date_attribution);
       if (d.getUTCFullYear() === annee) valeurs[d.getUTCMonth()] += h.nombre;
     });
     return { noms, valeurs };
-  }, [historique, annee]);
+  }, [historique, annee, moisNoms]);
 
   const totalSemaine = semaine.valeurs.reduce((s, v) => s + v, 0);
   const totalAnnee = mois.valeurs.reduce((s, v) => s + v, 0);

@@ -20,7 +20,7 @@ function ChampsSection({ section }: { section?: Partial<Section> }) {
           required
           maxLength={30}
           defaultValue={section?.titre ?? ""}
-          placeholder="Ex : Avis, Menu, News, E-shop…"
+          placeholder=""
           className={classesInput}
         />
       </div>
@@ -56,7 +56,7 @@ function ChampsSection({ section }: { section?: Partial<Section> }) {
             name="lien_libelle"
             maxLength={30}
             defaultValue={section?.lien_libelle ?? ""}
-            placeholder="Ex : Laisser un avis"
+            placeholder=""
             className={classesInput}
           />
         </div>
@@ -83,7 +83,7 @@ function BlocSection({ section }: { section: Section }) {
   }
 
   function supprimer() {
-    if (!window.confirm(`Supprimer la section « ${section.titre} » ?`)) return;
+    if (!window.confirm(t("supprimer") + " ?")) return;
     startTransition(async () => {
       const r = await supprimerSection(section.id);
       if (r?.erreur) setErreur(r.erreur);
@@ -132,8 +132,7 @@ function BlocSection({ section }: { section: Section }) {
                 />
               </div>
               <p className="text-xs text-stone-500">
-                Cette section affiche automatiquement toutes vos cartes de fidélité — le
-                contenu se met à jour tout seul. Vous pouvez seulement en changer le titre.
+                {t("vous_pouvez_seulement_changer_titre")}
               </p>
             </form>
           ) : section.type === "info" ? (
@@ -152,7 +151,7 @@ function BlocSection({ section }: { section: Section }) {
               </div>
               <div>
                 <label className="mb-1 block text-sm font-medium text-stone-700">
-                  Texte affiché avec le QR code du client
+                  {t("texte_section")}
                 </label>
                 <textarea
                   name="texte"
@@ -164,8 +163,7 @@ function BlocSection({ section }: { section: Section }) {
               <input type="hidden" name="lien_url" value="" />
               <input type="hidden" name="lien_libelle" value="" />
               <p className="text-xs text-stone-500">
-                Le QR code personnel du client s&apos;affiche automatiquement dans cette
-                section. Vous ou votre sous-compte le scannez pour attribuer des tampons.
+                {t("vous_pouvez_seulement_changer_titre")}
               </p>
             </form>
           ) : (

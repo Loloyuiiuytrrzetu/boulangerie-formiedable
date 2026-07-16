@@ -21,11 +21,22 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
   );
   const [apercuLogo, setApercuLogo] = useState<string | null>(null);
   const [apercuFond, setApercuFond] = useState<string | null>(null);
+  const [nomLogo, setNomLogo] = useState<string | null>(null);
+  const [nomFond, setNomFond] = useState<string | null>(null);
 
-  function previsualiser(fichier: File | null, setter: (v: string | null) => void) {
-    if (!fichier) return setter(null);
+  function previsualiser(
+    fichier: File | null,
+    setterApercu: (v: string | null) => void,
+    setterNom: (v: string | null) => void
+  ) {
+    if (!fichier) {
+      setterApercu(null);
+      setterNom(null);
+      return;
+    }
+    setterNom(fichier.name);
     const reader = new FileReader();
-    reader.onload = (e) => setter((e.target?.result as string) ?? null);
+    reader.onload = (e) => setterApercu((e.target?.result as string) ?? null);
     reader.readAsDataURL(fichier);
   }
 
@@ -45,8 +56,6 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
 
   const classesInput =
     "w-full rounded-lg border border-stone-300 px-3.5 py-2.5 outline-none transition focus:border-bordeaux-700 focus:ring-2 focus:ring-bordeaux-200";
-  const classesFichier =
-    "block w-full text-sm text-stone-500 file:mr-3 file:rounded-lg file:border-0 file:bg-bordeaux-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-bordeaux-800 hover:file:bg-bordeaux-100";
 
   // key inclut animation_recompense : après une sauvegarde, si le champ a
   // changé en base, le form est remonté et le <select> reprend la nouvelle
@@ -90,14 +99,25 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
                 className="mb-2 h-20 w-20 rounded-xl border border-stone-200 object-cover"
               />
             )}
-            <input
-              id="logo"
-              name="logo"
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              onChange={(e) => previsualiser(e.target.files?.[0] ?? null, setApercuLogo)}
-              className={classesFichier}
-            />
+            <div className="flex items-center gap-2">
+              <label
+                htmlFor="logo"
+                className="cursor-pointer rounded-lg bg-bordeaux-50 px-4 py-2 text-sm font-semibold text-bordeaux-800 transition hover:bg-bordeaux-100"
+              >
+                {t("choisir_fichier")}
+              </label>
+              <span className="text-sm text-stone-500 truncate max-w-[10rem]">
+                {nomLogo ?? t("aucun_fichier")}
+              </span>
+              <input
+                id="logo"
+                name="logo"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(e) => previsualiser(e.target.files?.[0] ?? null, setApercuLogo, setNomLogo)}
+                className="sr-only"
+              />
+            </div>
           </div>
           <div>
             <label htmlFor="fond" className="mb-1.5 block text-sm font-medium text-stone-700">
@@ -111,19 +131,29 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
                 className="mb-2 h-20 w-full rounded-xl border border-stone-200 object-cover"
               />
             )}
-            <input
-              id="fond"
-              name="fond"
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              onChange={(e) => previsualiser(e.target.files?.[0] ?? null, setApercuFond)}
-              className={classesFichier}
-            />
+            <div className="flex items-center gap-2">
+              <label
+                htmlFor="fond"
+                className="cursor-pointer rounded-lg bg-bordeaux-50 px-4 py-2 text-sm font-semibold text-bordeaux-800 transition hover:bg-bordeaux-100"
+              >
+                {t("choisir_fichier")}
+              </label>
+              <span className="text-sm text-stone-500 truncate max-w-[10rem]">
+                {nomFond ?? t("aucun_fichier")}
+              </span>
+              <input
+                id="fond"
+                name="fond"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(e) => previsualiser(e.target.files?.[0] ?? null, setApercuFond, setNomFond)}
+                className="sr-only"
+              />
+            </div>
           </div>
         </div>
         <p className="-mt-3 text-xs text-stone-400">
-          Images, 4 Mo maximum chacune. Si une image de fond est chargée, elle
-          remplace la couleur principale sur votre page.
+          {t("images_max_taille")}
         </p>
 
         <SelecteurCouleur

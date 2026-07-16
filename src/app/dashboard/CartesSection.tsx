@@ -89,9 +89,7 @@ function ChampsCarte({
         <input type="hidden" name="tampon_icone" value={icone} />
         {carte?.tampon_image_url && (
           <p className="mb-2 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
-            Vous avez une image personnalisée active — les icônes ci-dessous
-            sont ignorées. Retirez l&apos;image en bas du formulaire pour
-            revenir aux icônes.
+            ⚠️ {t("image_tampon")}
           </p>
         )}
         {/* Palette d'icônes prédéfinies (scrollable) */}
@@ -125,10 +123,7 @@ function ChampsCarte({
         {/* Emoji personnalisé — n'importe quel emoji que le clavier permet */}
         <div className="mt-3 rounded-xl border border-stone-200 bg-white p-3">
           <p className="text-xs font-semibold text-stone-700">
-            Ou utilisez un autre emoji
-          </p>
-          <p className="mt-0.5 text-xs text-stone-400">
-            Tapez ou collez un emoji ci-dessous (🍔, 🎂, 🐶, ⭐…).
+            {t("icone_tampon")} (emoji)
           </p>
           <div className="mt-2 flex items-center gap-2">
             <input
@@ -160,21 +155,16 @@ function ChampsCarte({
         {/* Image personnalisée (remplace l'icône si présente) */}
         <div className="mt-3 rounded-xl border border-dashed border-stone-300 bg-white p-3">
           <p className="text-xs font-semibold text-stone-700">
-            Ou importez votre propre image de tampon
-          </p>
-          <p className="mt-0.5 text-xs text-stone-400">
-            Elle apparaîtra en gris pâle quand la case est vide, en couleur
-            quand le tampon est obtenu. Fond transparent (PNG) recommandé.
+            {t("image_tampon")}
           </p>
           {carte?.tampon_image_url && (
             <div className="mt-2 flex items-center gap-3">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={carte.tampon_image_url}
-                alt="Tampon actuel"
+                alt=""
                 className="h-14 w-14 rounded-lg border border-stone-200 object-cover"
               />
-              <span className="text-xs text-stone-500">Image active</span>
             </div>
           )}
           <input
@@ -250,7 +240,7 @@ function ChampsCarte({
           name="texte_bas"
           maxLength={120}
           defaultValue={carte?.texte_bas ?? ""}
-          placeholder="Ex : Valable uniquement le midi, hors week-end…"
+          placeholder=""
           className={classesInput}
         />
       </div>
@@ -399,7 +389,7 @@ function BlocCarte({
   }
 
   function retirerTampon() {
-    if (!window.confirm("Retirer l'image de tampon ? Vous reviendrez à l'icône choisie.")) return;
+    if (!window.confirm(t("supprimer") + " ?")) return;
     startTransition(async () => {
       const r = await retirerImageTampon(carte.id);
       if (r?.erreur) setErreur(r.erreur);
@@ -514,7 +504,7 @@ function BlocCarte({
                 name="texte"
                 required
                 maxLength={120}
-                placeholder="Ex : 1 café offert"
+                placeholder=""
                 className={classesInput}
               />
               <div className="flex flex-wrap items-center gap-2">

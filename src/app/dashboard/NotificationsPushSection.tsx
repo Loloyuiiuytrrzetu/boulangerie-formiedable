@@ -112,31 +112,9 @@ export function NotificationsPushSection({
           {t("notifications_push_desc")}
         </p>
         <p className="mt-2 text-xs text-stone-500">
-          <strong>{nbAbonnes}</strong> client{nbAbonnes > 1 ? "s" : ""}{" "}
-          {nbAbonnes > 1 ? "ont" : "a"} activé les notifications sur{" "}
-          <strong>{nbClientsTotal}</strong> inscrit
-          {nbClientsTotal > 1 ? "s" : ""}. · Fuseau :{" "}
-          <span className="font-medium">{timezone}</span>
+          <strong>{nbAbonnes}</strong> / <strong>{nbClientsTotal}</strong> · {timezone}
         </p>
-        {nbClientsTotal > 0 && nbAbonnes === 0 && (
-          <div className="mt-3 rounded-lg bg-blue-50 px-3 py-2 text-xs text-blue-900">
-            💡 Vos clients doivent <strong>autoriser les notifications</strong>{" "}
-            sur leur téléphone pour recevoir vos messages. Sur iPhone, cela
-            fonctionne uniquement si le client ajoute votre page à son écran
-            d&apos;accueil (bouton Partager → « Sur l&apos;écran d&apos;accueil »).
-          </div>
-        )}
       </div>
-
-      {!pushConfigure && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          Les clés VAPID ne sont pas configurées sur le serveur. Les envois
-          échoueront tant que les variables{" "}
-          <code className="rounded bg-amber-100 px-1">NEXT_PUBLIC_VAPID_PUBLIC_KEY</code>{" "}
-          et <code className="rounded bg-amber-100 px-1">VAPID_PRIVATE_KEY</code>{" "}
-          ne sont pas renseignées.
-        </div>
-      )}
 
       <div className="flex gap-2 border-b border-stone-200">
         <button
@@ -170,7 +148,7 @@ export function NotificationsPushSection({
               required
               maxLength={300}
               rows={3}
-              placeholder="Ex : -20% sur tous les croissants ce samedi."
+              placeholder=""
               className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:border-bordeaux-500 focus:outline-none"
             />
           </div>
@@ -197,7 +175,7 @@ export function NotificationsPushSection({
           </div>
           <div>
             <label className="text-xs font-semibold text-stone-600">
-              Date et heure (fuseau {timezone})
+              {t("date_envoi")} · {timezone}
             </label>
             <input
               type="datetime-local"
@@ -206,9 +184,6 @@ export function NotificationsPushSection({
               min={nowLocaleForInput(timezone)}
               className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:border-bordeaux-500 focus:outline-none"
             />
-            <p className="mt-1 text-xs text-stone-500">
-              La notification sera envoyée à l&apos;heure locale de votre commerce.
-            </p>
           </div>
           <button
             type="submit"

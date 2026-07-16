@@ -34,7 +34,7 @@ export function SousCompteSection({ sousCompte }: { sousCompte: SousCompte | nul
   }
 
   function supprimer() {
-    if (!window.confirm("Supprimer ce sous-compte ? La personne ne pourra plus scanner de tampons.")) return;
+    if (!window.confirm(t("supprimer_sous_compte") + " ?")) return;
     startTransition(async () => {
       const r = await supprimerSousCompte();
       if (r?.erreur) setErreur(r.erreur);
@@ -179,7 +179,7 @@ function BlocSousCompteExistant({
       <p className="mt-0.5 font-mono text-xs text-stone-500 break-all">{sousCompte.email}</p>
       {!sousCompte.actif && (
         <p className="mt-1 text-xs font-semibold text-amber-700">
-          ⚠️ Compte désactivé
+          ⚠️ {t("desactiver_sous_compte")}
         </p>
       )}
 
@@ -188,14 +188,14 @@ function BlocSousCompteExistant({
           href="/dashboard/scanner"
           className="rounded-lg bg-bordeaux-800 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-bordeaux-700"
         >
-          🎯 Ouvrir l&apos;espace scan
+          🎯 {t("attribuer_tampons_client")}
         </Link>
         <button
           onClick={() => setChangeMdp(!changeMdp)}
           disabled={enCours || pending}
           className="rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-600 transition hover:bg-white disabled:opacity-60"
         >
-          🔑 Changer le mot de passe
+          🔑 {t("modifier")} {t("mot_de_passe_initial")}
         </button>
         <button
           onClick={onBasculer}
@@ -220,7 +220,7 @@ function BlocSousCompteExistant({
             type="text"
             required
             minLength={8}
-            placeholder="Nouveau mot de passe (8 car. min)"
+            placeholder=""
             className="flex-1 min-w-0 rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none transition focus:border-bordeaux-700 focus:ring-2 focus:ring-bordeaux-200"
           />
           <button
@@ -233,11 +233,7 @@ function BlocSousCompteExistant({
         </form>
       )}
       {erreur && <p className="mt-2 text-xs text-red-600">{erreur}</p>}
-      {succes && <p className="mt-2 text-xs text-green-600">Mot de passe changé ✓</p>}
-
-      <p className="mt-3 text-xs text-stone-500">
-        Cette personne se connecte sur /login avec l&apos;email ci-dessus et son mot de passe.
-      </p>
+      {succes && <p className="mt-2 text-xs text-green-600">{t("enregistre")}</p>}
     </div>
   );
 }
