@@ -17,11 +17,13 @@ self.addEventListener("push", (event) => {
     data = { titre: "Notification", message: event.data ? event.data.text() : "" };
   }
 
-  // Sur iOS, si le titre est différent du nom de l'app installée (PWA),
-  // le système ajoute une ligne "from <nom de l'app>". Pour éviter ce
-  // doublon disgracieux (« COCO hit » + « from COCO hit »), on omet le
-  // titre : iOS utilise alors directement le nom de l'app (= le nom du
-  // commerce, grâce au manifest.webmanifest dynamique) comme titre.
+  // Sur iOS, le système ajoute une ligne « from <nom de l'app> » dès que le
+  // titre de la notification DIFFÈRE du nom de l'app installée (PWA). Un titre
+  // vide compte comme différent → iOS affichait « Boulangerie Patire » +
+  // « from Boulangerie Patire ». La solution : utiliser comme titre le nom du
+  // commerce, qui est EXACTEMENT le nom de l'app (manifest.webmanifest
+  // dynamique). Titre == nom de l'app → iOS n'ajoute plus aucune ligne « from ».
+  const titre = data.titre || "";
   const options = {
     body: data.message || "",
     data: { url: data.url || "/" },
@@ -32,7 +34,7 @@ self.addEventListener("push", (event) => {
     options.image = data.icon;
   }
 
-  event.waitUntil(self.registration.showNotification("", options));
+  event.waitUntil(self.registration.showNotification(titre, options));
 });
 
 self.addEventListener("notificationclick", (event) => {
