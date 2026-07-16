@@ -8,6 +8,7 @@ import { TAMPON_ICONES } from "@/lib/icons";
 import { dateDuJour, slugify } from "@/lib/utils";
 import type { CarteClient } from "@/lib/types";
 import { utilisateurEffectif } from "@/lib/impersonate";
+import { TIMEZONES_VALIDES } from "@/lib/timezones";
 
 // Traduit les messages d'erreur Supabase Auth en français.
 function traduireErreurAuth(message: string | undefined): string {
@@ -56,9 +57,13 @@ async function restaurantCourant() {
   const effectif = await utilisateurEffectif();
   if (!effectif) redirect("/login");
 
-  const supabase = effectif.impersonation
-    ? createAdminClient()
-    : await createClient();
+  // On utilise TOUJOURS le client admin (comme le dashboard et le scanner) :
+  // la sécurité est assurée en amont par utilisateurEffectif() (le cookie
+  // d'impersonation est réservé au super admin) et par le filtre owner_id
+  // ci-dessous — un restaurateur ne peut donc récupérer QUE son propre
+  // commerce. Écrire via le client RLS anon provoquait des updates
+  // silencieusement bloqués (0 ligne, aucune erreur) → « rien ne change ».
+  const supabase = createAdminClient();
 
   const { data: restaurant } = await supabase
     .from("restaurants")
@@ -161,8 +166,14 @@ export async function mettreAJourConfig(formData: FormData) {
   const tamponRestaurateurOnly = formData.get("tampon_restaurateur_only") === "on";
   const animation = String(formData.get("animation_recompense") ?? "rayons");
   const animationCouleur = String(formData.get("animation_couleur") ?? "#FFD700");
+  // Fuseau horaire (région) : détermine à quelle heure le « tampon du jour »
+  // se réinitialise. Champ optionnel — s'il est absent du formulaire, on ne
+  // touche pas à la valeur existante.
+  const timezoneBrut = String(formData.get("timezone") ?? "").trim();
 
   if (!nom) return { erreur: "Le nom du commerce est obligatoire." };
+  if (timezoneBrut && !TIMEZONES_VALIDES.has(timezoneBrut))
+    return { erreur: "Région / fuseau horaire invalide." };
   if (!/^#[0-9a-fA-F]{6}$/.test(couleur)) return { erreur: "Couleur invalide." };
   if (!/^#[0-9a-fA-F]{6}$/.test(couleurQr))
     return { erreur: "Couleur du QR code invalide." };
@@ -180,6 +191,7 @@ export async function mettreAJourConfig(formData: FormData) {
     animation_recompense: animation,
     animation_couleur: animationCouleur,
   };
+  if (timezoneBrut) maj.timezone = timezoneBrut;
 
   const logo = formData.get("logo");
   if (logo instanceof File && logo.size > 0) {
@@ -195,12 +207,15 @@ export async function mettreAJourConfig(formData: FormData) {
     maj.fond_url = resultat.url!;
   }
 
-  const { error } = await supabase
+  const { data: majLignes, error } = await supabase
     .from("restaurants")
     .update(maj)
     .eq("id", restaurant.id)
-    .eq("owner_id", user.id);
+    .eq("owner_id", user.id)
+    .select("id");
   if (error) return { erreur: "Échec de l'enregistrement." };
+  if (!majLignes?.length)
+    return { erreur: "Aucune modification enregistrée (commerce introuvable)." };
 
   revalidatePath("/dashboard");
   revalidatePath(`/c/${restaurant.slug}`);

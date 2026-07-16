@@ -32,6 +32,8 @@ type CleDash =
   // Mon commerce (ConfigForm)
   | "identite_visuelle"
   | "nom_du_commerce"
+  | "region_fuseau"
+  | "region_fuseau_desc"
   | "logo"
   | "image_de_fond"
   | "couleur_principale"
@@ -182,6 +184,8 @@ const FR: Traductions = {
   attribuer_tampons_client: "🎯 Attribuer des tampons à un client",
   identite_visuelle: "L'identité visuelle de votre page client.",
   nom_du_commerce: "Nom du commerce",
+  region_fuseau: "Région / fuseau horaire",
+  region_fuseau_desc: "Détermine à quelle heure le « tampon du jour » se réinitialise (minuit dans cette région).",
   logo: "Logo",
   image_de_fond: "Image de fond",
   couleur_principale: "Couleur principale",
@@ -330,6 +334,8 @@ const EN: Traductions = {
   attribuer_tampons_client: "🎯 Give stamps to a customer",
   identite_visuelle: "The visual identity of your customer page.",
   nom_du_commerce: "Business name",
+  region_fuseau: "Region / time zone",
+  region_fuseau_desc: "Sets when the « daily stamp » resets (midnight in this region).",
   logo: "Logo",
   image_de_fond: "Background image",
   couleur_principale: "Main color",
@@ -478,6 +484,8 @@ const ES: Traductions = {
   attribuer_tampons_client: "🎯 Dar sellos a un cliente",
   identite_visuelle: "La identidad visual de tu página de cliente.",
   nom_du_commerce: "Nombre del comercio",
+  region_fuseau: "Región / zona horaria",
+  region_fuseau_desc: "Determina a qué hora se reinicia el « sello del día » (medianoche en esa región).",
   logo: "Logo",
   image_de_fond: "Imagen de fondo",
   couleur_principale: "Color principal",
@@ -626,6 +634,8 @@ const DE: Traductions = {
   attribuer_tampons_client: "🎯 Stempel an einen Kunden geben",
   identite_visuelle: "Das visuelle Erscheinungsbild Ihrer Kundenseite.",
   nom_du_commerce: "Name des Geschäfts",
+  region_fuseau: "Region / Zeitzone",
+  region_fuseau_desc: "Legt fest, wann der « Tagesstempel » zurückgesetzt wird (Mitternacht in dieser Region).",
   logo: "Logo",
   image_de_fond: "Hintergrundbild",
   couleur_principale: "Hauptfarbe",
@@ -774,6 +784,8 @@ const ZH: Traductions = {
   attribuer_tampons_client: "🎯 给客户发印章",
   identite_visuelle: "您客户页面的视觉标识。",
   nom_du_commerce: "商家名称",
+  region_fuseau: "地区 / 时区",
+  region_fuseau_desc: "决定每日印章何时重置（该地区的午夜）。",
   logo: "标志",
   image_de_fond: "背景图",
   couleur_principale: "主色",
@@ -920,6 +932,8 @@ const AR: Traductions = {
   attribuer_tampons_client: "🎯 منح أختام لعميل",
   identite_visuelle: "الهوية البصرية لصفحة عملائك.",
   nom_du_commerce: "اسم المتجر",
+  region_fuseau: "المنطقة / المنطقة الزمنية",
+  region_fuseau_desc: "يحدد متى تتم إعادة تعيين « ختم اليوم » (منتصف الليل في هذه المنطقة).",
   logo: "الشعار",
   image_de_fond: "صورة الخلفية",
   couleur_principale: "اللون الرئيسي",
@@ -1067,6 +1081,8 @@ const RU: Traductions = {
   attribuer_tampons_client: "🎯 Выдать печати клиенту",
   identite_visuelle: "Визуальный стиль вашей клиентской страницы.",
   nom_du_commerce: "Название заведения",
+  region_fuseau: "Регион / часовой пояс",
+  region_fuseau_desc: "Определяет, когда сбрасывается « печать дня » (полночь в этом регионе).",
   logo: "Логотип",
   image_de_fond: "Фоновое изображение",
   couleur_principale: "Основной цвет",

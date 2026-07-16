@@ -8,6 +8,7 @@ import { ApercuAnimation } from "./ApercuAnimation";
 import type { Restaurant } from "@/lib/types";
 import { compresserChampsImage } from "@/lib/compresser-image";
 import { useTDash } from "@/lib/langue-dashboard";
+import { TIMEZONES_PAR_GROUPE } from "@/lib/timezones";
 
 // Identité du commerce : nom, logo, image de fond, couleurs
 export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
@@ -62,7 +63,9 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
   // valeur au lieu de garder l'ancien defaultValue.
   return (
     <form
-      key={`${restaurant.id}-${restaurant.animation_recompense ?? "rayons"}`}
+      key={`${restaurant.id}-${restaurant.animation_recompense ?? "rayons"}-${
+        restaurant.tampon_par_carte !== false
+      }-${restaurant.tampon_restaurateur_only === true}-${restaurant.timezone ?? ""}`}
       action={soumettre}
       className="rounded-2xl border border-stone-200 bg-white p-6"
     >
@@ -84,6 +87,29 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
             defaultValue={restaurant.nom}
             className={classesInput}
           />
+        </div>
+
+        <div>
+          <label htmlFor="timezone" className="mb-1.5 block text-sm font-medium text-stone-700">
+            {t("region_fuseau")}
+          </label>
+          <select
+            id="timezone"
+            name="timezone"
+            defaultValue={restaurant.timezone ?? "Europe/Paris"}
+            className={classesInput}
+          >
+            {Object.entries(TIMEZONES_PAR_GROUPE).map(([groupe, liste]) => (
+              <optgroup key={groupe} label={groupe}>
+                {liste.map((tz) => (
+                  <option key={tz.timezone} value={tz.timezone}>
+                    {tz.region}
+                  </option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
+          <p className="mt-1 text-xs text-stone-400">{t("region_fuseau_desc")}</p>
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2">
