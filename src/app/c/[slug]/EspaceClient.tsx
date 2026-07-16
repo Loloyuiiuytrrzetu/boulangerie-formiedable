@@ -206,7 +206,7 @@ function CarrouselRecompenses({
         className="mb-2 rounded-2xl px-4 py-2 text-center text-sm font-medium"
         style={{ backgroundColor: `${couleur}14`, color: couleur }}
       >
-        🎁 Au choix parmi {recompenses.length} récompenses
+        {t("au_choix_parmi_n", { n: String(recompenses.length) })}
       </p>
       <div className="-mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-1 pb-2">
         {recompenses.map((r) => (
@@ -594,7 +594,7 @@ export function EspaceClient({
                 ))}
               </div>
               <p className="text-center text-xs text-stone-400">
-                ← Glissez pour voir toutes vos récompenses →
+                {t("glisser_recompenses")}
               </p>
             </>
           )}

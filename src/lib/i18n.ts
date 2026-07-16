@@ -51,6 +51,7 @@ type Cle =
   | "recompense_obtenue"
   | "toucher_pour_continuer"
   | "votre_recompense"
+  | "au_choix_parmi_n"
   | "scanner_qr_commerce"
   | "sur_quelle_carte"
   | "ajout_tampon_en_cours"
@@ -142,6 +143,7 @@ const FR: Traductions = {
   recompense_obtenue: "Récompense obtenue !",
   toucher_pour_continuer: "Touchez pour continuer",
   votre_recompense: "🎁 Votre récompense",
+  au_choix_parmi_n: "🎁 Au choix parmi {n} récompenses",
   scanner_qr_commerce: "📷 Scanner le QR code du commerce",
   sur_quelle_carte: "Sur quelle carte ?",
   ajout_tampon_en_cours: "Ajout du tampon…",
@@ -244,6 +246,7 @@ const EN: Traductions = {
   recompense_obtenue: "Reward earned!",
   toucher_pour_continuer: "Tap to continue",
   votre_recompense: "🎁 Your reward",
+  au_choix_parmi_n: "🎁 Choose from {n} rewards",
   scanner_qr_commerce: "📷 Scan the business QR code",
   sur_quelle_carte: "On which card?",
   ajout_tampon_en_cours: "Adding stamp…",
@@ -345,6 +348,7 @@ const ES: Traductions = {
   recompense_obtenue: "¡Recompensa obtenida!",
   toucher_pour_continuer: "Toca para continuar",
   votre_recompense: "🎁 Tu recompensa",
+  au_choix_parmi_n: "🎁 A elegir entre {n} recompensas",
   scanner_qr_commerce: "📷 Escanear el QR del comercio",
   sur_quelle_carte: "¿En qué tarjeta?",
   ajout_tampon_en_cours: "Añadiendo sello…",
@@ -448,6 +452,7 @@ const DE: Traductions = {
   recompense_obtenue: "Belohnung erhalten!",
   toucher_pour_continuer: "Tippen zum Fortfahren",
   votre_recompense: "🎁 Ihre Belohnung",
+  au_choix_parmi_n: "🎁 Wählen Sie aus {n} Belohnungen",
   scanner_qr_commerce: "📷 QR-Code des Geschäfts scannen",
   sur_quelle_carte: "Auf welcher Karte?",
   ajout_tampon_en_cours: "Stempel wird hinzugefügt…",
@@ -545,6 +550,7 @@ const ZH: Traductions = {
   recompense_obtenue: "获得奖励！",
   toucher_pour_continuer: "点击继续",
   votre_recompense: "🎁 您的奖励",
+  au_choix_parmi_n: "🎁 从 {n} 个奖励中任选",
   scanner_qr_commerce: "📷 扫描商家二维码",
   sur_quelle_carte: "在哪张卡上？",
   ajout_tampon_en_cours: "添加印章中…",
@@ -636,6 +642,7 @@ const AR: Traductions = {
   recompense_obtenue: "مكافأة تم الحصول عليها!",
   toucher_pour_continuer: "اضغط للمتابعة",
   votre_recompense: "🎁 مكافأتك",
+  au_choix_parmi_n: "🎁 اختر من بين {n} مكافآت",
   scanner_qr_commerce: "📷 امسح رمز QR الخاص بالمتجر",
   sur_quelle_carte: "على أي بطاقة؟",
   ajout_tampon_en_cours: "جارٍ إضافة الختم…",
@@ -732,6 +739,7 @@ const RU: Traductions = {
   recompense_obtenue: "Награда получена!",
   toucher_pour_continuer: "Нажмите, чтобы продолжить",
   votre_recompense: "🎁 Ваша награда",
+  au_choix_parmi_n: "🎁 На выбор из {n} наград",
   scanner_qr_commerce: "📷 Сканировать QR-код магазина",
   sur_quelle_carte: "На какой карте?",
   ajout_tampon_en_cours: "Добавление печати…",
