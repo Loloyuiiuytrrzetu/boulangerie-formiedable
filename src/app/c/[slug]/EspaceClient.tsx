@@ -165,6 +165,7 @@ function CarrouselRecompenses({
   recompenses: RecompenseAffichee[];
   couleur: string;
 }) {
+  const t = useT();
   // Une seule récompense : grande carte centrée
   if (recompenses.length === 1) {
     const r = recompenses[0];
@@ -174,7 +175,7 @@ function CarrouselRecompenses({
           className="mb-2 rounded-2xl px-4 py-2 text-center text-sm font-medium"
           style={{ backgroundColor: `${couleur}14`, color: couleur }}
         >
-          🎁 Votre récompense
+          {t("votre_recompense")}
         </p>
         <div className="mx-auto max-w-xs overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
           {r.image_url ? (
@@ -231,7 +232,7 @@ function CarrouselRecompenses({
         ))}
       </div>
       <p className="text-center text-xs text-stone-400">
-        ← Glissez pour voir toutes les récompenses →
+        {t("glisser_recompenses")}
       </p>
     </div>
   );
@@ -305,8 +306,8 @@ function BlocCarte({
             carte.expiree ? "font-semibold text-red-600" : "text-stone-400"
           }`}
         >
-          {carte.expiree ? "Carte expirée le " : "Valable jusqu'au "}
-          {new Date(carte.date_expiration + "T00:00:00").toLocaleDateString("fr-FR")}
+          {carte.expiree ? t("expire_le") + " " : t("valable_jusqu_au") + " "}
+          {new Date(carte.date_expiration + "T00:00:00").toLocaleDateString()}
         </p>
       )}
 

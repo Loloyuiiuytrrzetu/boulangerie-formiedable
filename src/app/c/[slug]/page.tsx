@@ -15,6 +15,8 @@ import { EspaceClient, type CarteAffichee } from "./EspaceClient";
 import { FormulaireInscription } from "./FormulaireInscription";
 import { getVapidPublicKey } from "@/lib/push";
 import { LangueProvider } from "@/lib/langue";
+import { LangueSourceProvider } from "@/lib/auto-traduction";
+import type { Langue } from "@/lib/i18n";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -226,8 +228,11 @@ export default async function PageCommerce({
     });
   }
 
+  const langueRestaurant = ((restaurant.langue ?? "fr") as Langue);
+
   return (
     <LangueProvider>
+    <LangueSourceProvider langue={langueRestaurant}>
     <main className="min-h-screen bg-white">
       <header
         className="relative flex h-[38vh] max-h-[360px] min-h-[240px] items-center justify-center overflow-hidden px-6 text-center text-white"
@@ -298,6 +303,7 @@ export default async function PageCommerce({
         )}
       </div>
     </main>
+    </LangueSourceProvider>
     </LangueProvider>
   );
 }

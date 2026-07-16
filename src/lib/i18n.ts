@@ -88,7 +88,13 @@ type Cle =
   | "ios_install_etape_2"
   | "ios_install_etape_3"
   | "langue"
-  | "choisir_langue";
+  | "choisir_langue"
+  | "valable_jusqu_au"
+  | "expire_le"
+  | "ajouter_a_ecran_titre"
+  | "ajouter_a_ecran_desc_court"
+  | "comment_faire"
+  | "ne_plus_afficher";
 
 type Traductions = Record<Cle, string>;
 
@@ -181,6 +187,13 @@ const FR: Traductions = {
     "Ouvrez l'app depuis votre écran d'accueil et revenez ici pour activer les notifications",
   langue: "Langue",
   choisir_langue: "Choisissez votre langue",
+  valable_jusqu_au: "Valable jusqu'au",
+  expire_le: "Carte expirée le",
+  ajouter_a_ecran_titre: "Ajoutez {nom} à votre écran d'accueil",
+  ajouter_a_ecran_desc_court:
+    "Pour recevoir nos promotions et alertes de récompenses par notification.",
+  comment_faire: "Comment faire ?",
+  ne_plus_afficher: "Ne plus afficher",
 };
 
 const EN: Traductions = {
@@ -271,6 +284,13 @@ const EN: Traductions = {
     "Open the app from your home screen and come back here to activate notifications",
   langue: "Language",
   choisir_langue: "Choose your language",
+  valable_jusqu_au: "Valid until",
+  expire_le: "Card expired on",
+  ajouter_a_ecran_titre: "Add {nom} to your home screen",
+  ajouter_a_ecran_desc_court:
+    "To receive our promotions and reward alerts by notification.",
+  comment_faire: "How to?",
+  ne_plus_afficher: "Don't show again",
 };
 
 const ES: Traductions = {
@@ -362,6 +382,13 @@ const ES: Traductions = {
     "Abre la app desde tu pantalla de inicio y vuelve aquí para activar notificaciones",
   langue: "Idioma",
   choisir_langue: "Elige tu idioma",
+  valable_jusqu_au: "Válida hasta",
+  expire_le: "Tarjeta expirada el",
+  ajouter_a_ecran_titre: "Añade {nom} a tu pantalla de inicio",
+  ajouter_a_ecran_desc_court:
+    "Para recibir nuestras promociones y avisos de recompensas por notificación.",
+  comment_faire: "¿Cómo hacerlo?",
+  ne_plus_afficher: "No mostrar más",
 };
 
 const DE: Traductions = {
@@ -454,6 +481,13 @@ const DE: Traductions = {
     "Öffnen Sie die App vom Startbildschirm und kommen Sie zurück, um Benachrichtigungen zu aktivieren",
   langue: "Sprache",
   choisir_langue: "Wählen Sie Ihre Sprache",
+  valable_jusqu_au: "Gültig bis",
+  expire_le: "Karte abgelaufen am",
+  ajouter_a_ecran_titre: "Fügen Sie {nom} zu Ihrem Startbildschirm hinzu",
+  ajouter_a_ecran_desc_court:
+    "Um unsere Aktionen und Belohnungshinweise per Benachrichtigung zu erhalten.",
+  comment_faire: "Wie geht das?",
+  ne_plus_afficher: "Nicht mehr anzeigen",
 };
 
 const ZH: Traductions = {
@@ -532,6 +566,12 @@ const ZH: Traductions = {
   ios_install_etape_3: "从主屏幕打开应用并返回此处以激活通知",
   langue: "语言",
   choisir_langue: "选择您的语言",
+  valable_jusqu_au: "有效期至",
+  expire_le: "卡已过期于",
+  ajouter_a_ecran_titre: "将 {nom} 添加到您的主屏幕",
+  ajouter_a_ecran_desc_court: "以通过通知接收我们的促销和奖励提醒。",
+  comment_faire: "怎么做?",
+  ne_plus_afficher: "不再显示",
 };
 
 const AR: Traductions = {
@@ -616,6 +656,13 @@ const AR: Traductions = {
     "افتح التطبيق من شاشتك الرئيسية وعُد إلى هنا لتفعيل الإشعارات",
   langue: "اللغة",
   choisir_langue: "اختر لغتك",
+  valable_jusqu_au: "صالحة حتى",
+  expire_le: "انتهت البطاقة في",
+  ajouter_a_ecran_titre: "أضف {nom} إلى شاشتك الرئيسية",
+  ajouter_a_ecran_desc_court:
+    "لتلقي عروضنا وتنبيهات المكافآت عبر الإشعارات.",
+  comment_faire: "كيف؟",
+  ne_plus_afficher: "عدم العرض مجدداً",
 };
 
 const RU: Traductions = {
@@ -705,6 +752,13 @@ const RU: Traductions = {
     "Откройте приложение с главного экрана и вернитесь сюда, чтобы включить уведомления",
   langue: "Язык",
   choisir_langue: "Выберите ваш язык",
+  valable_jusqu_au: "Действительна до",
+  expire_le: "Карта истекла",
+  ajouter_a_ecran_titre: "Добавьте {nom} на главный экран",
+  ajouter_a_ecran_desc_court:
+    "Чтобы получать наши акции и уведомления о наградах.",
+  comment_faire: "Как это сделать?",
+  ne_plus_afficher: "Больше не показывать",
 };
 
 const TRADUCTIONS: Record<Langue, Traductions> = {

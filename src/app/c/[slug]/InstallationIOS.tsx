@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useT } from "@/lib/langue";
 
 // ---------------------------------------------------------------------------
 // PWA sur iPhone — onboarding en 3 temps :
@@ -116,6 +117,7 @@ export function BanniereInstallationIOS({
   couleur: string;
   nomCommerce: string;
 }) {
+  const t = useT();
   const [visible, setVisible] = useState(false);
   const [modalOuverte, setModalOuverte] = useState(false);
   const [safari, setSafari] = useState(false);
@@ -159,11 +161,10 @@ export function BanniereInstallationIOS({
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-sm font-bold text-stone-900">
-              Ajoutez {nomCommerce} à votre écran d&apos;accueil
+              {t("ajouter_a_ecran_titre", { nom: nomCommerce })}
             </p>
             <p className="mt-1 text-xs text-stone-600">
-              Pour recevoir nos promotions et alertes de récompenses par
-              notification.
+              {t("ajouter_a_ecran_desc_court")}
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               <button
@@ -172,14 +173,14 @@ export function BanniereInstallationIOS({
                 className="rounded-lg px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:opacity-90"
                 style={{ backgroundColor: couleur }}
               >
-                Comment faire ?
+                {t("comment_faire")}
               </button>
               <button
                 type="button"
                 onClick={masquer}
                 className="rounded-lg border border-stone-300 bg-white px-3 py-1.5 text-xs font-medium text-stone-600 transition hover:bg-stone-100"
               >
-                Ne plus afficher
+                {t("ne_plus_afficher")}
               </button>
             </div>
           </div>
@@ -213,38 +214,26 @@ function ModalInstallation({
   safari: boolean;
   onClose: () => void;
 }) {
+  const t = useT();
+  const etapePartager = (
+    <span>
+      {t("etape_1_partager").replace(/\*\*.*?\*\*/g, "").replace("⬆︎", "")}{" "}
+      <IconePartage couleur={couleur} />
+    </span>
+  );
+  const etapeAjouter = (
+    <span>{t("etape_3_ajouter_ecran").replace(/\*\*/g, "")}</span>
+  );
+  const etapeOuvrir = (
+    <span>{t("etape_4_ouvrir_app", { nom: nomCommerce })}</span>
+  );
+  const etapeVoirPlus = (
+    <span>{t("etape_2_en_voir_plus").replace(/\*\*/g, "")}</span>
+  );
+
   const etapes = safari
-    ? [
-        <>
-          Appuyez sur le bouton <strong>Partager</strong>{" "}
-          <IconePartage couleur={couleur} /> de Safari
-        </>,
-        <>
-          Faites défiler et cliquez sur{" "}
-          <strong>« Ajouter à l&apos;écran d&apos;accueil »</strong>
-        </>,
-        <>
-          Ouvrez l&apos;app {nomCommerce} depuis l&apos;icône apparue sur votre
-          écran d&apos;accueil
-        </>,
-      ]
-    : [
-        <>
-          Appuyez sur le bouton <strong>Partager</strong>{" "}
-          <IconePartage couleur={couleur} /> de Chrome
-        </>,
-        <>
-          Cliquez sur <strong>« En voir plus »</strong>
-        </>,
-        <>
-          Faites défiler et cliquez sur{" "}
-          <strong>« Ajouter à l&apos;écran d&apos;accueil »</strong>
-        </>,
-        <>
-          Ouvrez l&apos;app {nomCommerce} depuis l&apos;icône apparue sur votre
-          écran d&apos;accueil
-        </>,
-      ];
+    ? [etapePartager, etapeAjouter, etapeOuvrir]
+    : [etapePartager, etapeVoirPlus, etapeAjouter, etapeOuvrir];
 
   return (
     <div className="fixed inset-0 z-[60] flex items-end justify-center bg-black/70 p-4 sm:items-center">
@@ -266,12 +255,10 @@ function ModalInstallation({
         </div>
 
         <h2 className="mt-4 text-center text-lg font-extrabold text-stone-900">
-          Ajoutez {nomCommerce} à votre écran d&apos;accueil
+          {t("ajoutez_a_ecran", { nom: nomCommerce })}
         </h2>
         <p className="mt-2 text-center text-sm text-stone-600">
-          Pour recevoir nos promotions et alertes de récompenses par
-          notification, ajoutez cette page comme une application ({safari ? 2 : 3} clics
-          suffisent).
+          {t("pour_recevoir_promotions")}
         </p>
 
         <ol className="mt-5 space-y-4 text-sm text-stone-800">
@@ -295,14 +282,14 @@ function ModalInstallation({
             className="w-full rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:opacity-90"
             style={{ backgroundColor: couleur }}
           >
-            J&apos;ai compris
+            {t("jai_compris")}
           </button>
           <button
             type="button"
             onClick={onClose}
             className="text-center text-xs font-medium text-stone-500 hover:text-stone-700"
           >
-            Plus tard
+            {t("plus_tard")}
           </button>
         </div>
       </div>

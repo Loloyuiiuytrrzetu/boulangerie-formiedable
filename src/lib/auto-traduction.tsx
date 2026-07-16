@@ -1,8 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useLangue } from "./langue";
 import type { Langue } from "./i18n";
+
+// Contexte qui rend la langue SOURCE du contenu (celle dans laquelle le
+// restaurateur a saisi ses cartes) disponible aux composants <AutoTraduit>
+// sans avoir à passer la prop partout.
+const LangueSourceContext = createContext<Langue>("fr");
+
+export function LangueSourceProvider({
+  langue,
+  children,
+}: {
+  langue: Langue;
+  children: React.ReactNode;
+}) {
+  return (
+    <LangueSourceContext.Provider value={langue}>
+      {children}
+    </LangueSourceContext.Provider>
+  );
+}
 
 // ---------------------------------------------------------------------------
 // AUTO-TRADUCTION pour les contenus saisis librement par le restaurateur :
@@ -28,11 +47,16 @@ function codeLangue(l: Langue): string {
   return l;
 }
 
-async function traduire(texte: string, cible: Langue): Promise<string> {
+async function traduire(
+  texte: string,
+  cible: Langue,
+  source: Langue
+): Promise<string> {
   const cleaned = texte.trim();
   if (!cleaned) return texte;
+  if (source === cible) return texte;
 
-  const cacheKey = `${cible}::${cleaned}`;
+  const cacheKey = `${source}>${cible}::${cleaned}`;
   if (memCache.has(cacheKey)) return memCache.get(cacheKey)!;
 
   if (typeof localStorage !== "undefined") {
@@ -43,12 +67,12 @@ async function traduire(texte: string, cible: Langue): Promise<string> {
     }
   }
 
-  // On demande à MyMemory de deviner la langue source. Pour la plupart des
-  // paires, MyMemory renvoie le texte original si source = cible.
   try {
+    // MyMemory exige une langue source explicite (2 lettres ISO). On prend
+    // celle du commerce, transmise via prop → contexte (français par défaut).
     const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(
       cleaned
-    )}&langpair=auto|${codeLangue(cible)}`;
+    )}&langpair=${codeLangue(source)}|${codeLangue(cible)}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(String(res.status));
     const data = (await res.json()) as {
@@ -58,9 +82,14 @@ async function traduire(texte: string, cible: Langue): Promise<string> {
     const trad = data?.responseData?.translatedText;
     if (!trad || typeof trad !== "string") return texte;
 
-    // MyMemory renvoie parfois le texte tel quel entre guillemets ; on nettoie.
+    // Filtre : si l'API renvoie un message d'erreur en majuscules
+    // (ex : "'AUTO' IS AN INVALID SOURCE LANGUAGE"), on retombe sur le
+    // texte original plutôt que d'afficher l'erreur au client.
+    const semble_erreur =
+      trad === trad.toUpperCase() && trad.length > 30 && /INVALID|ERROR|EXAMPLE:/.test(trad);
+    if (semble_erreur) return texte;
+
     let out = trad;
-    // Décode les entités HTML basiques.
     out = out.replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, "&");
 
     memCache.set(cacheKey, out);
@@ -71,15 +100,15 @@ async function traduire(texte: string, cible: Langue): Promise<string> {
     }
     return out;
   } catch {
-    return texte; // En cas d'erreur réseau, on affiche le texte original.
+    return texte;
   }
 }
 
-// Composant : affiche `texte` traduit dans la langue courante du contexte.
-// Le texte original est affiché instantanément puis remplacé par la
-// traduction dès qu'elle arrive.
+// Composant : affiche `texte` traduit de la langue source du contenu
+// (LangueSourceProvider) vers la langue courante du client.
 export function AutoTraduit({ texte }: { texte: string | null | undefined }) {
   const { langue } = useLangue();
+  const source = useContext(LangueSourceContext);
   const [affiche, setAffiche] = useState(texte ?? "");
 
   useEffect(() => {
@@ -88,20 +117,18 @@ export function AutoTraduit({ texte }: { texte: string | null | undefined }) {
       return;
     }
     let annule = false;
-    // Si la langue courante est le français (langue par défaut d'entrée en
-    // pratique), pas d'appel — on renvoie directement le texte original.
-    if (langue === "fr") {
+    if (langue === source) {
       setAffiche(texte);
       return;
     }
     setAffiche(texte); // fallback instantané pendant que la traduction charge
-    traduire(texte, langue).then((tr) => {
+    traduire(texte, langue, source).then((tr) => {
       if (!annule) setAffiche(tr);
     });
     return () => {
       annule = true;
     };
-  }, [texte, langue]);
+  }, [texte, langue, source]);
 
   return <>{affiche}</>;
 }
