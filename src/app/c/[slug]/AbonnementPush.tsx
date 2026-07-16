@@ -45,8 +45,26 @@ export function AbonnementPush({
       setStatut("ios-install");
       return;
     }
-    if (!("Notification" in window)) setStatut("erreur");
-    else if (Notification.permission === "denied") setStatut("refuse");
+    if (!("Notification" in window)) {
+      setStatut("erreur");
+      return;
+    }
+    if (Notification.permission === "denied") {
+      setStatut("refuse");
+      return;
+    }
+    // Déjà abonné pour de vrai ? On vérifie l'abonnement push réel du
+    // navigateur (et pas seulement une préférence enregistrée), pour afficher
+    // l'état exact et éviter un faux « actif ».
+    if (Notification.permission === "granted" && "serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .getRegistration("/sw.js")
+        .then((reg) => reg?.pushManager.getSubscription())
+        .then((sub) => {
+          if (sub) setStatut("actif");
+        })
+        .catch(() => {});
+    }
   }, []);
 
   async function activer() {

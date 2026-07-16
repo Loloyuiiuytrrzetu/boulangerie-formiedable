@@ -11,6 +11,7 @@ import {
 } from "./actions";
 import { AnimationRecompense } from "./Animation";
 import { InstallationIOS, BanniereInstallationIOS } from "./InstallationIOS";
+import { AbonnementPush } from "./AbonnementPush";
 import { ScannerClient } from "./ScannerClient";
 import { useLangue, useT } from "@/lib/langue";
 import { AutoTraduit } from "@/lib/auto-traduction";
@@ -433,7 +434,6 @@ export function EspaceClient({
   cartes,
   recompenses,
   recompensesEnAttente,
-  notificationsActives,
   scanRecent,
   qrClientDataUrl,
   restaurantId,
@@ -614,6 +614,7 @@ export function EspaceClient({
           qrClientDataUrl={qrClientDataUrl}
           tamponRestaurateurOnly={tamponRestaurateurOnly}
           restaurantId={restaurantId}
+          vapidPublicKey={vapidPublicKey}
           identiteClient={identiteClient}
           nomCommerce={nomCommerce}
           onAnimation={(a) => setAnimationEnCours(a || animation)}
@@ -633,6 +634,7 @@ function ContenuSection({
   qrClientDataUrl,
   tamponRestaurateurOnly,
   restaurantId,
+  vapidPublicKey,
   identiteClient,
   nomCommerce,
   onAnimation,
@@ -647,6 +649,7 @@ function ContenuSection({
   qrClientDataUrl: string | null;
   tamponRestaurateurOnly: boolean;
   restaurantId: string;
+  vapidPublicKey: string | null;
   identiteClient: string;
   nomCommerce: string;
   onAnimation: (a: string) => void;
@@ -715,6 +718,17 @@ function ContenuSection({
         )}
         <SelecteurLangue />
         <BanniereInstallationIOS couleur={couleur} nomCommerce={nomCommerce} />
+        <div className="mt-5 border-t border-stone-100 pt-5">
+          <p className="mb-2 text-sm font-semibold text-stone-800">
+            🔔 {t("recevoir_notifs").replace("🔔 ", "")}
+          </p>
+          <AbonnementPush
+            restaurantId={restaurantId}
+            vapidPublicKey={vapidPublicKey}
+            dejaActif={false}
+            couleur={couleur}
+          />
+        </div>
         <ModifierIdentite slug={slug} identiteActuelle={identiteClient} />
         <BoutonDesinscription slug={slug} couleur={couleur} />
       </section>
