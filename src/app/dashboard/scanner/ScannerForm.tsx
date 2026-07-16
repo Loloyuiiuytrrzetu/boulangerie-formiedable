@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { attribuerTampons } from "../actions";
 import { iconeEmoji } from "@/lib/icons";
 import type { Carte } from "@/lib/types";
@@ -21,6 +22,7 @@ export function ScannerForm({
   identitePrecharge?: string | null;
 }) {
   const t = useTDash();
+  const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [erreur, setErreur] = useState<string | null>(null);
   const [succes, setSucces] = useState<null | {
@@ -54,6 +56,9 @@ export function ScannerForm({
           recompenses_creees: r.recompenses_creees,
         });
         formRef.current?.reset();
+        // Rafraîchit la liste « Derniers tampons donnés » pour que la nouvelle
+        // attribution apparaisse immédiatement (côté restaurateur ET sous-compte).
+        router.refresh();
       }
     });
   }
