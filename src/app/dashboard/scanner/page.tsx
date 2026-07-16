@@ -5,6 +5,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import type { Carte } from "@/lib/types";
 import { ScannerForm } from "./ScannerForm";
 import { BoutonDeconnexion } from "../BoutonDeconnexion";
+import { tDash } from "@/lib/i18n-dashboard";
+import type { Langue } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +28,7 @@ export default async function Scanner({
   const admin = createAdminClient();
   const { data: restoOwn } = await admin
     .from("restaurants")
-    .select("id, nom, slug")
+    .select("id, nom, slug, langue")
     .eq("owner_id", user.id)
     .maybeSingle();
   let restaurant = restoOwn;
@@ -41,7 +43,7 @@ export default async function Scanner({
     if (sc) {
       const { data: r } = await admin
         .from("restaurants")
-        .select("id, nom, slug")
+        .select("id, nom, slug, langue")
         .eq("id", sc.restaurant_id)
         .maybeSingle();
       restaurant = r;
@@ -73,6 +75,9 @@ export default async function Scanner({
     }
   }
 
+  const langue = ((restaurant as { langue?: string }).langue ?? "fr") as Langue;
+  const td = (cle: Parameters<typeof tDash>[0]) => tDash(cle, langue);
+
   return (
     <main className="min-h-screen bg-stone-50">
       <header className="border-b border-stone-200 bg-white">
@@ -84,7 +89,7 @@ export default async function Scanner({
             <div>
               <p className="font-bold text-bordeaux-800">Walletiz</p>
               <p className="text-xs text-stone-500">
-                {sousCompte ? "Sous-compte — " : ""}
+                {sousCompte ? `${td("sous_compte")} — ` : ""}
                 {restaurant.nom}
               </p>
             </div>
@@ -107,14 +112,9 @@ export default async function Scanner({
         <div className="rounded-3xl border border-stone-200 bg-white p-5 shadow-lg sm:p-6">
           <h1 className="text-xl font-bold text-stone-900">
             {clientPrecharge
-              ? "Client identifié ✓"
-              : "Scanner le QR code du client"}
+              ? "✅"
+              : `📷 ${td("attribuer_tampons_client").replace("🎯 ", "")}`}
           </h1>
-          <p className="mt-1 text-sm text-stone-500">
-            {clientPrecharge
-              ? "Choisissez la carte et le nombre de tampons à attribuer."
-              : "Demandez au client d'ouvrir son onglet Info après avoir scanné le QR code, puis scannez son QR code personnel."}
-          </p>
 
           <ScannerForm
             cartes={cartes ?? []}

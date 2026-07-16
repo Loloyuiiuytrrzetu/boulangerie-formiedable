@@ -244,9 +244,6 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
                 pattern="^#[0-9a-fA-F]{6}$"
                 className="w-28 rounded-lg border border-stone-300 px-3 py-2 font-mono text-sm uppercase focus:border-bordeaux-500 focus:outline-none"
               />
-              <span className="text-xs text-stone-400">
-                Jaune brillant recommandé pour un effet lumineux.
-              </span>
             </div>
           </div>
 

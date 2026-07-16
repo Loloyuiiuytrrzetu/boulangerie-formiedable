@@ -175,7 +175,7 @@ function BlocSousCompteExistant({
 
   return (
     <div className="mt-4 rounded-xl border border-stone-200 bg-stone-50 p-4">
-      <p className="font-semibold text-stone-900">{sousCompte.nom}</p>
+      <p className="font-semibold text-stone-900">{t("sous_compte")}</p>
       <p className="mt-0.5 font-mono text-xs text-stone-500 break-all">{sousCompte.email}</p>
       {!sousCompte.actif && (
         <p className="mt-1 text-xs font-semibold text-amber-700">

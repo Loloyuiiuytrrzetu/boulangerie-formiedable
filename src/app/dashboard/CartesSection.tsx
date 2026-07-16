@@ -167,12 +167,17 @@ function ChampsCarte({
               />
             </div>
           )}
-          <input
-            name="tampon_image"
-            type="file"
-            accept="image/*"
-            className="mt-2 block w-full text-xs text-stone-500 file:mr-2 file:rounded-lg file:border-0 file:bg-bordeaux-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-bordeaux-800 hover:file:bg-bordeaux-100"
-          />
+          <label className="mt-2 flex cursor-pointer items-center gap-2">
+            <span className="rounded-lg bg-bordeaux-50 px-3 py-1.5 text-xs font-semibold text-bordeaux-800 hover:bg-bordeaux-100">
+              {t("choisir_fichier")}
+            </span>
+            <input
+              name="tampon_image"
+              type="file"
+              accept="image/*"
+              className="sr-only"
+            />
+          </label>
         </div>
       </div>
 
@@ -225,10 +230,6 @@ function ChampsCarte({
             defaultValue={carte?.date_expiration ?? ""}
             className={classesInput}
           />
-          <p className="mt-1 text-xs text-stone-400">
-            Laissez vide pour une carte permanente. Si vous mettez une date,
-            la carte disparaîtra automatiquement le lendemain de cette date.
-          </p>
         </div>
       </div>
 
@@ -318,12 +319,17 @@ function LigneRecompense({ recompense }: { recompense: Recompense }) {
         action={changerImage}
         className="mt-2 flex flex-wrap items-center gap-2"
       >
-        <input
-          name="image"
-          type="file"
-          accept="image/*"
-          className="block flex-1 text-xs text-stone-500 file:mr-2 file:rounded-lg file:border-0 file:bg-white file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-bordeaux-800"
-        />
+        <label className="flex flex-1 cursor-pointer items-center gap-2">
+          <span className="rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-bordeaux-800 ring-1 ring-stone-200 hover:bg-stone-50">
+            {t("choisir_fichier")}
+          </span>
+          <input
+            name="image"
+            type="file"
+            accept="image/*"
+            className="sr-only"
+          />
+        </label>
         <button
           type="submit"
           disabled={enCours}
@@ -508,12 +514,17 @@ function BlocCarte({
                 className={classesInput}
               />
               <div className="flex flex-wrap items-center gap-2">
-                <input
-                  name="image"
-                  type="file"
-                  accept="image/*"
-                  className="block flex-1 text-xs text-stone-500 file:mr-2 file:rounded-lg file:border-0 file:bg-white file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-bordeaux-800"
-                />
+                <label className="flex flex-1 cursor-pointer items-center">
+                  <span className="rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-bordeaux-800 ring-1 ring-stone-200 hover:bg-stone-50">
+                    {t("choisir_fichier")}
+                  </span>
+                  <input
+                    name="image"
+                    type="file"
+                    accept="image/*"
+                    className="sr-only"
+                  />
+                </label>
                 <button
                   type="submit"
                   disabled={enCours}

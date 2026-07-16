@@ -106,7 +106,13 @@ function BlocSection({ section }: { section: Section }) {
         className="flex w-full items-center justify-between px-5 py-4 text-left"
       >
         <div>
-          <p className="font-semibold text-stone-900">{section.titre}</p>
+          <p className="font-semibold text-stone-900">
+            {section.type === "cartes"
+              ? t("cartes_de_fidelite")
+              : section.type === "info"
+                ? t("info_qr")
+                : section.titre}
+          </p>
           <p className="text-xs text-stone-500">
             {badgeType}
             {!section.supprimable && ` · ${t("non_supprimable")}`}
