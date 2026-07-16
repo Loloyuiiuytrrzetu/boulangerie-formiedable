@@ -104,6 +104,15 @@ export async function creerRestaurateur(formData: FormData) {
     };
   }
 
+  // Force le rôle dans public.profiles à 'restaurateur'. Le trigger
+  // on_auth_user_created ne se déclenche que sur INSERT auth.users ;
+  // si on réutilise un utilisateur existant (branche ci-dessus), la ligne
+  // profiles peut avoir gardé un ancien rôle (ex : 'sous_compte'), ce qui
+  // ferait rediriger le middleware vers /dashboard/scanner à la connexion.
+  await admin
+    .from("profiles")
+    .upsert({ id: userId, role: "restaurateur" });
+
   // Slug unique pour la page publique
   let slug = slugify(nomCommerce);
   const { data: existant } = await admin
