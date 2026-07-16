@@ -133,7 +133,7 @@ export function ScannerForm({
           href="/dashboard/scanner"
           className="block text-center text-sm text-stone-500 hover:text-bordeaux-700"
         >
-          ← {t("attribuer_tampons_client").replace("🎯 ", "")}
+          ← {t("nouveau_scan")}
         </a>
       </form>
     );

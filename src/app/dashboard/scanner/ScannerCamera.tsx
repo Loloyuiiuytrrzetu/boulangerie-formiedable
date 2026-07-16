@@ -3,12 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import jsQR from "jsqr";
+import { useTDash } from "@/lib/langue-dashboard";
 
 // Scanner QR code via la caméra du navigateur. Utilise l'API BarcodeDetector
 // si disponible (Chrome Android), sinon jsQR côté JS (marche partout —
 // iOS Safari inclus). Le scanner est intégré au site : aucune app native
 // requise, le restaurateur clique sur le bouton et scan directement.
 export function ScannerCamera({ slugRestaurant }: { slugRestaurant?: string }) {
+  const t = useTDash();
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -91,13 +93,11 @@ export function ScannerCamera({ slugRestaurant }: { slugRestaurant?: string }) {
             } catch {
               // Pas une URL
             }
-            setErreur("Ce QR code n'est pas un QR code client Walletiz.");
+            setErreur(t("qr_pas_client_walletiz"));
           }
         }, 300);
       } catch (e) {
-        setErreur(
-          "Impossible d'accéder à la caméra. Autorisez l'accès dans les réglages du navigateur."
-        );
+        setErreur(t("camera_acces_impossible"));
         console.error(e);
       }
     })();
@@ -107,6 +107,7 @@ export function ScannerCamera({ slugRestaurant }: { slugRestaurant?: string }) {
       if (interval) clearInterval(interval);
       if (stream) stream.getTracks().forEach((t) => t.stop());
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ouvert, router, slugRestaurant]);
 
   return (
@@ -119,10 +120,10 @@ export function ScannerCamera({ slugRestaurant }: { slugRestaurant?: string }) {
         }}
         className="w-full rounded-2xl bg-bordeaux-800 px-6 py-6 text-lg font-bold text-white shadow-lg transition hover:bg-bordeaux-700"
       >
-        📷 Scanner le QR code du client
+        {t("scanner_qr_client")}
       </button>
       <p className="mt-2 text-center text-xs text-stone-500">
-        Le client vous montre son QR code (onglet Info de sa page)
+        {t("client_montre_qr")}
       </p>
 
       {ouvert && (
@@ -148,10 +149,10 @@ export function ScannerCamera({ slugRestaurant }: { slugRestaurant?: string }) {
               onClick={() => setOuvert(false)}
               className="absolute right-2 top-2 rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-stone-900"
             >
-              ✕ Fermer
+              {t("fermer")}
             </button>
             <p className="p-3 text-center text-sm text-white">
-              Pointez la caméra vers le QR code du client
+              {t("pointez_camera_client")}
             </p>
             {erreur && (
               <p className="mx-3 mb-3 rounded-lg bg-red-100 px-3 py-2 text-sm text-red-800">

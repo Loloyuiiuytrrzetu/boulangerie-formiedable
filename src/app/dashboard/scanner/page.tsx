@@ -1,12 +1,10 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Carte } from "@/lib/types";
-import { ScannerForm } from "./ScannerForm";
-import { BoutonDeconnexion } from "../BoutonDeconnexion";
-import { tDash } from "@/lib/i18n-dashboard";
 import type { Langue } from "@/lib/i18n";
+import { ScannerPageClient } from "./ScannerPageClient";
+import type { TamponRecent } from "./DerniersTampons";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +26,7 @@ export default async function Scanner({
   const admin = createAdminClient();
   const { data: restoOwn } = await admin
     .from("restaurants")
-    .select("id, nom, slug, langue")
+    .select("id, nom, slug, langue, timezone")
     .eq("owner_id", user.id)
     .maybeSingle();
   let restaurant = restoOwn;
@@ -43,7 +41,7 @@ export default async function Scanner({
     if (sc) {
       const { data: r } = await admin
         .from("restaurants")
-        .select("id, nom, slug, langue")
+        .select("id, nom, slug, langue, timezone")
         .eq("id", sc.restaurant_id)
         .maybeSingle();
       restaurant = r;
@@ -75,54 +73,70 @@ export default async function Scanner({
     }
   }
 
+  // Derniers tampons donnés (pour vérifier rapidement à qui on vient de
+  // donner des tampons). On récupère les 12 dernières attributions puis on
+  // complète avec le nom/téléphone du client et le titre de la carte.
+  const { data: histo } = await admin
+    .from("tampons_historique")
+    .select("id, nombre, created_at, client_id, carte_id")
+    .eq("restaurant_id", restaurant.id)
+    .order("created_at", { ascending: false })
+    .limit(12);
+
+  const recents: TamponRecent[] = [];
+  if (histo && histo.length > 0) {
+    const clientIds = [
+      ...new Set(histo.map((h) => h.client_id).filter(Boolean)),
+    ] as string[];
+    const carteIds = [
+      ...new Set(histo.map((h) => h.carte_id).filter(Boolean)),
+    ] as string[];
+    const [resClients, resCartes] = await Promise.all([
+      clientIds.length
+        ? admin
+            .from("clients_fidelite")
+            .select("id, identite, numero_telephone")
+            .in("id", clientIds)
+        : Promise.resolve({ data: [] as { id: string; identite: string | null; numero_telephone: string }[] }),
+      carteIds.length
+        ? admin.from("cartes").select("id, titre").in("id", carteIds)
+        : Promise.resolve({ data: [] as { id: string; titre: string }[] }),
+    ]);
+    const mapClient = new Map(
+      ((resClients.data as { id: string; identite: string | null; numero_telephone: string }[]) ?? []).map((c) => [c.id, c])
+    );
+    const mapCarte = new Map(
+      ((resCartes.data as { id: string; titre: string }[]) ?? []).map((c) => [c.id, c])
+    );
+    for (const h of histo) {
+      const cli = h.client_id ? mapClient.get(h.client_id) : undefined;
+      const carte = h.carte_id ? mapCarte.get(h.carte_id) : undefined;
+      recents.push({
+        id: h.id,
+        identite: cli?.identite ?? null,
+        telephone: cli?.numero_telephone ?? null,
+        carteTitre: carte?.titre ?? null,
+        nombre: h.nombre,
+        created_at: h.created_at,
+      });
+    }
+  }
+
   const langue = ((restaurant as { langue?: string }).langue ?? "fr") as Langue;
-  const td = (cle: Parameters<typeof tDash>[0]) => tDash(cle, langue);
+  const timezone = (restaurant as { timezone?: string }).timezone ?? "Europe/Paris";
 
   return (
-    <main className="min-h-screen bg-stone-50">
-      <header className="border-b border-stone-200 bg-white">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4 sm:px-6">
-          <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-bordeaux-800 text-lg text-white">
-              🎯
-            </span>
-            <div>
-              <p className="font-bold text-bordeaux-800">Walletiz</p>
-              <p className="text-xs text-stone-500">
-                {sousCompte ? `${td("sous_compte")} — ` : ""}
-                {restaurant.nom}
-              </p>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            {!sousCompte && (
-              <Link
-                href="/dashboard"
-                className="rounded-lg border border-stone-300 px-3 py-1.5 text-sm text-stone-600 transition hover:bg-stone-100"
-              >
-                ← Dashboard
-              </Link>
-            )}
-            <BoutonDeconnexion />
-          </div>
-        </div>
-      </header>
-
-      <div className="mx-auto max-w-xl px-4 py-6 sm:px-6 sm:py-8">
-        <div className="rounded-3xl border border-stone-200 bg-white p-5 shadow-lg sm:p-6">
-          <h1 className="text-xl font-bold text-stone-900">
-            {clientPrecharge
-              ? "✅"
-              : `📷 ${td("attribuer_tampons_client").replace("🎯 ", "")}`}
-          </h1>
-
-          <ScannerForm
-            cartes={cartes ?? []}
-            telephonePrecharge={clientPrecharge?.telephone ?? ""}
-            identitePrecharge={clientPrecharge?.identite ?? null}
-          />
-        </div>
-      </div>
-    </main>
+    <ScannerPageClient
+      langueInitiale={langue}
+      sousCompte={sousCompte}
+      estRestaurateur={!sousCompte}
+      nomCommerce={restaurant.nom}
+      timezone={timezone}
+      cartes={cartes ?? []}
+      clientIdentifie={Boolean(clientPrecharge)}
+      telephonePrecharge={clientPrecharge?.telephone ?? ""}
+      identitePrecharge={clientPrecharge?.identite ?? null}
+      recents={recents}
+    />
   );
 }
