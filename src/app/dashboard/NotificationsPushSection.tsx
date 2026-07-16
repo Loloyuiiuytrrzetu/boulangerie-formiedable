@@ -7,6 +7,7 @@ import {
   supprimerNotification,
 } from "./notifications-actions";
 import { useTDash } from "@/lib/langue-dashboard";
+import { regionDe } from "@/lib/timezones";
 
 export type NotificationPush = {
   id: string;
@@ -112,7 +113,12 @@ export function NotificationsPushSection({
           {t("notifications_push_desc")}
         </p>
         <p className="mt-2 text-xs text-stone-500">
-          <strong>{nbAbonnes}</strong> / <strong>{nbClientsTotal}</strong> · {timezone}
+          🔔 {t("abonnes_sur_clients", {
+            n: String(nbAbonnes),
+            total: String(nbClientsTotal),
+          })}
+          {" · "}
+          🌍 {t("fuseau_horaire")} : {regionDe(timezone)}
         </p>
       </div>
 

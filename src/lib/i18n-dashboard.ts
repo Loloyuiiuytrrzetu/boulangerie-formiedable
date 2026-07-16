@@ -118,6 +118,8 @@ type CleDash =
   | "cacher_anciennes_notifications"
   | "aucun_abonne"
   | "nb_abonnes"
+  | "abonnes_sur_clients"
+  | "fuseau_horaire"
   | "annuler_envoi_programme"
   // Abonnement
   | "abonnement_desc"
@@ -271,6 +273,8 @@ const FR: Traductions = {
   cacher_anciennes_notifications: "Cacher les anciennes notifications",
   aucun_abonne: "Aucun client abonné aux notifications pour l'instant.",
   nb_abonnes: "abonnés",
+  abonnes_sur_clients: "{n} client(s) abonné(s) aux notifications sur {total} inscrit(s)",
+  fuseau_horaire: "Fuseau horaire",
   annuler_envoi_programme: "Annuler l'envoi",
   abonnement_desc: "Gérez votre abonnement Walletiz.",
   statut_actuel: "Statut actuel",
@@ -421,6 +425,8 @@ const EN: Traductions = {
   cacher_anciennes_notifications: "Hide older notifications",
   aucun_abonne: "No customer subscribed to notifications yet.",
   nb_abonnes: "subscribers",
+  abonnes_sur_clients: "{n} of {total} customers subscribed to notifications",
+  fuseau_horaire: "Time zone",
   annuler_envoi_programme: "Cancel send",
   abonnement_desc: "Manage your Walletiz subscription.",
   statut_actuel: "Current status",
@@ -571,6 +577,8 @@ const ES: Traductions = {
   cacher_anciennes_notifications: "Ocultar notificaciones anteriores",
   aucun_abonne: "Aún no hay clientes suscritos a las notificaciones.",
   nb_abonnes: "suscritos",
+  abonnes_sur_clients: "{n} de {total} clientes suscritos a las notificaciones",
+  fuseau_horaire: "Zona horaria",
   annuler_envoi_programme: "Cancelar envío",
   abonnement_desc: "Gestiona tu suscripción Walletiz.",
   statut_actuel: "Estado actual",
@@ -721,6 +729,8 @@ const DE: Traductions = {
   cacher_anciennes_notifications: "Ältere Benachrichtigungen ausblenden",
   aucun_abonne: "Noch kein Kunde für Benachrichtigungen abonniert.",
   nb_abonnes: "Abonnenten",
+  abonnes_sur_clients: "{n} von {total} Kunden für Benachrichtigungen angemeldet",
+  fuseau_horaire: "Zeitzone",
   annuler_envoi_programme: "Senden abbrechen",
   abonnement_desc: "Verwalten Sie Ihr Walletiz-Abonnement.",
   statut_actuel: "Aktueller Status",
@@ -870,6 +880,8 @@ const ZH: Traductions = {
   cacher_anciennes_notifications: "隐藏旧通知",
   aucun_abonne: "尚无客户订阅通知。",
   nb_abonnes: "订阅者",
+  abonnes_sur_clients: "{total} 位客户中有 {n} 位订阅了通知",
+  fuseau_horaire: "时区",
   annuler_envoi_programme: "取消发送",
   abonnement_desc: "管理您的 Walletiz 订阅。",
   statut_actuel: "当前状态",
@@ -1018,6 +1030,8 @@ const AR: Traductions = {
   cacher_anciennes_notifications: "إخفاء الإشعارات القديمة",
   aucun_abonne: "لا يوجد عميل مشترك في الإشعارات بعد.",
   nb_abonnes: "مشتركين",
+  abonnes_sur_clients: "{n} من أصل {total} عملاء مشتركون في الإشعارات",
+  fuseau_horaire: "المنطقة الزمنية",
   annuler_envoi_programme: "إلغاء الإرسال",
   abonnement_desc: "إدارة اشتراكك في Walletiz.",
   statut_actuel: "الحالة الحالية",
@@ -1168,6 +1182,8 @@ const RU: Traductions = {
   cacher_anciennes_notifications: "Скрыть старые уведомления",
   aucun_abonne: "Пока нет клиентов, подписанных на уведомления.",
   nb_abonnes: "подписчиков",
+  abonnes_sur_clients: "{n} из {total} клиентов подписаны на уведомления",
+  fuseau_horaire: "Часовой пояс",
   annuler_envoi_programme: "Отменить отправку",
   abonnement_desc: "Управляйте вашей подпиской Walletiz.",
   statut_actuel: "Текущий статус",
