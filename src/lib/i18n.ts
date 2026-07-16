@@ -177,9 +177,9 @@ const FR: Traductions = {
   pour_recevoir_promotions:
     "Pour recevoir nos promotions et alertes de récompenses par notification, ajoutez cette page comme une application (2 clics suffisent).",
   etape_1_partager: "Appuyez sur le bouton **Partager** ⬆︎ de Safari ou Chrome",
-  etape_2_en_voir_plus: "Cliquez sur **« En voir plus »**",
+  etape_2_en_voir_plus: "Faites défiler ou appuyez sur **« En voir plus »**",
   etape_3_ajouter_ecran:
-    "Faites défiler et cliquez sur **« Ajouter à l'écran d'accueil »**",
+    "Appuyez sur **« Sur l'écran d'accueil »** (faites défiler ou passez par « En voir plus » si besoin)",
   etape_4_ouvrir_app:
     "Ouvrez l'app {nom} depuis l'icône apparue sur votre écran d'accueil",
   jai_compris: "J'ai compris",
