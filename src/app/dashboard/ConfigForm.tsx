@@ -20,6 +20,10 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
   const [animationCouleur, setAnimationCouleur] = useState(
     restaurant.animation_couleur ?? "#FFD700"
   );
+  // Système manuel : quand il est activé, le client ne peut plus prendre de
+  // tampon lui-même → la règle « 1 tampon par carte » (qui ne concerne QUE le
+  // libre-service client) devient sans objet et est grisée.
+  const [manuel, setManuel] = useState(restaurant.tampon_restaurateur_only === true);
   const [apercuLogo, setApercuLogo] = useState<string | null>(null);
   const [apercuFond, setApercuFond] = useState<string | null>(null);
   const [nomLogo, setNomLogo] = useState<string | null>(null);
@@ -196,12 +200,17 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
           description=""
         />
 
-        <div className="rounded-xl border border-stone-200 bg-stone-50 p-4">
-          <label className="flex items-start gap-3">
+        <div
+          className={`rounded-xl border border-stone-200 bg-stone-50 p-4 transition ${
+            manuel ? "opacity-55" : ""
+          }`}
+        >
+          <label className={`flex items-start gap-3 ${manuel ? "pointer-events-none" : ""}`}>
             <input
               type="checkbox"
               name="tampon_par_carte"
               defaultChecked={restaurant.tampon_par_carte !== false}
+              tabIndex={manuel ? -1 : undefined}
               className="mt-0.5 h-4 w-4 shrink-0 accent-bordeaux-800"
             />
             <span className="text-sm text-stone-600">
@@ -210,6 +219,11 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
               {t("un_tampon_par_carte_desc")}
             </span>
           </label>
+          {manuel && (
+            <p className="mt-2 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
+              {t("regle_libre_service_seulement")}
+            </p>
+          )}
         </div>
 
         <div className="rounded-xl border border-stone-200 bg-stone-50 p-4">
@@ -217,7 +231,8 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
             <input
               type="checkbox"
               name="tampon_restaurateur_only"
-              defaultChecked={restaurant.tampon_restaurateur_only === true}
+              checked={manuel}
+              onChange={(e) => setManuel(e.target.checked)}
               className="mt-0.5 h-4 w-4 shrink-0 accent-bordeaux-800"
             />
             <span className="text-sm text-stone-600">

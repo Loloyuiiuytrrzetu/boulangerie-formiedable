@@ -51,6 +51,7 @@ type CleDash =
   | "couleur_qr"
   | "un_tampon_par_carte"
   | "un_tampon_par_carte_desc"
+  | "regle_libre_service_seulement"
   | "tampon_manuel_uniquement"
   | "tampon_manuel_uniquement_desc"
   | "animation_recompense"
@@ -218,6 +219,8 @@ const FR: Traductions = {
   un_tampon_par_carte: "1 tampon par carte, chaque jour",
   un_tampon_par_carte_desc:
     "Si activé : le client peut prendre 1 tampon par carte par jour. Si désactivé : 1 tampon par jour toutes cartes confondues.",
+  regle_libre_service_seulement:
+    "En système manuel, cette règle ne s'applique pas : elle ne concerne que le libre-service du client. Vous et votre sous-compte donnez les tampons librement via le scan.",
   tampon_manuel_uniquement: "Système manuel (tampon donné uniquement par vous)",
   tampon_manuel_uniquement_desc:
     "Seul moi (ou mon sous-compte) peux attribuer les tampons. Le bouton « Prendre mon tampon » disparaît côté client.",
@@ -382,6 +385,8 @@ const EN: Traductions = {
   un_tampon_par_carte: "1 stamp per card, per day",
   un_tampon_par_carte_desc:
     "If on: customer can get 1 stamp per card per day. If off: 1 stamp per day across all cards.",
+  regle_libre_service_seulement:
+    "In manual mode this rule does not apply: it only governs customer self-service. You and your sub-account give stamps freely by scanning.",
   tampon_manuel_uniquement: "Manual mode (only you give stamps)",
   tampon_manuel_uniquement_desc:
     "Only you (or your sub-account) can give stamps. The 'Get my stamp' button disappears on the customer side.",
@@ -546,6 +551,8 @@ const ES: Traductions = {
   un_tampon_par_carte: "1 sello por tarjeta, cada día",
   un_tampon_par_carte_desc:
     "Si activado: el cliente puede tomar 1 sello por tarjeta al día. Si desactivado: 1 sello al día para todas las tarjetas.",
+  regle_libre_service_seulement:
+    "En modo manual esta regla no se aplica: solo afecta al autoservicio del cliente. Usted y su subcuenta dan sellos libremente al escanear.",
   tampon_manuel_uniquement: "Modo manual (solo tú das los sellos)",
   tampon_manuel_uniquement_desc:
     "Solo tú (o tu subcuenta) puedes dar sellos. El botón «Obtener mi sello» desaparece del lado del cliente.",
@@ -710,6 +717,8 @@ const DE: Traductions = {
   un_tampon_par_carte: "1 Stempel pro Karte, pro Tag",
   un_tampon_par_carte_desc:
     "Aktiviert: 1 Stempel pro Karte pro Tag. Deaktiviert: 1 Stempel pro Tag für alle Karten.",
+  regle_libre_service_seulement:
+    "Im manuellen Modus gilt diese Regel nicht: Sie betrifft nur den Kunden-Selbstbedienung. Sie und Ihr Unterkonto vergeben Stempel frei per Scan.",
   tampon_manuel_uniquement: "Manuell (nur Sie vergeben Stempel)",
   tampon_manuel_uniquement_desc:
     "Nur Sie (oder Ihr Unterkonto) können Stempel vergeben. Die Schaltfläche « Meinen Stempel holen » verschwindet auf der Kundenseite.",
@@ -874,6 +883,8 @@ const ZH: Traductions = {
   un_tampon_par_carte: "每张卡每天 1 个印章",
   un_tampon_par_carte_desc:
     "开启:客户每张卡每天可获得 1 个印章。关闭:所有卡每天共 1 个印章。",
+  regle_libre_service_seulement:
+    "手动模式下此规则不适用：它仅涉及客户自助。您和您的子账户通过扫描自由发放印章。",
   tampon_manuel_uniquement: "手动模式（仅您可发印章）",
   tampon_manuel_uniquement_desc:
     "只有您（或您的子账户）能发印章。客户端的\"获取印章\"按钮将消失。",
@@ -1036,6 +1047,8 @@ const AR: Traductions = {
   un_tampon_par_carte: "ختم واحد لكل بطاقة يومياً",
   un_tampon_par_carte_desc:
     "مفعّل: يحصل العميل على ختم واحد لكل بطاقة يومياً. معطّل: ختم واحد يومياً لجميع البطاقات.",
+  regle_libre_service_seulement:
+    "في الوضع اليدوي لا تنطبق هذه القاعدة: فهي تخص الخدمة الذاتية للعميل فقط. أنت وحسابك الفرعي تمنحان الأختام بحرية عبر المسح.",
   tampon_manuel_uniquement: "الوضع اليدوي (أنت فقط تمنح الأختام)",
   tampon_manuel_uniquement_desc:
     "أنت فقط (أو حسابك الفرعي) يمكنك منح الأختام. سيختفي زر «احصل على ختمي» من جانب العميل.",
@@ -1199,6 +1212,8 @@ const RU: Traductions = {
   un_tampon_par_carte: "1 печать на карту в день",
   un_tampon_par_carte_desc:
     "Включено: клиент получает 1 печать на карту в день. Выключено: 1 печать в день на все карты.",
+  regle_libre_service_seulement:
+    "В ручном режиме это правило не действует: оно касается только самообслуживания клиента. Вы и ваш субаккаунт выдаёте печати свободно через сканирование.",
   tampon_manuel_uniquement: "Ручной режим (только вы даёте печати)",
   tampon_manuel_uniquement_desc:
     "Только вы (или ваш субаккаунт) можете давать печати. Кнопка «Получить печать» исчезает у клиента.",
