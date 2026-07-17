@@ -17,15 +17,15 @@ self.addEventListener("push", (event) => {
     data = { titre: "Notification", message: event.data ? event.data.text() : "" };
   }
 
-  // Sur iOS, le système ajoute une ligne « from <nom de l'app> » dès que le
-  // titre de la notification DIFFÈRE du nom de l'app installée (PWA). Un titre
-  // vide compte comme différent → iOS affichait « Boulangerie Patire » +
-  // « from Boulangerie Patire ». La solution : utiliser comme titre le nom du
-  // commerce, qui est EXACTEMENT le nom de l'app (manifest.webmanifest
-  // dynamique). Titre == nom de l'app → iOS n'ajoute plus aucune ligne « from ».
-  const titre = data.titre || "";
+  // iOS/Safari ajoute AUTOMATIQUEMENT « from <nom de l'app> » à toute
+  // notification d'app web installée (comportement Apple, non supprimable).
+  // Si on met AUSSI le nom du commerce en titre, il apparaît deux fois
+  // (« Boulangerie Patire » + « from Boulangerie Patire »).
+  // Solution : mettre le MESSAGE en titre. Le nom du commerce n'apparaît
+  // alors qu'une seule fois, via la mention « from » ajoutée par iOS, et le
+  // message est le texte principal (en gras).
+  const titre = data.message || data.titre || "";
   const options = {
-    body: data.message || "",
     data: { url: data.url || "/" },
   };
   if (data.icon) {
