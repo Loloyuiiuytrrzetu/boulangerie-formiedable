@@ -67,6 +67,16 @@ export function FormulaireInscription({
         return;
       }
 
+      // Le cookie « fid_ » n'est posé que par inscrireClient ci-dessus.
+      // Le 1er abonnement push (avant le cookie) ne pouvait donc PAS être
+      // enregistré côté serveur (401). Maintenant que le cookie existe, on
+      // renvoie l'abonnement : la permission est déjà accordée, donc pas
+      // besoin d'un nouveau geste utilisateur. Sans ça, un nouvel inscrit ne
+      // reçoit jamais de notification.
+      if (notifs && resAbonnement.statut === "abonne") {
+        await abonnerAuxNotifications(restaurantId, vapidPublicKey);
+      }
+
       // Le client vient de s'inscrire → on force l'onboarding PWA à réapparaître
       // (popup « Ajouter à l'écran d'accueil »). Qu'il la passe ou non, elle
       // reste ensuite accessible depuis l'onglet Info.
