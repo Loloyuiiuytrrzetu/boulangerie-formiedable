@@ -62,6 +62,7 @@ function ChampsCarte({
   const router = useRouter();
   const [retraitEnCours, startRetrait] = useTransition();
   const [imageRetiree, setImageRetiree] = useState(false);
+  const [dateExp, setDateExp] = useState(carte?.date_expiration ?? "");
   const [icone, setIcone] = useState(carte?.tampon_icone ?? "cafe");
   const [emojiCustom, setEmojiCustom] = useState(
     carte?.tampon_icone?.startsWith("custom:") ? carte.tampon_icone.slice(7) : ""
@@ -242,12 +243,24 @@ function ChampsCarte({
           <label className="mb-1.5 block text-sm font-medium text-stone-700">
             {t("date_expiration")}
           </label>
-          <input
-            name="date_expiration"
-            type="date"
-            defaultValue={carte?.date_expiration ?? ""}
-            className={classesInput}
-          />
+          <div className="flex items-center gap-2">
+            <input
+              name="date_expiration"
+              type="date"
+              value={dateExp}
+              onChange={(e) => setDateExp(e.target.value)}
+              className={classesInput}
+            />
+            {dateExp && (
+              <button
+                type="button"
+                onClick={() => setDateExp("")}
+                className="shrink-0 rounded-lg border border-stone-300 px-3 py-2.5 text-xs font-medium text-stone-600 transition hover:bg-stone-100"
+              >
+                {t("effacer")}
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

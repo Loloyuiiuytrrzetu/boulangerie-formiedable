@@ -62,6 +62,7 @@ type CleDash =
   | "annuler"
   | "modifier"
   | "supprimer"
+  | "effacer"
   | "creer"
   // Cartes
   | "aucune_carte_creee"
@@ -230,6 +231,7 @@ const FR: Traductions = {
   annuler: "Annuler",
   modifier: "Modifier",
   supprimer: "Supprimer",
+  effacer: "Effacer",
   creer: "Créer",
   aucune_carte_creee: "Aucune carte créée pour l'instant.",
   nouvelle_carte: "+ Nouvelle carte",
@@ -393,6 +395,7 @@ const EN: Traductions = {
   annuler: "Cancel",
   modifier: "Edit",
   supprimer: "Delete",
+  effacer: "Clear",
   creer: "Create",
   aucune_carte_creee: "No card created yet.",
   nouvelle_carte: "+ New card",
@@ -556,6 +559,7 @@ const ES: Traductions = {
   annuler: "Cancelar",
   modifier: "Editar",
   supprimer: "Eliminar",
+  effacer: "Borrar",
   creer: "Crear",
   aucune_carte_creee: "Aún no hay tarjeta creada.",
   nouvelle_carte: "+ Nueva tarjeta",
@@ -719,6 +723,7 @@ const DE: Traductions = {
   annuler: "Abbrechen",
   modifier: "Bearbeiten",
   supprimer: "Löschen",
+  effacer: "Leeren",
   creer: "Erstellen",
   aucune_carte_creee: "Noch keine Karte erstellt.",
   nouvelle_carte: "+ Neue Karte",
@@ -881,6 +886,7 @@ const ZH: Traductions = {
   annuler: "取消",
   modifier: "编辑",
   supprimer: "删除",
+  effacer: "清除",
   creer: "创建",
   aucune_carte_creee: "尚未创建卡片。",
   nouvelle_carte: "+ 新卡片",
@@ -1042,6 +1048,7 @@ const AR: Traductions = {
   annuler: "إلغاء",
   modifier: "تعديل",
   supprimer: "حذف",
+  effacer: "مسح",
   creer: "إنشاء",
   aucune_carte_creee: "لم يتم إنشاء بطاقة بعد.",
   nouvelle_carte: "+ بطاقة جديدة",
@@ -1205,6 +1212,7 @@ const RU: Traductions = {
   annuler: "Отмена",
   modifier: "Изменить",
   supprimer: "Удалить",
+  effacer: "Очистить",
   creer: "Создать",
   aucune_carte_creee: "Карт пока нет.",
   nouvelle_carte: "+ Новая карта",
