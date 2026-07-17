@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { slugify } from "@/lib/utils";
 import { TIMEZONES_VALIDES } from "@/lib/timezones";
+import { lierAbonnementExistant } from "@/lib/stripe-sync";
 
 // Traduit les messages d'erreur Supabase Auth en français.
 function traduireErreurAuth(message: string | undefined): string {
@@ -126,26 +127,38 @@ export async function creerRestaurateur(formData: FormData) {
   const essaiFin = new Date();
   essaiFin.setDate(essaiFin.getDate() + 7);
 
-  const { error: erreurResto } = await admin.from("restaurants").insert({
-    owner_id: userId,
-    nom: nomCommerce,
-    slug,
-    timezone,
-    animation_recompense: "rayons",
-    abonnement_statut: "essai",
-    abonnement_type: abonnementType,
-    langue,
-    essai_fin_le: essaiFin.toISOString(),
-  });
-  if (erreurResto) {
+  const { data: resto, error: erreurResto } = await admin
+    .from("restaurants")
+    .insert({
+      owner_id: userId,
+      nom: nomCommerce,
+      slug,
+      timezone,
+      animation_recompense: "rayons",
+      abonnement_statut: "essai",
+      abonnement_type: abonnementType,
+      langue,
+      essai_fin_le: essaiFin.toISOString(),
+    })
+    .select("id")
+    .single();
+  if (erreurResto || !resto) {
     // Rollback : supprime l'utilisateur auth qu'on vient de créer pour
     // qu'il puisse retenter avec le même email.
     if (nouvelUtilisateur?.user) {
       await admin.auth.admin.deleteUser(nouvelUtilisateur.user.id);
     }
     return {
-      erreur: `Échec de la création du commerce : ${erreurResto.message}`,
+      erreur: `Échec de la création du commerce : ${erreurResto?.message ?? "inconnue"}`,
     };
+  }
+
+  // Si le client a déjà payé sur Stripe avec ce même email (paiement AVANT
+  // création du compte), on relie l'abonnement au restaurant maintenant.
+  try {
+    await lierAbonnementExistant(resto.id, email);
+  } catch (e) {
+    console.error("Liaison abonnement Stripe échouée:", e);
   }
 
   revalidatePath("/super-admin");
