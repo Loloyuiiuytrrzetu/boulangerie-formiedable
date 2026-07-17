@@ -59,6 +59,9 @@ function ChampsCarte({
   titreDefaut?: string;
 }) {
   const t = useTDash();
+  const router = useRouter();
+  const [retraitEnCours, startRetrait] = useTransition();
+  const [imageRetiree, setImageRetiree] = useState(false);
   const [icone, setIcone] = useState(carte?.tampon_icone ?? "cafe");
   const [emojiCustom, setEmojiCustom] = useState(
     carte?.tampon_icone?.startsWith("custom:") ? carte.tampon_icone.slice(7) : ""
@@ -157,7 +160,7 @@ function ChampsCarte({
           <p className="text-xs font-semibold text-stone-700">
             {t("image_tampon")}
           </p>
-          {carte?.tampon_image_url && (
+          {carte?.tampon_image_url && !imageRetiree && (
             <div className="mt-2 flex items-center gap-3">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -165,6 +168,21 @@ function ChampsCarte({
                 alt=""
                 className="h-14 w-14 rounded-lg border border-stone-200 object-cover"
               />
+              <button
+                type="button"
+                disabled={retraitEnCours}
+                onClick={() =>
+                  startRetrait(async () => {
+                    if (!carte?.id) return;
+                    await retirerImageTampon(carte.id);
+                    setImageRetiree(true);
+                    router.refresh();
+                  })
+                }
+                className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-60"
+              >
+                {retraitEnCours ? "…" : t("supprimer")}
+              </button>
             </div>
           )}
           <label className="mt-2 flex cursor-pointer items-center gap-2">
