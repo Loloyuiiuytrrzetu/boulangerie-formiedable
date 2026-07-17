@@ -201,16 +201,12 @@ export function InvitationNotifications({
       return;
     }
     if (Notification.permission === "granted") {
-      // Permission déjà accordée : on vérifie l'abonnement réel et on
-      // (ré)abonne en silence s'il manque — aucun bandeau nécessaire.
-      navigator.serviceWorker
-        .getRegistration("/sw.js")
-        .then((reg) => reg?.pushManager.getSubscription())
-        .then(async (sub) => {
-          if (sub) return; // déjà abonné
-          await abonnerAuxNotifications(restaurantId, vapidPublicKey);
-        })
-        .catch(() => {});
+      // Permission déjà accordée : on ré-enregistre TOUJOURS l'abonnement
+      // courant côté serveur (opération idempotente : upsert par endpoint).
+      // Indispensable après une réinstallation de la PWA sur iPhone : l'ancien
+      // endpoint est mort et le navigateur en recrée un nouveau — s'il n'est
+      // pas renvoyé au serveur, plus aucune notification n'arrive.
+      abonnerAuxNotifications(restaurantId, vapidPublicKey).catch(() => {});
       return;
     }
     // Permission "default" : l'appui final est requis par iOS → on propose.
