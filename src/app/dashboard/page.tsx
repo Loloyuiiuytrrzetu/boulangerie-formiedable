@@ -223,17 +223,17 @@ export default async function Dashboard() {
                   </Link>
                 </div>
 
-                <div id="graphiques">
+                <div id="graphiques" className="scroll-mt-24">
                   <GraphiquesTampons
                     historique={historique}
                     couleur={restaurant.couleur}
                     timezone={restaurant.timezone ?? "Europe/Paris"}
                   />
                 </div>
-                <div id="commerce">
+                <div id="commerce" className="scroll-mt-24">
                   <ConfigForm restaurant={restaurant} />
                 </div>
-                <div id="cartes">
+                <div id="cartes" className="scroll-mt-24">
                   <CartesSection
                     cartes={cartes}
                     recompenses={recompenses}
@@ -241,13 +241,13 @@ export default async function Dashboard() {
                     aujourdHui={aujourdHui}
                   />
                 </div>
-                <div id="sections-page">
+                <div id="sections-page" className="scroll-mt-24">
                   <SectionsSection sections={sections} />
                 </div>
-                <div id="souscompte">
+                <div id="souscompte" className="scroll-mt-24">
                   <SousCompteSection sousCompte={sousCompte} />
                 </div>
-                <div id="notifications">
+                <div id="notifications" className="scroll-mt-24">
                   <NotificationsPushSection
                     notifications={notificationsPush}
                     timezone={restaurant.timezone ?? "Europe/Paris"}
@@ -256,13 +256,13 @@ export default async function Dashboard() {
                     pushConfigure={Boolean(getVapidPublicKey())}
                   />
                 </div>
-                <div id="abonnement">
+                <div id="abonnement" className="scroll-mt-24">
                   <AbonnementSection restaurant={restaurant} />
                 </div>
 
                 <aside
                   id="qr-code"
-                  className="h-fit rounded-2xl border border-stone-200 bg-white p-6 text-center"
+                  className="h-fit scroll-mt-24 rounded-2xl border border-stone-200 bg-white p-6 text-center"
                 >
                 <h2 className="font-bold text-stone-900">{td("qr_code_titre")}</h2>
                 <p className="mt-1 text-sm text-stone-500">{td("qr_code_desc")}</p>
