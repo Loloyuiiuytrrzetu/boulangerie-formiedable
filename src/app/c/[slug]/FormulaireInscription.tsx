@@ -67,6 +67,14 @@ export function FormulaireInscription({
         return;
       }
 
+      // S'inscrire = cocher la case notifications (obligatoire) = consentir.
+      // On efface donc TOUJOURS un éventuel ancien « refus » (cas d'un client
+      // qui s'était désinscrit puis se réinscrit) : sinon le prompt et le
+      // ré-abonnement restent bloqués et il ne reçoit plus rien.
+      if (typeof window !== "undefined" && notifs) {
+        localStorage.removeItem(`walletiz_notif_refus_${slug}`);
+      }
+
       // Le cookie « fid_ » n'est posé que par inscrireClient ci-dessus.
       // Le 1er abonnement push (avant le cookie) ne pouvait donc PAS être
       // enregistré côté serveur (401). Maintenant que le cookie existe, on
