@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
-import jsQR from "jsqr";
+import { useState, useTransition } from "react";
 import { scannerEtAjouterTampon } from "./actions";
+import { ScanCameraModal } from "./ScanCameraModal";
 import type { CarteAffichee } from "./EspaceClient";
 import { useT } from "@/lib/langue";
 import { useAutoTraduitListe } from "@/lib/auto-traduction";
@@ -23,8 +23,6 @@ export function ScannerClient({
   onAnimation: () => void;
 }) {
   const t = useT();
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [ouvert, setOuvert] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
   const [succes, setSucces] = useState<string | null>(null);
@@ -34,109 +32,19 @@ export function ScannerClient({
   // Noms de cartes traduits automatiquement dans la langue du client
   const titresTraduits = useAutoTraduitListe(cartes.map((c) => c.titre));
 
-  useEffect(() => {
-    if (!ouvert) return;
-    let stream: MediaStream | null = null;
-    let interval: ReturnType<typeof setInterval> | null = null;
-    let annule = false;
-
-    const winTyped = window as unknown as {
-      BarcodeDetector?: new (o?: { formats?: string[] }) => {
-        detect(v: HTMLVideoElement): Promise<{ rawValue?: string }[]>;
-      };
-    };
-    const supportNatif = typeof winTyped.BarcodeDetector === "function";
-    const detector = supportNatif
-      ? new winTyped.BarcodeDetector!({ formats: ["qr_code"] })
-      : null;
-
-    (async () => {
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment" },
-        });
-        if (annule) {
-          stream.getTracks().forEach((t) => t.stop());
-          return;
+  function surDetecte() {
+    setOuvert(false);
+    startTransition(async () => {
+      const r = await scannerEtAjouterTampon(slug, carteId);
+      if (r?.erreur) setErreur(r.erreur);
+      else if ("ok" in r && r.ok) {
+        setSucces(t("tampon_ajoute"));
+        if ("recompense" in r && r.recompense) {
+          onAnimation();
         }
-        const video = videoRef.current;
-        if (!video) return;
-        video.srcObject = stream;
-        await video.play();
-
-        interval = setInterval(async () => {
-          const v = videoRef.current;
-          if (!v || v.readyState < 2) return;
-
-          let raw: string | null = null;
-          if (detector) {
-            try {
-              const codes = await detector.detect(v);
-              if (codes.length > 0 && codes[0].rawValue) raw = codes[0].rawValue;
-            } catch {
-              // ignore
-            }
-          } else {
-            const canvas = canvasRef.current;
-            if (!canvas) return;
-            const w = v.videoWidth;
-            const h = v.videoHeight;
-            if (!w || !h) return;
-            canvas.width = w;
-            canvas.height = h;
-            const ctx = canvas.getContext("2d", { willReadFrequently: true });
-            if (!ctx) return;
-            ctx.drawImage(v, 0, 0, w, h);
-            const img = ctx.getImageData(0, 0, w, h);
-            const code = jsQR(img.data, w, h, { inversionAttempts: "attemptBoth" });
-            if (code?.data) raw = code.data;
-          }
-
-          if (!raw) return;
-
-          // Le QR doit être le QR du commerce (/scan/<slug> ou /c/<slug>)
-          let valide = false;
-          try {
-            const u = new URL(raw);
-            const parts = u.pathname.split("/").filter(Boolean);
-            valide =
-              (parts[0] === "scan" || parts[0] === "c") && parts[1] === slug;
-          } catch {
-            valide = false;
-          }
-          if (!valide) {
-            setErreur(t("qr_ne_correspond_pas"));
-            return;
-          }
-
-          if (interval) clearInterval(interval);
-          if (stream) stream.getTracks().forEach((t) => t.stop());
-          setOuvert(false);
-
-          startTransition(async () => {
-            const r = await scannerEtAjouterTampon(slug, carteId);
-            if (r?.erreur) setErreur(r.erreur);
-            else if ("ok" in r && r.ok) {
-              setSucces(t("tampon_ajoute"));
-              if ("recompense" in r && r.recompense) {
-                onAnimation();
-              }
-            }
-          });
-        }, 300);
-      } catch (e) {
-        setErreur(t("camera_impossible"));
-        console.error(e);
       }
-    })();
-
-    return () => {
-      annule = true;
-      if (interval) clearInterval(interval);
-      if (stream) stream.getTracks().forEach((t) => t.stop());
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ouvert, slug, carteId, onAnimation]);
+    });
+  }
 
   if (cartes.length === 0) {
     return (
@@ -203,35 +111,12 @@ export function ScannerClient({
       )}
 
       {ouvert && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
-          onClick={() => setOuvert(false)}
-        >
-          <div
-            className="relative w-full max-w-md rounded-2xl bg-black shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <video
-              ref={videoRef}
-              playsInline
-              muted
-              autoPlay
-              className="aspect-square w-full rounded-2xl object-cover"
-            />
-            <canvas ref={canvasRef} className="hidden" />
-            <div className="pointer-events-none absolute inset-8 rounded-2xl border-4 border-white/70" />
-            <button
-              type="button"
-              onClick={() => setOuvert(false)}
-              className="absolute right-2 top-2 rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-stone-900"
-            >
-              {t("fermer")}
-            </button>
-            <p className="p-3 text-center text-sm text-white">
-              {t("pointez_camera")}
-            </p>
-          </div>
-        </div>
+        <ScanCameraModal
+          slug={slug}
+          onDetecte={surDetecte}
+          onErreur={setErreur}
+          onFermer={() => setOuvert(false)}
+        />
       )}
     </div>
   );

@@ -7,12 +7,14 @@ import {
   choisirRecompense,
   desinscrireClient,
   modifierIdentite,
+  scannerEtAjouterTampon,
   utiliserRecompense,
 } from "./actions";
 import { AnimationRecompense } from "./Animation";
 import { InstallationIOS, BanniereInstallationIOS, reinitialiserPromptInstallation } from "./InstallationIOS";
 import { AbonnementPush, InvitationNotifications } from "./AbonnementPush";
 import { ScannerClient } from "./ScannerClient";
+import { ScanCameraModal } from "./ScanCameraModal";
 import { useLangue, useT } from "@/lib/langue";
 import { AutoTraduit } from "@/lib/auto-traduction";
 import { LANGUES } from "@/lib/i18n";
@@ -261,6 +263,7 @@ function BlocCarte({
   const [erreur, setErreur] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [choix, setChoix] = useState(false);
+  const [scanOuvert, setScanOuvert] = useState(false);
   const [enCours, startTransition] = useTransition();
 
   const requis = carte.nombre_tampons_requis;
@@ -272,6 +275,29 @@ function BlocCarte({
     setMessage(null);
     startTransition(async () => {
       const resultat = await ajouterTampon(slug, carte.id);
+      if (resultat?.erreur) setErreur(resultat.erreur);
+      else setMessage(t("tampon_ajoute_merci"));
+    });
+  }
+
+  // Clic sur le bouton de tampon :
+  //  - si un scan récent est déjà enregistré (cookie posé en passant par
+  //    /scan/<slug>), on prend directement le tampon ;
+  //  - sinon (cas iPhone en app installée : le cookie de Safari n'atteint
+  //    jamais la PWA), on ouvre la caméra DANS l'app. Le client scanne le QR
+  //    de caisse et le tampon est posé via `scannerEtAjouterTampon`, qui pose
+  //    lui-même le cookie côté serveur. Plus de bouton bloqué.
+  function surClicTampon() {
+    if (scanRecent) prendreTampon();
+    else setScanOuvert(true);
+  }
+
+  function surScanDetecte() {
+    setScanOuvert(false);
+    setErreur(null);
+    setMessage(null);
+    startTransition(async () => {
+      const resultat = await scannerEtAjouterTampon(slug, carte.id);
       if (resultat?.erreur) setErreur(resultat.erreur);
       else setMessage(t("tampon_ajoute_merci"));
     });
@@ -395,22 +421,30 @@ function BlocCarte({
           ) : (
             <>
               <button
-                onClick={prendreTampon}
-                disabled={enCours || carte.tampon_pris_aujourdhui || !scanRecent}
+                onClick={surClicTampon}
+                disabled={enCours || carte.tampon_pris_aujourdhui}
                 className="w-full rounded-xl px-4 py-3.5 font-semibold text-white shadow-md transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                 style={{ backgroundColor: couleur }}
               >
-                {!scanRecent
-                  ? t("scannez_qr_caisse")
-                  : carte.tampon_pris_aujourdhui
-                    ? t("tampon_deja_pris")
-                    : enCours
-                      ? t("un_instant")
-                      : `${emoji} ${t("prendre_tampon_du_jour")}`}
+                {carte.tampon_pris_aujourdhui
+                  ? t("tampon_deja_pris")
+                  : enCours
+                    ? t("un_instant")
+                    : scanRecent
+                      ? `${emoji} ${t("prendre_tampon_du_jour")}`
+                      : t("scannez_qr_caisse")}
               </button>
               <p className="mt-2 text-center text-xs text-stone-400">
                 {t("un_tampon_max")}
               </p>
+              {scanOuvert && (
+                <ScanCameraModal
+                  slug={slug}
+                  onDetecte={surScanDetecte}
+                  onErreur={setErreur}
+                  onFermer={() => setScanOuvert(false)}
+                />
+              )}
             </>
           )}
         </div>
