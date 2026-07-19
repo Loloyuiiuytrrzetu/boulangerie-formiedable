@@ -51,9 +51,10 @@ export function NavigationSidebar({
 
   return (
     <>
-      {/* Mobile / tablette : barre FIXE (sticky) qui reste visible au
-          défilement, avec logo + menu burger — comme la page vitrine. */}
-      <header className="sticky top-0 z-40 border-b border-stone-200 bg-white/95 shadow-sm backdrop-blur-md supports-[backdrop-filter]:bg-white/85 lg:hidden">
+      {/* Mobile / tablette : barre FIXE qui reste TOUJOURS visible au
+          défilement, avec logo + menu burger — exactement comme la vitrine
+          (position: fixed ; `sticky` était cassé par un parent en overflow). */}
+      <header className="fixed inset-x-0 top-0 z-40 border-b border-stone-200 bg-white/95 shadow-sm backdrop-blur-md supports-[backdrop-filter]:bg-white/85 lg:hidden">
         <div className="flex items-center justify-between gap-2 px-4 py-3">
           <div className="flex items-center gap-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -78,6 +79,9 @@ export function NavigationSidebar({
           </button>
         </div>
       </header>
+      {/* Réserve la hauteur de la barre fixe pour que le contenu ne passe
+          pas dessous (barre out-of-flow). Mobile uniquement. */}
+      <div aria-hidden className="h-[57px] lg:hidden" />
 
       {/* Panneau burger plein écran (mobile) : tous les onglets + langue +
           déconnexion. Fermé au clic sur un onglet ou sur le fond. */}
