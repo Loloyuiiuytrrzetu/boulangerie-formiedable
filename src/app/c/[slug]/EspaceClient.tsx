@@ -724,17 +724,12 @@ function ContenuSection({
         )}
         <SelecteurLangue />
         <BanniereInstallationIOS couleur={couleur} nomCommerce={nomCommerce} />
-        <div className="mt-5 border-t border-stone-100 pt-5">
-          <p className="mb-2 text-sm font-semibold text-stone-800">
-            🔔 {t("recevoir_notifs").replace("🔔 ", "")}
-          </p>
-          <AbonnementPush
-            restaurantId={restaurantId}
-            vapidPublicKey={vapidPublicKey}
-            dejaActif={false}
-            couleur={couleur}
-          />
-        </div>
+        <AbonnementPush
+          restaurantId={restaurantId}
+          vapidPublicKey={vapidPublicKey}
+          dejaActif={false}
+          couleur={couleur}
+        />
         <ModifierIdentite slug={slug} identiteActuelle={identiteClient} />
         <BoutonDesinscription slug={slug} couleur={couleur} />
       </section>

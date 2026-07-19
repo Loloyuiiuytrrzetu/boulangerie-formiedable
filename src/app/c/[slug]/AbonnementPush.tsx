@@ -114,48 +114,50 @@ export function AbonnementPush({
     }
   }
 
+  // Hors app installée (Safari sur iPhone) : on n'affiche RIEN ici — c'est le
+  // bandeau « Ajoutez à l'écran d'accueil » qui guide le client. Évite le
+  // doublon (deux blocs qui répètent les mêmes étapes d'installation).
+  if (statut === "ios-install") return null;
+
+  let contenu: React.ReactNode;
   if (statut === "actif") {
-    return (
-      <div className="rounded-2xl border border-stone-200 bg-white p-4 text-sm text-stone-600">
+    contenu = (
+      <div className="rounded-2xl border border-green-200 bg-green-50 p-4 text-sm font-semibold text-green-800">
         {t("notifs_actives")}
       </div>
     );
-  }
-  if (statut === "refuse") {
-    return (
+  } else if (statut === "refuse") {
+    contenu = (
       <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
         {t("notifs_refusees")}
       </div>
     );
-  }
-  if (statut === "erreur") {
-    return (
+  } else if (statut === "erreur") {
+    contenu = (
       <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
         {message ?? t("notifs_impossible")}
       </div>
     );
-  }
-  if (statut === "ios-install") {
-    return (
-      <div className="rounded-2xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
-        {t("ios_install_pour_notifs")}
-        <ol className="mt-2 list-inside list-decimal space-y-1 text-xs">
-          <li>{t("ios_install_etape_1").replace(/\*\*/g, "")}</li>
-          <li>{t("ios_install_etape_2").replace(/\*\*/g, "")}</li>
-          <li>{t("ios_install_etape_3").replace(/\*\*/g, "")}</li>
-        </ol>
-      </div>
+  } else {
+    contenu = (
+      <button
+        onClick={activer}
+        disabled={statut === "loading"}
+        className="w-full rounded-xl px-4 py-3 text-sm font-semibold text-white transition disabled:opacity-60"
+        style={{ backgroundColor: couleur }}
+      >
+        {statut === "loading" ? t("activation_en_cours") : t("recevoir_notifs")}
+      </button>
     );
   }
+
   return (
-    <button
-      onClick={activer}
-      disabled={statut === "loading"}
-      className="w-full rounded-xl px-4 py-3 text-sm font-semibold text-white transition disabled:opacity-60"
-      style={{ backgroundColor: couleur }}
-    >
-      {statut === "loading" ? t("activation_en_cours") : t("recevoir_notifs")}
-    </button>
+    <div className="mt-5 border-t border-stone-100 pt-5">
+      <p className="mb-2 text-sm font-semibold text-stone-800">
+        🔔 {t("recevoir_notifs").replace("🔔 ", "")}
+      </p>
+      {contenu}
+    </div>
   );
 }
 
