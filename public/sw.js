@@ -17,10 +17,12 @@ self.addEventListener("push", (event) => {
     data = { titre: "Notification", message: event.data ? event.data.text() : "" };
   }
 
-  // Disposition demandée par le restaurateur : nom du commerce en TITRE (haut,
-  // gras) et MESSAGE en CORPS (bas, PAS en gras).
-  // iOS ajoute quand même « from <nom> » entre les deux (comportement Apple).
-  const titre = data.titre || "";
+  // On veut masquer la ligne de titre pour ne garder que « from <commerce> »
+  // (ajouté par iOS) + le message en corps (non gras). Un titre vide ("")
+  // pousse iOS à afficher le nom de l'app à la place ; on met donc un caractère
+  // INVISIBLE (espace de largeur nulle) : la ligne de titre existe mais ne
+  // montre rien.
+  const titre = "​";
   const options = {
     body: data.message || "",
     data: { url: data.url || "/" },
