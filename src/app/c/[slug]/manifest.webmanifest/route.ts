@@ -33,14 +33,24 @@ export async function GET(
       ]
     : [];
 
+  // start_url ABSOLU sur le domaine canonique : évite qu'au lancement l'app
+  // suive une redirection (ex. walletiz.fr → www.walletiz.fr) qui ferait
+  // rebasculer iOS dans Safari au lieu de rester dans l'app installée.
+  // scope RELATIF : toujours de même origine que le manifeste (donc valide),
+  // et il englobe la page une fois lancée sur le domaine canonique.
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/+$/, "");
+  const startUrl = siteUrl ? `${siteUrl}/c/${slug}` : `/c/${slug}`;
+
   return NextResponse.json(
     {
+      id: `/c/${slug}`,
       name: restaurant.nom,
       short_name: restaurant.nom,
       description: `Carte de fidélité ${restaurant.nom}`,
-      start_url: `/c/${slug}`,
+      start_url: startUrl,
       scope: `/c/${slug}`,
       display: "standalone",
+      display_override: ["standalone"],
       background_color: "#ffffff",
       theme_color: restaurant.couleur ?? "#7A1E2E",
       icons,
