@@ -55,6 +55,13 @@ export async function generateMetadata({
       title: restaurant.nom,
       statusBarStyle: "default",
     },
+    // Next n'émet que « mobile-web-app-capable » ; iOS Safari a besoin de la
+    // balise préfixée « apple- » pour ouvrir la page en mode app plein écran
+    // (et pas comme un simple raccourci qui rouvre Safari). On l'ajoute donc
+    // explicitement.
+    other: {
+      "apple-mobile-web-app-capable": "yes",
+    },
   };
 }
 
