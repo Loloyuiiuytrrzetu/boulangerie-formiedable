@@ -17,11 +17,13 @@ self.addEventListener("push", (event) => {
     data = { titre: "Notification", message: event.data ? event.data.text() : "" };
   }
 
-  // Disposition demandée par le restaurateur : NOM DU COMMERCE en titre (haut),
-  // MESSAGE en corps (bas). Test pour vérifier si iOS ajoute encore « from ».
-  const titre = data.titre || "";
+  // iOS ajoute TOUJOURS « from <nom de l'app> » après le titre (confirmé en
+  // test réel — impossible à retirer, c'est Apple). Pour que le nom du commerce
+  // n'apparaisse qu'UNE seule fois (via ce « from »), on met le MESSAGE en titre
+  // et pas de corps : « <message> » puis « from <commerce> ». C'est le plus
+  // propre possible sur iPhone.
+  const titre = data.message || data.titre || "";
   const options = {
-    body: data.message || "",
     data: { url: data.url || "/" },
   };
   if (data.icon) {
