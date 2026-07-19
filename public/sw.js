@@ -17,15 +17,11 @@ self.addEventListener("push", (event) => {
     data = { titre: "Notification", message: event.data ? event.data.text() : "" };
   }
 
-  // iOS/Safari ajoute AUTOMATIQUEMENT « from <nom de l'app> » à toute
-  // notification d'app web installée (comportement Apple, non supprimable).
-  // Si on met AUSSI le nom du commerce en titre, il apparaît deux fois
-  // (« Boulangerie Patire » + « from Boulangerie Patire »).
-  // Solution : mettre le MESSAGE en titre. Le nom du commerce n'apparaît
-  // alors qu'une seule fois, via la mention « from » ajoutée par iOS, et le
-  // message est le texte principal (en gras).
-  const titre = data.message || data.titre || "";
+  // Disposition demandée par le restaurateur : NOM DU COMMERCE en titre (haut),
+  // MESSAGE en corps (bas). Test pour vérifier si iOS ajoute encore « from ».
+  const titre = data.titre || "";
   const options = {
+    body: data.message || "",
     data: { url: data.url || "/" },
   };
   if (data.icon) {
