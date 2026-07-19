@@ -176,7 +176,24 @@ type CleDash =
   | "aper_carte_expiree"
   | "date_valide_jusqu"
   | "nb_recompenses"
-  | "vous_pouvez_seulement_changer_titre";
+  | "vous_pouvez_seulement_changer_titre"
+  // Liste des clients
+  | "mes_clients"
+  | "mes_clients_desc"
+  | "aucun_client"
+  | "client_sans_nom"
+  | "col_nom"
+  | "col_telephone"
+  | "col_tampons"
+  | "col_derniere_visite"
+  | "jamais_visite"
+  | "notifs_actives_client"
+  | "notifs_inactives_client"
+  | "page_x_sur_y"
+  | "page_precedente"
+  | "page_suivante"
+  | "glisser_pages_clients"
+  | "clients_au_total";
 
 type Traductions = Record<CleDash, string>;
 
@@ -344,6 +361,23 @@ const FR: Traductions = {
   date_valide_jusqu: "Valable jusqu'au",
   nb_recompenses: "récompenses",
   vous_pouvez_seulement_changer_titre: "Vous pouvez seulement en changer le titre.",
+  mes_clients: "Mes clients",
+  mes_clients_desc:
+    "La liste de tous vos clients. Elle se met à jour automatiquement : un client désinscrit disparaît, un changement de nom apparaît aussitôt.",
+  aucun_client: "Aucun client pour le moment.",
+  client_sans_nom: "Sans nom",
+  col_nom: "Nom",
+  col_telephone: "Téléphone",
+  col_tampons: "Tampons",
+  col_derniere_visite: "Dernière visite",
+  jamais_visite: "Jamais",
+  notifs_actives_client: "Notifications activées",
+  notifs_inactives_client: "Notifications désactivées",
+  page_x_sur_y: "Page {page} / {pages}",
+  page_precedente: "Précédent",
+  page_suivante: "Suivant",
+  glisser_pages_clients: "Glissez vers la gauche/droite pour changer de page",
+  clients_au_total: "{n} client(s) au total",
 };
 
 const EN: Traductions = {
@@ -510,6 +544,23 @@ const EN: Traductions = {
   date_valide_jusqu: "Valid until",
   nb_recompenses: "rewards",
   vous_pouvez_seulement_changer_titre: "You can only change its title.",
+  mes_clients: "My customers",
+  mes_clients_desc:
+    "The list of all your customers. It updates automatically: an unsubscribed customer disappears, a name change shows up right away.",
+  aucun_client: "No customers yet.",
+  client_sans_nom: "No name",
+  col_nom: "Name",
+  col_telephone: "Phone",
+  col_tampons: "Stamps",
+  col_derniere_visite: "Last visit",
+  jamais_visite: "Never",
+  notifs_actives_client: "Notifications on",
+  notifs_inactives_client: "Notifications off",
+  page_x_sur_y: "Page {page} / {pages}",
+  page_precedente: "Previous",
+  page_suivante: "Next",
+  glisser_pages_clients: "Swipe left/right to change page",
+  clients_au_total: "{n} customer(s) in total",
 };
 
 const ES: Traductions = {
@@ -676,6 +727,23 @@ const ES: Traductions = {
   date_valide_jusqu: "Válida hasta",
   nb_recompenses: "recompensas",
   vous_pouvez_seulement_changer_titre: "Solo puedes cambiar el título.",
+  mes_clients: "Mis clientes",
+  mes_clients_desc:
+    "La lista de todos tus clientes. Se actualiza automáticamente: un cliente dado de baja desaparece, un cambio de nombre aparece al instante.",
+  aucun_client: "Aún no hay clientes.",
+  client_sans_nom: "Sin nombre",
+  col_nom: "Nombre",
+  col_telephone: "Teléfono",
+  col_tampons: "Sellos",
+  col_derniere_visite: "Última visita",
+  jamais_visite: "Nunca",
+  notifs_actives_client: "Notificaciones activadas",
+  notifs_inactives_client: "Notificaciones desactivadas",
+  page_x_sur_y: "Página {page} / {pages}",
+  page_precedente: "Anterior",
+  page_suivante: "Siguiente",
+  glisser_pages_clients: "Desliza a la izquierda/derecha para cambiar de página",
+  clients_au_total: "{n} cliente(s) en total",
 };
 
 const DE: Traductions = {
@@ -842,6 +910,23 @@ const DE: Traductions = {
   date_valide_jusqu: "Gültig bis",
   nb_recompenses: "Belohnungen",
   vous_pouvez_seulement_changer_titre: "Sie können nur den Titel ändern.",
+  mes_clients: "Meine Kunden",
+  mes_clients_desc:
+    "Die Liste all Ihrer Kunden. Sie aktualisiert sich automatisch: Ein abgemeldeter Kunde verschwindet, eine Namensänderung erscheint sofort.",
+  aucun_client: "Noch keine Kunden.",
+  client_sans_nom: "Ohne Namen",
+  col_nom: "Name",
+  col_telephone: "Telefon",
+  col_tampons: "Stempel",
+  col_derniere_visite: "Letzter Besuch",
+  jamais_visite: "Nie",
+  notifs_actives_client: "Benachrichtigungen aktiv",
+  notifs_inactives_client: "Benachrichtigungen aus",
+  page_x_sur_y: "Seite {page} / {pages}",
+  page_precedente: "Zurück",
+  page_suivante: "Weiter",
+  glisser_pages_clients: "Nach links/rechts wischen, um die Seite zu wechseln",
+  clients_au_total: "{n} Kunde(n) insgesamt",
 };
 
 const ZH: Traductions = {
@@ -1006,6 +1091,23 @@ const ZH: Traductions = {
   date_valide_jusqu: "有效期至",
   nb_recompenses: "奖励",
   vous_pouvez_seulement_changer_titre: "您只能修改标题。",
+  mes_clients: "我的顾客",
+  mes_clients_desc:
+    "您所有顾客的列表。它会自动更新：取消订阅的顾客会消失，改名会立即显示。",
+  aucun_client: "暂无顾客。",
+  client_sans_nom: "无姓名",
+  col_nom: "姓名",
+  col_telephone: "电话",
+  col_tampons: "印章",
+  col_derniere_visite: "最近到访",
+  jamais_visite: "从未",
+  notifs_actives_client: "已开启通知",
+  notifs_inactives_client: "已关闭通知",
+  page_x_sur_y: "第 {page} / {pages} 页",
+  page_precedente: "上一页",
+  page_suivante: "下一页",
+  glisser_pages_clients: "左右滑动以翻页",
+  clients_au_total: "共 {n} 位顾客",
 };
 
 const AR: Traductions = {
@@ -1171,6 +1273,23 @@ const AR: Traductions = {
   date_valide_jusqu: "صالحة حتى",
   nb_recompenses: "مكافآت",
   vous_pouvez_seulement_changer_titre: "يمكنك فقط تغيير العنوان.",
+  mes_clients: "عملائي",
+  mes_clients_desc:
+    "قائمة بجميع عملائك. تُحدَّث تلقائيًا: يختفي العميل الذي ألغى اشتراكه، ويظهر تغيير الاسم فورًا.",
+  aucun_client: "لا يوجد عملاء بعد.",
+  client_sans_nom: "بدون اسم",
+  col_nom: "الاسم",
+  col_telephone: "الهاتف",
+  col_tampons: "الأختام",
+  col_derniere_visite: "آخر زيارة",
+  jamais_visite: "أبدًا",
+  notifs_actives_client: "الإشعارات مُفعّلة",
+  notifs_inactives_client: "الإشعارات مُعطّلة",
+  page_x_sur_y: "صفحة {page} / {pages}",
+  page_precedente: "السابق",
+  page_suivante: "التالي",
+  glisser_pages_clients: "اسحب يمينًا/يسارًا لتغيير الصفحة",
+  clients_au_total: "{n} عميل إجمالًا",
 };
 
 const RU: Traductions = {
@@ -1337,6 +1456,23 @@ const RU: Traductions = {
   date_valide_jusqu: "Действительна до",
   nb_recompenses: "наград",
   vous_pouvez_seulement_changer_titre: "Вы можете изменить только название.",
+  mes_clients: "Мои клиенты",
+  mes_clients_desc:
+    "Список всех ваших клиентов. Он обновляется автоматически: отписавшийся клиент исчезает, изменение имени появляется сразу.",
+  aucun_client: "Пока нет клиентов.",
+  client_sans_nom: "Без имени",
+  col_nom: "Имя",
+  col_telephone: "Телефон",
+  col_tampons: "Штампы",
+  col_derniere_visite: "Последний визит",
+  jamais_visite: "Никогда",
+  notifs_actives_client: "Уведомления включены",
+  notifs_inactives_client: "Уведомления выключены",
+  page_x_sur_y: "Страница {page} / {pages}",
+  page_precedente: "Назад",
+  page_suivante: "Далее",
+  glisser_pages_clients: "Проведите влево/вправо, чтобы сменить страницу",
+  clients_au_total: "{n} клиент(ов) всего",
 };
 
 const TRADUCTIONS: Record<Langue, Traductions> = {

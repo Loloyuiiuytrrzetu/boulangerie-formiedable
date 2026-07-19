@@ -3,6 +3,7 @@ import QRCode from "qrcode";
 import Link from "next/link";
 import type {
   Carte,
+  ClientListe,
   Recompense,
   Restaurant,
   Section,
@@ -20,6 +21,7 @@ import { SousCompteSection } from "./SousCompteSection";
 import { GraphiquesTampons } from "./GraphiquesTampons";
 import { BandeauImpersonation } from "./BandeauImpersonation";
 import { NavigationSidebar } from "./NavigationSidebar";
+import { ClientsSection } from "./ClientsSection";
 import { NotificationsPushSection, type NotificationPush } from "./NotificationsPushSection";
 import { AbonnementSection } from "./AbonnementSection";
 import { getVapidPublicKey } from "@/lib/push";
@@ -51,9 +53,12 @@ export default async function Dashboard() {
   let sousCompte: SousCompte | null = null;
   let historique: TamponHistorique[] = [];
   let notificationsPush: NotificationPush[] = [];
+  let premiersClients: ClientListe[] = [];
   let nbAbonnes = 0;
   let nbClients = 0;
   let nbTampons = 0;
+  // Doit rester synchronisé avec CLIENTS_PAR_PAGE dans actions.ts.
+  const CLIENTS_PAR_PAGE = 12;
   let aujourdHui = dateDuJour(restaurant?.timezone ?? "Europe/Paris");
   if (restaurant) {
     const [resCartes, resRecompenses, resClients, resSc, resSections] = await Promise.all([
@@ -117,6 +122,18 @@ export default async function Dashboard() {
     ]);
     notificationsPush = (resNotifs.data as NotificationPush[]) ?? [];
     nbAbonnes = resAbonnes.count ?? 0;
+
+    // Première page de la liste des clients (les suivantes sont chargées à la
+    // demande côté client via l'action listerClients).
+    const { data: resPremiersClients } = await supabase
+      .from("clients_fidelite")
+      .select(
+        "id, identite, numero_telephone, tampons_total, date_dernier_tampon, notifications_push_actif, created_at"
+      )
+      .eq("restaurant_id", restaurant.id)
+      .order("created_at", { ascending: false })
+      .range(0, CLIENTS_PAR_PAGE - 1);
+    premiersClients = (resPremiersClients as ClientListe[]) ?? [];
 
     // Auto-réparation si aucune section (migration incomplète)
     if (sections.length === 0) {
@@ -246,6 +263,14 @@ export default async function Dashboard() {
                 </div>
                 <div id="souscompte" className="scroll-mt-24">
                   <SousCompteSection sousCompte={sousCompte} />
+                </div>
+                <div id="clients" className="scroll-mt-24">
+                  <ClientsSection
+                    clientsInitiaux={premiersClients}
+                    totalInitial={nbClients}
+                    timezone={restaurant.timezone ?? "Europe/Paris"}
+                    parPage={CLIENTS_PAR_PAGE}
+                  />
                 </div>
                 <div id="notifications" className="scroll-mt-24">
                   <NotificationsPushSection

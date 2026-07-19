@@ -43,6 +43,7 @@ export function NavigationSidebar({
     { href: "#cartes", label: t("cartes_de_fidelite"), icone: "💳" },
     { href: "#sections-page", label: t("sections_de_ma_page"), icone: "🗂️" },
     { href: "#souscompte", label: t("sous_compte"), icone: "👥" },
+    { href: "#clients", label: t("mes_clients"), icone: "👤" },
     { href: "#notifications", label: t("notifications_push"), icone: "🔔" },
     { href: "#abonnement", label: t("mon_abonnement"), icone: "💳" },
     { href: "#qr-code", label: t("qr_code"), icone: "📱" },

@@ -78,6 +78,45 @@ async function restaurantCourant() {
   };
 }
 
+// Nombre de clients affichés par page dans la liste « Mes clients ».
+// (Non exporté : un fichier "use server" ne peut exporter que des fonctions
+// async. Le composant récupère `parPage` via la valeur de retour.)
+const CLIENTS_PAR_PAGE = 12;
+
+// Liste paginée des clients du commerce. Pensée pour passer à l'échelle
+// (des milliers de clients) : on ne charge qu'une page à la fois via
+// `.range()`, et on renvoie le total pour calculer le nombre de pages.
+// Rappelée périodiquement côté client → la liste reflète en direct les
+// désinscriptions et les changements de nom.
+export async function listerClients(page: number) {
+  const { supabase, restaurant } = await restaurantCourant();
+  if (!restaurant) return { erreur: "Aucun commerce." as const };
+
+  const p = Math.max(0, Math.floor(Number(page)) || 0);
+  const from = p * CLIENTS_PAR_PAGE;
+  const to = from + CLIENTS_PAR_PAGE - 1;
+
+  const { data, count, error } = await supabase
+    .from("clients_fidelite")
+    .select(
+      "id, identite, numero_telephone, tampons_total, date_dernier_tampon, notifications_push_actif, created_at",
+      { count: "exact" }
+    )
+    .eq("restaurant_id", restaurant.id)
+    .order("created_at", { ascending: false })
+    .range(from, to);
+
+  if (error) return { erreur: "Échec du chargement des clients." as const };
+
+  return {
+    ok: true as const,
+    clients: (data ?? []) as import("@/lib/types").ClientListe[],
+    total: count ?? 0,
+    page: p,
+    parPage: CLIENTS_PAR_PAGE,
+  };
+}
+
 // Upload d'une image dans le bucket public "logos"
 async function uploaderImage(
   supabase: Awaited<ReturnType<typeof createClient>>,

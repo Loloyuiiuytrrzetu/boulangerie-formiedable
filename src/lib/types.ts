@@ -77,6 +77,17 @@ export type ClientFidelite = {
   created_at: string;
 };
 
+// Vue allégée d'un client pour la liste paginée du dashboard.
+export type ClientListe = {
+  id: string;
+  identite: string | null;
+  numero_telephone: string;
+  tampons_total: number;
+  date_dernier_tampon: string | null;
+  notifications_push_actif: boolean;
+  created_at: string;
+};
+
 export type Profile = {
   id: string;
   role: "restaurateur" | "super_admin" | "sous_compte";
