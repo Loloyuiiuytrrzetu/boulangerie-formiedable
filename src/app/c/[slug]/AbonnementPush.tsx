@@ -54,18 +54,19 @@ export function AbonnementPush({
       setStatut("refuse");
       return;
     }
-    // Déjà abonné pour de vrai ? On vérifie l'abonnement push réel du
-    // navigateur (et pas seulement une préférence enregistrée), pour afficher
-    // l'état exact et éviter un faux « actif ».
-    if (Notification.permission === "granted" && "serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .getRegistration("/sw.js")
-        .then((reg) => reg?.pushManager.getSubscription())
-        .then((sub) => {
-          if (sub) setStatut("actif");
+    // Permission déjà accordée : on RÉ-ENREGISTRE toujours l'abonnement courant
+    // côté serveur (opération idempotente). Indispensable après une
+    // désinscription : la base a été vidée mais le navigateur garde son
+    // abonnement — sans ce renvoi, le client n'est plus dans la base et ne
+    // reçoit plus rien alors que tout semble « actif ».
+    if (Notification.permission === "granted") {
+      abonnerAuxNotifications(restaurantId, vapidPublicKey)
+        .then((r) => {
+          if (r.statut === "abonne") setStatut("actif");
         })
         .catch(() => {});
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function activer() {

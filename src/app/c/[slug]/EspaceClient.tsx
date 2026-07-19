@@ -1021,18 +1021,16 @@ function BoutonDesinscription({
       const r = await desinscrireClient(slug);
       if (r?.erreur) setErreur(r.erreur);
       else {
-        // Nettoyage complet côté navigateur pour repartir d'un état PROPRE à la
-        // prochaine réinscription (sinon d'anciens réglages bloquent le
-        // ré-abonnement aux notifications) :
+        // Nettoyage côté navigateur pour repartir PROPRE à la réinscription :
         //  - efface le « refus » de notifications
         //  - réactive l'onboarding PWA
-        //  - désabonne le push du navigateur (endpoint devenu inutile)
+        // IMPORTANT : on NE désabonne PAS le push du navigateur. Sur iPhone,
+        // se ré-abonner ensuite automatiquement (sans geste) ne marche pas ;
+        // en gardant l'abonnement navigateur intact, la réinscription le
+        // renvoie simplement au serveur (idempotent) et les notifs repartent.
         try {
           localStorage.removeItem(`walletiz_notif_refus_${slug}`);
           reinitialiserPromptInstallation();
-          const reg = await navigator.serviceWorker?.getRegistration("/sw.js");
-          const sub = await reg?.pushManager.getSubscription();
-          if (sub) await sub.unsubscribe();
         } catch {
           // sans importance : le nettoyage est du confort, pas bloquant
         }
