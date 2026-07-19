@@ -17,12 +17,16 @@ self.addEventListener("push", (event) => {
     data = { titre: "Notification", message: event.data ? event.data.text() : "" };
   }
 
-  // On veut masquer la ligne de titre pour ne garder que « from <commerce> »
-  // (ajouté par iOS) + le message en corps (non gras). Un titre vide ("")
-  // pousse iOS à afficher le nom de l'app à la place ; on met donc un caractère
-  // INVISIBLE (espace de largeur nulle) : la ligne de titre existe mais ne
-  // montre rien.
-  const titre = "​";
+  // Le rendu optimal diffère selon le téléphone :
+  //  - iPhone (iOS) ajoute TOUJOURS « from <nom de l'app> ». Pour ne pas
+  //    afficher le nom deux fois, on masque le titre avec un caractère
+  //    invisible (espace de largeur nulle) : il reste « from <commerce> » +
+  //    le message en corps.
+  //  - Android / ordinateur n'ajoutent PAS de « from » : on met le nom du
+  //    commerce en titre (gras) + le message en corps. Propre, nom une fois.
+  const ua = (self.navigator && self.navigator.userAgent) || "";
+  const estIOS = /iPad|iPhone|iPod/.test(ua);
+  const titre = estIOS ? "​" : (data.titre || "");
   const options = {
     body: data.message || "",
     data: { url: data.url || "/" },
