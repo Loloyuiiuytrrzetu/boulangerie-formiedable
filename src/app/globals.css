@@ -23,6 +23,9 @@ body {
      jamais avoir de barre de scroll en bas de son navigateur. */
   overflow-x: hidden;
   max-width: 100%;
+  /* Désactive le double-tap zoom (natif, sans casser les clics) : combiné
+     au viewport verrouillé + au blocage du pinch, le zoom est impossible. */
+  touch-action: manipulation;
 }
 
 html {
