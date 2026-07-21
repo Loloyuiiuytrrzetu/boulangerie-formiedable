@@ -426,13 +426,29 @@ function BlocCarte({
                 className="w-full rounded-xl px-4 py-3.5 font-semibold text-white shadow-md transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                 style={{ backgroundColor: couleur }}
               >
-                {carte.tampon_pris_aujourdhui
-                  ? t("tampon_deja_pris")
-                  : enCours
-                    ? t("un_instant")
-                    : scanRecent
-                      ? `${emoji} ${t("prendre_tampon_du_jour")}`
-                      : t("scannez_qr_caisse")}
+                {carte.tampon_pris_aujourdhui ? (
+                  t("tampon_deja_pris")
+                ) : enCours ? (
+                  t("un_instant")
+                ) : scanRecent ? (
+                  <span className="inline-flex items-center justify-center gap-2">
+                    {/* Icône du bouton = l'image de tampon personnalisée si
+                        elle existe, sinon l'emoji choisi. */}
+                    {carte.tampon_image_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={carte.tampon_image_url}
+                        alt=""
+                        className="h-5 w-5 rounded object-cover"
+                      />
+                    ) : (
+                      <span>{emoji}</span>
+                    )}
+                    {t("prendre_tampon_du_jour")}
+                  </span>
+                ) : (
+                  t("scannez_qr_caisse")
+                )}
               </button>
               <p className="mt-2 text-center text-xs text-stone-400">
                 {t("un_tampon_max")}
