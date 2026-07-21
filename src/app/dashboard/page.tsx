@@ -55,7 +55,6 @@ export default async function Dashboard() {
   let historique: TamponHistorique[] = [];
   let notificationsPush: NotificationPush[] = [];
   let premiersClients: ClientListe[] = [];
-  let nbAbonnes = 0;
   let nbClients = 0;
   let nbTampons = 0;
   // Doit rester synchronisé avec CLIENTS_PAR_PAGE dans actions.ts.
@@ -109,20 +108,13 @@ export default async function Dashboard() {
     sousCompte = resSc.data ?? null;
     sections = (resSections.data as Section[]) ?? [];
 
-    const [resNotifs, resAbonnes] = await Promise.all([
-      supabase
-        .from("notifications_push")
-        .select("*")
-        .eq("restaurant_id", restaurant.id)
-        .order("created_at", { ascending: false })
-        .limit(50),
-      supabase
-        .from("push_subscriptions")
-        .select("id", { count: "exact", head: true })
-        .eq("restaurant_id", restaurant.id),
-    ]);
-    notificationsPush = (resNotifs.data as NotificationPush[]) ?? [];
-    nbAbonnes = resAbonnes.count ?? 0;
+    const { data: resNotifs } = await supabase
+      .from("notifications_push")
+      .select("*")
+      .eq("restaurant_id", restaurant.id)
+      .order("created_at", { ascending: false })
+      .limit(50);
+    notificationsPush = (resNotifs as NotificationPush[]) ?? [];
 
     // Première page de la liste des clients (les suivantes sont chargées à la
     // demande côté client via l'action listerClients).
@@ -252,8 +244,6 @@ export default async function Dashboard() {
                   <NotificationsPushSection
                     notifications={notificationsPush}
                     timezone={restaurant.timezone ?? "Europe/Paris"}
-                    nbAbonnes={nbAbonnes}
-                    nbClientsTotal={nbClients}
                     pushConfigure={Boolean(getVapidPublicKey())}
                   />
                 </div>

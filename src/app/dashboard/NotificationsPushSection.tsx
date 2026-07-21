@@ -50,14 +50,10 @@ function nowLocaleForInput(timezone: string): string {
 export function NotificationsPushSection({
   notifications,
   timezone,
-  nbAbonnes,
-  nbClientsTotal,
   pushConfigure,
 }: {
   notifications: NotificationPush[];
   timezone: string;
-  nbAbonnes: number;
-  nbClientsTotal: number;
   pushConfigure: boolean;
 }) {
   const t = useTDash();
@@ -113,11 +109,6 @@ export function NotificationsPushSection({
           {t("notifications_push_desc")}
         </p>
         <p className="mt-2 text-xs text-stone-500">
-          🔔 {t("abonnes_sur_clients", {
-            n: String(nbAbonnes),
-            total: String(nbClientsTotal),
-          })}
-          {" · "}
           🌍 {t("fuseau_horaire")} : {regionDe(timezone)}
         </p>
       </div>
