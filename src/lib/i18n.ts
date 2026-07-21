@@ -178,10 +178,10 @@ const FR: Traductions = {
   ajoutez_a_ecran: "Ajoutez {nom} à votre écran d'accueil",
   pour_recevoir_promotions:
     "Pour recevoir nos promotions et alertes de récompenses par notification, ajoutez cette page comme une application (2 clics suffisent).",
-  etape_1_partager: "Appuyez sur le bouton **Partager** ⬆︎ de Safari ou Chrome",
+  etape_1_partager: "Cliquez sur le bouton partager de Safari ou Chrome",
   etape_2_en_voir_plus: "Faites défiler ou appuyez sur **« En voir plus »**",
   etape_3_ajouter_ecran:
-    "Appuyez sur **« Sur l'écran d'accueil »** (faites défiler ou passez par « En voir plus » si besoin)",
+    "Appuyez sur « Sur l'écran d'accueil ». Si vous ne le trouvez pas, appuyez d'abord sur « En savoir plus » : vous y retrouverez le bouton « Sur l'écran d'accueil »",
   etape_4_ouvrir_app:
     "Ouvrez l'app {nom} depuis l'icône apparue sur votre écran d'accueil",
   jai_compris: "J'ai compris",
@@ -281,9 +281,9 @@ const EN: Traductions = {
   ajoutez_a_ecran: "Add {nom} to your home screen",
   pour_recevoir_promotions:
     "To receive our promotions and reward alerts by notification, add this page as an app (2 clicks are enough).",
-  etape_1_partager: "Tap the **Share** ⬆︎ button in Safari or Chrome",
+  etape_1_partager: "Tap the share button in Safari or Chrome",
   etape_2_en_voir_plus: "Tap **\"See More\"**",
-  etape_3_ajouter_ecran: "Scroll down and tap **\"Add to Home Screen\"**",
+  etape_3_ajouter_ecran: "Tap “Add to Home Screen”. If you can't find it, tap “Show More” first — you'll find the “Add to Home Screen” button there",
   etape_4_ouvrir_app:
     "Open the {nom} app from the icon that appeared on your home screen",
   jai_compris: "Got it",
@@ -383,10 +383,10 @@ const ES: Traductions = {
   ajoutez_a_ecran: "Añade {nom} a tu pantalla de inicio",
   pour_recevoir_promotions:
     "Para recibir promociones y avisos de recompensas por notificación, añade esta página como app (2 clics).",
-  etape_1_partager: "Toca el botón **Compartir** ⬆︎ en Safari o Chrome",
+  etape_1_partager: "Toca el botón compartir en Safari o Chrome",
   etape_2_en_voir_plus: "Toca **\"Ver más\"**",
   etape_3_ajouter_ecran:
-    "Desplázate y toca **\"Añadir a pantalla de inicio\"**",
+    "Toca «Añadir a pantalla de inicio». Si no lo encuentras, toca primero «Ver más»: allí estará el botón «Añadir a pantalla de inicio»",
   etape_4_ouvrir_app:
     "Abre la app {nom} desde el icono en tu pantalla de inicio",
   jai_compris: "Entendido",
@@ -487,10 +487,10 @@ const DE: Traductions = {
   ajoutez_a_ecran: "Fügen Sie {nom} zu Ihrem Startbildschirm hinzu",
   pour_recevoir_promotions:
     "Um unsere Aktionen und Belohnungshinweise per Benachrichtigung zu erhalten, fügen Sie diese Seite als App hinzu (2 Klicks reichen).",
-  etape_1_partager: "Tippen Sie auf **Teilen** ⬆︎ in Safari oder Chrome",
+  etape_1_partager: "Tippen Sie auf die Teilen-Schaltfläche in Safari oder Chrome",
   etape_2_en_voir_plus: "Tippen Sie auf **\"Mehr anzeigen\"**",
   etape_3_ajouter_ecran:
-    "Scrollen Sie und tippen Sie auf **\"Zum Home-Bildschirm\"**",
+    "Tippen Sie auf „Zum Home-Bildschirm“. Wenn Sie es nicht finden, tippen Sie zuerst auf „Mehr anzeigen“ – dort finden Sie die Schaltfläche „Zum Home-Bildschirm“",
   etape_4_ouvrir_app:
     "Öffnen Sie die App {nom} über das Symbol auf Ihrem Startbildschirm",
   jai_compris: "Verstanden",
@@ -580,9 +580,9 @@ const ZH: Traductions = {
   ajoutez_a_ecran: "将 {nom} 添加到您的主屏幕",
   pour_recevoir_promotions:
     "要通过通知接收我们的促销和奖励提醒，请将此页面添加为应用（只需 2 次点击）。",
-  etape_1_partager: "点击 Safari 或 Chrome 中的 **分享** ⬆︎ 按钮",
+  etape_1_partager: "点击 Safari 或 Chrome 中的分享按钮",
   etape_2_en_voir_plus: "点击 **\"查看更多\"**",
-  etape_3_ajouter_ecran: "向下滚动并点击 **\"添加到主屏幕\"**",
+  etape_3_ajouter_ecran: "点击「添加到主屏幕」。如果找不到,请先点击「显示更多」,即可在其中找到「添加到主屏幕」按钮",
   etape_4_ouvrir_app: "从主屏幕上出现的图标打开 {nom} 应用",
   jai_compris: "知道了",
   ios_install_pour_notifs:
@@ -674,9 +674,9 @@ const AR: Traductions = {
   ajoutez_a_ecran: "أضف {nom} إلى شاشتك الرئيسية",
   pour_recevoir_promotions:
     "لتلقي عروضنا وتنبيهات المكافآت عبر الإشعارات، أضف هذه الصفحة كتطبيق (نقرتان تكفيان).",
-  etape_1_partager: "اضغط على زر **مشاركة** ⬆︎ في Safari أو Chrome",
+  etape_1_partager: "اضغط على زر المشاركة في Safari أو Chrome",
   etape_2_en_voir_plus: "اضغط على **\"عرض المزيد\"**",
-  etape_3_ajouter_ecran: "مرر واضغط على **\"إضافة إلى الشاشة الرئيسية\"**",
+  etape_3_ajouter_ecran: "اضغط على «إضافة إلى الشاشة الرئيسية». إذا لم تجدها، اضغط أولاً على «عرض المزيد»: ستجد هناك زر «إضافة إلى الشاشة الرئيسية»",
   etape_4_ouvrir_app: "افتح تطبيق {nom} من الأيقونة على شاشتك الرئيسية",
   jai_compris: "فهمت",
   ios_install_pour_notifs:
@@ -774,10 +774,10 @@ const RU: Traductions = {
   ajoutez_a_ecran: "Добавьте {nom} на главный экран",
   pour_recevoir_promotions:
     "Чтобы получать акции и уведомления о наградах, добавьте эту страницу как приложение (достаточно 2 нажатий).",
-  etape_1_partager: "Нажмите кнопку **Поделиться** ⬆︎ в Safari или Chrome",
+  etape_1_partager: "Нажмите кнопку «Поделиться» в Safari или Chrome",
   etape_2_en_voir_plus: "Нажмите **\"Ещё\"**",
   etape_3_ajouter_ecran:
-    "Прокрутите вниз и нажмите **\"На экран «Домой»\"**",
+    "Нажмите «На экран „Домой“». Если не находите, сначала нажмите «Ещё» — там будет кнопка «На экран „Домой“»",
   etape_4_ouvrir_app: "Откройте приложение {nom} с иконки на главном экране",
   jai_compris: "Понятно",
   ios_install_pour_notifs:
