@@ -14,6 +14,7 @@ import type {
 import { EspaceClient, type CarteAffichee } from "./EspaceClient";
 import { FormulaireInscription } from "./FormulaireInscription";
 import { getVapidPublicKey } from "@/lib/push";
+import { assurerSectionsParDefaut } from "@/lib/sections";
 import { LangueProvider } from "@/lib/langue";
 import { LangueSourceProvider } from "@/lib/auto-traduction";
 import type { Langue } from "@/lib/i18n";
@@ -112,7 +113,7 @@ export default async function PageCommerce({
   }
 
   // Toujours charger les sections (même quand pas de client) — inscription simple
-  let { data: sectionsData } = await admin
+  const { data: sectionsData } = await admin
     .from("sections")
     .select("*")
     .eq("restaurant_id", restaurant.id)
@@ -120,36 +121,9 @@ export default async function PageCommerce({
     .returns<Section[]>();
   let sections = sectionsData ?? [];
 
-  // Auto-réparation : si aucune section (migration incomplète, ancien
-  // restaurant…), on crée les 2 sections par défaut à la volée
-  if (sections.length === 0) {
-    await admin.from("sections").insert([
-      {
-        restaurant_id: restaurant.id,
-        type: "cartes",
-        titre: "Cartes de fidélité",
-        ordre: 0,
-        supprimable: false,
-      },
-      {
-        restaurant_id: restaurant.id,
-        type: "info",
-        titre: "Info",
-        texte:
-          "Présentez ce QR code uniquement si le commerçant vous le demande.",
-        ordre: 100,
-        supprimable: false,
-      },
-    ]);
-    const { data: refetch } = await admin
-      .from("sections")
-      .select("*")
-      .eq("restaurant_id", restaurant.id)
-      .order("ordre", { ascending: true })
-      .returns<Section[]>();
-    sectionsData = refetch;
-    sections = sectionsData ?? [];
-  }
+  // Garantit exactement 2 sections par défaut (cartes + info) et supprime
+  // tout doublon éventuel — auto-réparation à chaque chargement.
+  sections = await assurerSectionsParDefaut(admin, restaurant.id, sections);
 
   let cartesAffichees: CarteAffichee[] = [];
   let recompenses: Recompense[] = [];

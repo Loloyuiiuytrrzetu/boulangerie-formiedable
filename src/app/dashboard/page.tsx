@@ -22,6 +22,7 @@ import { GraphiquesTampons } from "./GraphiquesTampons";
 import { BandeauImpersonation } from "./BandeauImpersonation";
 import { NavigationSidebar } from "./NavigationSidebar";
 import { ClientsSection } from "./ClientsSection";
+import { assurerSectionsParDefaut } from "@/lib/sections";
 import { NotificationsPushSection, type NotificationPush } from "./NotificationsPushSection";
 import { AbonnementSection } from "./AbonnementSection";
 import { getVapidPublicKey } from "@/lib/push";
@@ -135,34 +136,9 @@ export default async function Dashboard() {
       .range(0, CLIENTS_PAR_PAGE - 1);
     premiersClients = (resPremiersClients as ClientListe[]) ?? [];
 
-    // Auto-réparation si aucune section (migration incomplète)
-    if (sections.length === 0) {
-      const admin = createAdminClient();
-      await admin.from("sections").insert([
-        {
-          restaurant_id: restaurant.id,
-          type: "cartes",
-          titre: "Cartes de fidélité",
-          ordre: 0,
-          supprimable: false,
-        },
-        {
-          restaurant_id: restaurant.id,
-          type: "info",
-          titre: "Info",
-          texte:
-            "Présentez ce QR code uniquement si le commerçant vous le demande.",
-          ordre: 100,
-          supprimable: false,
-        },
-      ]);
-      const { data: refetch } = await admin
-        .from("sections")
-        .select("*")
-        .eq("restaurant_id", restaurant.id)
-        .order("ordre", { ascending: true });
-      sections = (refetch as Section[]) ?? [];
-    }
+    // Garantit exactement 2 sections par défaut (cartes + info) et supprime
+    // tout doublon éventuel — auto-réparation à chaque chargement.
+    sections = await assurerSectionsParDefaut(supabase, restaurant.id, sections);
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";

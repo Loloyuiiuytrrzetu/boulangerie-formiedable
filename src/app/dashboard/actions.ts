@@ -9,6 +9,7 @@ import { dateDuJour, slugify } from "@/lib/utils";
 import type { CarteClient } from "@/lib/types";
 import { utilisateurEffectif } from "@/lib/impersonate";
 import { TIMEZONES_VALIDES } from "@/lib/timezones";
+import { assurerSectionsParDefaut } from "@/lib/sections";
 
 // Traduit les messages d'erreur Supabase Auth en français.
 function traduireErreurAuth(message: string | undefined): string {
@@ -168,26 +169,10 @@ export async function creerRestaurant(formData: FormData) {
     .single();
   if (error || !nouveau) return { erreur: "Impossible de créer le commerce." };
 
-  // Sections par défaut (cartes + info, toutes deux non supprimables)
+  // Sections par défaut (cartes + info, toutes deux non supprimables).
+  // Via le helper idempotent → jamais de doublon même en cas d'appel concurrent.
   const admin = createAdminClient();
-  await admin.from("sections").insert([
-    {
-      restaurant_id: nouveau.id,
-      type: "cartes",
-      titre: "Cartes de fidélité",
-      ordre: 0,
-      supprimable: false,
-    },
-    {
-      restaurant_id: nouveau.id,
-      type: "info",
-      titre: "Info",
-      texte:
-        "Présentez ce QR code uniquement si le commerçant vous le demande.",
-      ordre: 100,
-      supprimable: false,
-    },
-  ]);
+  await assurerSectionsParDefaut(admin, nouveau.id, []);
 
   revalidatePath("/dashboard");
   return { ok: true };
