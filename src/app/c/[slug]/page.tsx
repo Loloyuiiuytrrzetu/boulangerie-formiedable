@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import QRCode from "qrcode";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { dateDuJour } from "@/lib/utils";
+import { dateDuJour, couleurQrLisible } from "@/lib/utils";
 import type {
   Carte,
   CarteClient,
@@ -203,9 +203,13 @@ export default async function PageCommerce({
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
     const lienScan = `${siteUrl}/dashboard/scanner?c=${client.token_public ?? client.id}`;
     qrClientDataUrl = await QRCode.toDataURL(lienScan, {
-      width: 480,
-      margin: 2,
-      color: { dark: restaurant.couleur_qr ?? "#380b15", light: "#ffffff" },
+      errorCorrectionLevel: "H",
+      width: 512,
+      margin: 4,
+      color: {
+        dark: couleurQrLisible(restaurant.couleur_qr ?? "#380b15"),
+        light: "#ffffff",
+      },
     });
   }
 
