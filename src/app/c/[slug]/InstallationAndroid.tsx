@@ -9,19 +9,13 @@ type BipEvent = Event & {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 };
 
-const CLE_MASQUE = "walletiz_android_install_hide";
+// État déplié/replié mémorisé : le client peut masquer le guide et le
+// réafficher quand il veut (le bloc reste toujours présent dans l'onglet Info).
+const CLE_OUVERT = "walletiz_android_guide_ouvert";
 
-// Bloc d'installation pour ANDROID (Chrome / Samsung Internet).
-//
-// Deux chemins proposés :
-//  1. Bouton natif « Installer » en un geste, quand le navigateur le propose
-//     (événement `beforeinstallprompt`, capté tôt dans le layout).
-//  2. Un GUIDE manuel de secours (toujours affiché) : sur Samsung Internet
-//     l'invite native n'apparaît pas toujours, donc on montre les étapes.
-//
-// Une fois la PWA installée, les notifications sont attribuées à l'app du
-// commerce → logo à gauche + nom, sans l'icône du navigateur ni l'adresse
-// « www.walletiz.fr ».
+// Bloc d'installation ANDROID (Chrome / Samsung Internet) — placé dans
+// l'onglet Info. Deux chemins : bouton natif « Installer » (quand le
+// navigateur le propose) + guide manuel de secours. Repliable / dépliable.
 export function InstallationAndroid({
   couleur,
   nomCommerce,
@@ -31,6 +25,7 @@ export function InstallationAndroid({
 }) {
   const t = useT();
   const [visible, setVisible] = useState(false);
+  const [ouvert, setOuvert] = useState(true);
   const [dispo, setDispo] = useState(false);
   const [enCours, setEnCours] = useState(false);
 
@@ -40,9 +35,9 @@ export function InstallationAndroid({
     const isStandalone =
       window.matchMedia("(display-mode: standalone)").matches ||
       (navigator as unknown as { standalone?: boolean }).standalone === true;
-    // Uniquement Android, hors app déjà installée, et si non masqué.
+    // Android uniquement, et pas quand l'app est déjà installée.
     if (!isAndroid || isStandalone) return;
-    if (localStorage.getItem(CLE_MASQUE) === "1") return;
+    setOuvert(localStorage.getItem(CLE_OUVERT) !== "0"); // ouvert par défaut
     setVisible(true);
 
     // Enregistre le service worker : condition (avec le manifeste) pour qu'Android
@@ -53,13 +48,21 @@ export function InstallationAndroid({
 
     const win = window as unknown as { __walletizBip?: BipEvent | null };
     const maj = () => setDispo(Boolean(win.__walletizBip));
-    maj(); // l'événement a pu se déclencher avant le montage
+    maj();
     window.addEventListener("walletiz-bip", maj);
     window.addEventListener("walletiz-installed", () => setVisible(false));
-    return () => {
-      window.removeEventListener("walletiz-bip", maj);
-    };
+    return () => window.removeEventListener("walletiz-bip", maj);
   }, []);
+
+  function basculer() {
+    const v = !ouvert;
+    setOuvert(v);
+    try {
+      localStorage.setItem(CLE_OUVERT, v ? "1" : "0");
+    } catch {
+      // sans importance
+    }
+  }
 
   async function installer() {
     const win = window as unknown as { __walletizBip?: BipEvent | null };
@@ -79,15 +82,6 @@ export function InstallationAndroid({
     }
   }
 
-  function masquer() {
-    try {
-      localStorage.setItem(CLE_MASQUE, "1");
-    } catch {
-      // sans importance
-    }
-    setVisible(false);
-  }
-
   if (!visible) return null;
 
   const etapes = [
@@ -97,22 +91,27 @@ export function InstallationAndroid({
   ];
 
   return (
-    <div
-      className="rounded-2xl border p-4"
-      style={{ borderColor: `${couleur}55`, backgroundColor: `${couleur}0d` }}
-    >
-      <div className="flex items-start gap-3">
-        <div
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl text-white"
-          style={{ backgroundColor: couleur }}
+    <div className="mt-8 border-t border-stone-100 pt-4">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm font-semibold text-stone-800">
+          📲 {t("ajouter_a_ecran_titre", { nom: nomCommerce })}
+        </p>
+        <button
+          type="button"
+          onClick={basculer}
+          className="shrink-0 text-xs font-medium underline"
+          style={{ color: couleur }}
         >
-          📱
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-bold text-stone-900">
-            {t("ajouter_a_ecran_titre", { nom: nomCommerce })}
-          </p>
-          <p className="mt-1 text-xs text-stone-600">
+          {ouvert ? t("masquer") : t("afficher_instructions")}
+        </button>
+      </div>
+
+      {ouvert && (
+        <div
+          className="mt-3 rounded-2xl border p-4"
+          style={{ borderColor: `${couleur}55`, backgroundColor: `${couleur}0d` }}
+        >
+          <p className="text-xs text-stone-600">
             {t("ajouter_a_ecran_desc_court")}
           </p>
 
@@ -148,16 +147,8 @@ export function InstallationAndroid({
               ))}
             </ol>
           </div>
-
-          <button
-            type="button"
-            onClick={masquer}
-            className="mt-3 text-xs font-medium text-stone-500 underline hover:text-stone-700"
-          >
-            {t("ne_plus_afficher")}
-          </button>
         </div>
-      </div>
+      )}
     </div>
   );
 }

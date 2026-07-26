@@ -579,7 +579,6 @@ export function EspaceClient({
   return (
     <div className="space-y-6">
       <InstallationIOS couleur={couleur} nomCommerce={nomCommerce} />
-      <InstallationAndroid couleur={couleur} nomCommerce={nomCommerce} />
       <InvitationNotifications
         slug={slug}
         restaurantId={restaurantId}
@@ -776,6 +775,7 @@ function ContenuSection({
         )}
         <SelecteurLangue />
         <BanniereInstallationIOS couleur={couleur} nomCommerce={nomCommerce} />
+        <InstallationAndroid couleur={couleur} nomCommerce={nomCommerce} />
         <ToggleNotifications
           slug={slug}
           restaurantId={restaurantId}

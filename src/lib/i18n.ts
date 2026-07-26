@@ -121,6 +121,8 @@ type Cle =
   | "err_recompense_deja_choisie"
   | "err_carte_introuvable"
   | "err_recompense_deja_utilisee"
+  | "masquer"
+  | "afficher_instructions"
   | "ne_plus_afficher"
   | "tampon_ajoute_merci"
   | "push_non_supporte"
@@ -251,6 +253,8 @@ const FR: Traductions = {
   err_recompense_deja_choisie: "Récompense déjà choisie.",
   err_carte_introuvable: "Carte introuvable.",
   err_recompense_deja_utilisee: "Récompense déjà utilisée.",
+  masquer: "Masquer",
+  afficher_instructions: "Afficher les instructions",
   ne_plus_afficher: "Ne plus afficher",
   tampon_ajoute_merci: "Tampon ajouté, merci de votre visite ! 🎉",
   push_non_supporte: "Votre navigateur ne supporte pas les notifications push.",
@@ -379,6 +383,8 @@ const EN: Traductions = {
   err_recompense_deja_choisie: "Reward already chosen.",
   err_carte_introuvable: "Card not found.",
   err_recompense_deja_utilisee: "Reward already used.",
+  masquer: "Hide",
+  afficher_instructions: "Show instructions",
   ne_plus_afficher: "Don't show again",
   tampon_ajoute_merci: "Stamp added, thanks for your visit! 🎉",
   push_non_supporte: "Your browser does not support push notifications.",
@@ -508,6 +514,8 @@ const ES: Traductions = {
   err_recompense_deja_choisie: "Recompensa ya elegida.",
   err_carte_introuvable: "Tarjeta no encontrada.",
   err_recompense_deja_utilisee: "Recompensa ya utilizada.",
+  masquer: "Ocultar",
+  afficher_instructions: "Mostrar instrucciones",
   ne_plus_afficher: "No mostrar más",
   tampon_ajoute_merci: "¡Sello añadido, gracias por tu visita! 🎉",
   push_non_supporte: "Tu navegador no admite notificaciones push.",
@@ -638,6 +646,8 @@ const DE: Traductions = {
   err_recompense_deja_choisie: "Belohnung bereits gewählt.",
   err_carte_introuvable: "Karte nicht gefunden.",
   err_recompense_deja_utilisee: "Belohnung bereits eingelöst.",
+  masquer: "Ausblenden",
+  afficher_instructions: "Anleitung anzeigen",
   ne_plus_afficher: "Nicht mehr anzeigen",
   tampon_ajoute_merci: "Stempel hinzugefügt, danke für Ihren Besuch! 🎉",
   push_non_supporte: "Ihr Browser unterstützt keine Push-Benachrichtigungen.",
@@ -753,6 +763,8 @@ const ZH: Traductions = {
   err_recompense_deja_choisie: "已选择过奖励。",
   err_carte_introuvable: "未找到卡片。",
   err_recompense_deja_utilisee: "奖励已使用。",
+  masquer: "隐藏",
+  afficher_instructions: "显示说明",
   ne_plus_afficher: "不再显示",
   tampon_ajoute_merci: "印章已添加，感谢您的光临！🎉",
   push_non_supporte: "您的浏览器不支持推送通知。",
@@ -875,6 +887,8 @@ const AR: Traductions = {
   err_recompense_deja_choisie: "تم اختيار المكافأة بالفعل.",
   err_carte_introuvable: "البطاقة غير موجودة.",
   err_recompense_deja_utilisee: "تم استخدام المكافأة بالفعل.",
+  masquer: "إخفاء",
+  afficher_instructions: "عرض التعليمات",
   ne_plus_afficher: "عدم العرض مجدداً",
   tampon_ajoute_merci: "تمت إضافة الختم، شكراً لزيارتك! 🎉",
   push_non_supporte: "متصفحك لا يدعم إشعارات الدفع.",
@@ -1002,6 +1016,8 @@ const RU: Traductions = {
   err_recompense_deja_choisie: "Награда уже выбрана.",
   err_carte_introuvable: "Карта не найдена.",
   err_recompense_deja_utilisee: "Награда уже использована.",
+  masquer: "Скрыть",
+  afficher_instructions: "Показать инструкции",
   ne_plus_afficher: "Больше не показывать",
   tampon_ajoute_merci: "Печать добавлена, спасибо за визит! 🎉",
   push_non_supporte: "Ваш браузер не поддерживает push-уведомления.",
