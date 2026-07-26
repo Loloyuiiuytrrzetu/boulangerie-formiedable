@@ -100,6 +100,9 @@ type Cle =
   | "android_install_etape_1"
   | "android_install_etape_2"
   | "android_install_etape_3"
+  | "notifications_titre"
+  | "notifs_statut_on"
+  | "notifs_statut_off"
   | "ne_plus_afficher"
   | "tampon_ajoute_merci"
   | "push_non_supporte"
@@ -209,6 +212,9 @@ const FR: Traductions = {
   android_install_etape_1: "Appuyez sur les 3 petits points ⋮ en bas à droite",
   android_install_etape_2: "Appuyez sur « Ajouter la page à », puis « Écran d'accueil »",
   android_install_etape_3: "Appuyez sur « Ajouter »",
+  notifications_titre: "Notifications",
+  notifs_statut_on: "Activées",
+  notifs_statut_off: "Désactivées",
   ne_plus_afficher: "Ne plus afficher",
   tampon_ajoute_merci: "Tampon ajouté, merci de votre visite ! 🎉",
   push_non_supporte: "Votre navigateur ne supporte pas les notifications push.",
@@ -316,6 +322,9 @@ const EN: Traductions = {
   android_install_etape_1: "Tap the 3 dots ⋮ at the bottom right",
   android_install_etape_2: "Tap “Add page to”, then “Home screen”",
   android_install_etape_3: "Tap “Add”",
+  notifications_titre: "Notifications",
+  notifs_statut_on: "On",
+  notifs_statut_off: "Off",
   ne_plus_afficher: "Don't show again",
   tampon_ajoute_merci: "Stamp added, thanks for your visit! 🎉",
   push_non_supporte: "Your browser does not support push notifications.",
@@ -424,6 +433,9 @@ const ES: Traductions = {
   android_install_etape_1: "Toca los 3 puntos ⋮ abajo a la derecha",
   android_install_etape_2: "Toca «Añadir página a», luego «Pantalla de inicio»",
   android_install_etape_3: "Toca «Añadir»",
+  notifications_titre: "Notificaciones",
+  notifs_statut_on: "Activadas",
+  notifs_statut_off: "Desactivadas",
   ne_plus_afficher: "No mostrar más",
   tampon_ajoute_merci: "¡Sello añadido, gracias por tu visita! 🎉",
   push_non_supporte: "Tu navegador no admite notificaciones push.",
@@ -533,6 +545,9 @@ const DE: Traductions = {
   android_install_etape_1: "Tippen Sie auf die 3 Punkte ⋮ unten rechts",
   android_install_etape_2: "Tippen Sie auf „Seite hinzufügen zu“, dann „Startbildschirm“",
   android_install_etape_3: "Tippen Sie auf „Hinzufügen“",
+  notifications_titre: "Benachrichtigungen",
+  notifs_statut_on: "An",
+  notifs_statut_off: "Aus",
   ne_plus_afficher: "Nicht mehr anzeigen",
   tampon_ajoute_merci: "Stempel hinzugefügt, danke für Ihren Besuch! 🎉",
   push_non_supporte: "Ihr Browser unterstützt keine Push-Benachrichtigungen.",
@@ -627,6 +642,9 @@ const ZH: Traductions = {
   android_install_etape_1: "点击右下角的三个小点 ⋮",
   android_install_etape_2: "点击「添加页面到」，然后「主屏幕」",
   android_install_etape_3: "点击「添加」",
+  notifications_titre: "通知",
+  notifs_statut_on: "已开启",
+  notifs_statut_off: "已关闭",
   ne_plus_afficher: "不再显示",
   tampon_ajoute_merci: "印章已添加，感谢您的光临！🎉",
   push_non_supporte: "您的浏览器不支持推送通知。",
@@ -728,6 +746,9 @@ const AR: Traductions = {
   android_install_etape_1: "اضغط على النقاط الثلاث ⋮ في أسفل اليمين",
   android_install_etape_2: "اضغط على «إضافة الصفحة إلى»، ثم «الشاشة الرئيسية»",
   android_install_etape_3: "اضغط على «إضافة»",
+  notifications_titre: "الإشعارات",
+  notifs_statut_on: "مُفعّلة",
+  notifs_statut_off: "مُعطّلة",
   ne_plus_afficher: "عدم العرض مجدداً",
   tampon_ajoute_merci: "تمت إضافة الختم، شكراً لزيارتك! 🎉",
   push_non_supporte: "متصفحك لا يدعم إشعارات الدفع.",
@@ -834,6 +855,9 @@ const RU: Traductions = {
   android_install_etape_1: "Нажмите на три точки ⋮ внизу справа",
   android_install_etape_2: "Нажмите «Добавить страницу на», затем «Главный экран»",
   android_install_etape_3: "Нажмите «Добавить»",
+  notifications_titre: "Уведомления",
+  notifs_statut_on: "Включены",
+  notifs_statut_off: "Выключены",
   ne_plus_afficher: "Больше не показывать",
   tampon_ajoute_merci: "Печать добавлена, спасибо за визит! 🎉",
   push_non_supporte: "Ваш браузер не поддерживает push-уведомления.",

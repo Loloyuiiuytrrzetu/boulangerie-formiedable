@@ -163,6 +163,138 @@ export function AbonnementPush({
 }
 
 // ---------------------------------------------------------------------------
+// INTERRUPTEUR on/off des notifications — placé dans l'onglet Info.
+//
+// Permet à un client de RÉACTIVER les notifications après les avoir coupées
+// (ou l'inverse), quel que soit son téléphone. C'est le contrôle manuel
+// central : coché = abonné, décoché = désabonné.
+// ---------------------------------------------------------------------------
+export function ToggleNotifications({
+  slug,
+  restaurantId,
+  vapidPublicKey,
+  couleur,
+}: {
+  slug: string;
+  restaurantId: string;
+  vapidPublicKey: string | null;
+  couleur: string;
+}) {
+  const t = useT();
+  const [pret, setPret] = useState(false);
+  const [actif, setActif] = useState(false);
+  const [enCours, setEnCours] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  const cleRefus = `walletiz_notif_refus_${slug}`;
+
+  useEffect(() => {
+    (async () => {
+      if (!("Notification" in window)) {
+        setPret(true);
+        return;
+      }
+      const refus = localStorage.getItem(cleRefus) === "1";
+      let aUnAbonnement = false;
+      try {
+        const reg = await navigator.serviceWorker?.getRegistration("/sw.js");
+        const sub = await reg?.pushManager.getSubscription();
+        aUnAbonnement = Boolean(sub);
+      } catch {
+        // ignore
+      }
+      setActif(Notification.permission === "granted" && !refus && aUnAbonnement);
+      setPret(true);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function activer() {
+    setEnCours(true);
+    setMessage(null);
+    const r = await abonnerAuxNotifications(restaurantId, vapidPublicKey);
+    if (r.statut === "abonne") {
+      localStorage.removeItem(cleRefus);
+      setActif(true);
+    } else if (r.statut === "ios-install") {
+      setMessage(t("ios_install_pour_notifs"));
+    } else if (r.statut === "refuse") {
+      setMessage(t("notifs_refusees"));
+    } else {
+      setMessage(t("notifs_impossible"));
+    }
+    setEnCours(false);
+  }
+
+  async function desactiver() {
+    setEnCours(true);
+    setMessage(null);
+    localStorage.setItem(cleRefus, "1");
+    try {
+      const reg = await navigator.serviceWorker?.getRegistration("/sw.js");
+      const sub = await reg?.pushManager.getSubscription();
+      if (sub) await sub.unsubscribe();
+    } catch {
+      // ignore
+    }
+    try {
+      await fetch("/api/push/unsubscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ restaurantId }),
+      });
+    } catch {
+      // ignore
+    }
+    setActif(false);
+    setEnCours(false);
+  }
+
+  function basculer() {
+    if (enCours) return;
+    if (actif) desactiver();
+    else activer();
+  }
+
+  if (!pret) return null;
+
+  return (
+    <div className="mt-8 border-t border-stone-100 pt-4">
+      <div className="flex items-center justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-stone-800">
+            🔔 {t("notifications_titre")}
+          </p>
+          <p className="mt-0.5 text-xs text-stone-500">
+            {actif ? t("notifs_statut_on") : t("notifs_statut_off")}
+          </p>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={actif}
+          onClick={basculer}
+          disabled={enCours}
+          className="relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition disabled:opacity-60"
+          style={{ backgroundColor: actif ? couleur : "#d6d3d1" }}
+        >
+          <span
+            className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition ${
+              actif ? "translate-x-6" : "translate-x-1"
+            }`}
+          />
+        </button>
+      </div>
+      {message && (
+        <p className="mt-2 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
+          {message}
+        </p>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // INVITATION en HAUT de la page client — s'affiche automatiquement quand le
 // client ouvre l'app INSTALLÉE (mode standalone) sans être encore abonné.
 //

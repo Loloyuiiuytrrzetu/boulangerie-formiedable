@@ -13,7 +13,7 @@ import {
 import { AnimationRecompense } from "./Animation";
 import { InstallationIOS, BanniereInstallationIOS, reinitialiserPromptInstallation } from "./InstallationIOS";
 import { InstallationAndroid } from "./InstallationAndroid";
-import { AbonnementPush, InvitationNotifications } from "./AbonnementPush";
+import { ToggleNotifications, InvitationNotifications } from "./AbonnementPush";
 import { ScannerClient } from "./ScannerClient";
 import { ScanCameraModal } from "./ScanCameraModal";
 import { useLangue, useT } from "@/lib/langue";
@@ -776,10 +776,10 @@ function ContenuSection({
         )}
         <SelecteurLangue />
         <BanniereInstallationIOS couleur={couleur} nomCommerce={nomCommerce} />
-        <AbonnementPush
+        <ToggleNotifications
+          slug={slug}
           restaurantId={restaurantId}
           vapidPublicKey={vapidPublicKey}
-          dejaActif={false}
           couleur={couleur}
         />
         <ModifierIdentite slug={slug} identiteActuelle={identiteClient} />
