@@ -31,10 +31,12 @@ self.addEventListener("push", (event) => {
     body: data.message || "",
     data: { url: data.url || "/" },
   };
+  // Logo du commerce en icône (petite pastille) + badge. On n'utilise PAS
+  // `image` : sur Android/Samsung ça affichait une grande bannière redondante
+  // qui alourdissait la notification. Rendu épuré : logo + nom + message.
   if (data.icon) {
     options.icon = data.icon;
     options.badge = data.icon;
-    options.image = data.icon;
   }
 
   event.waitUntil(self.registration.showNotification(titre, options));

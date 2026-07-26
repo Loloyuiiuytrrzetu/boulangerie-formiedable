@@ -12,7 +12,7 @@ import type {
 } from "@/lib/types";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { utilisateurEffectif } from "@/lib/impersonate";
-import { dateDuJour, couleurQrLisible } from "@/lib/utils";
+import { dateDuJour } from "@/lib/utils";
 import { ConfigForm } from "./ConfigForm";
 import { CartesSection } from "./CartesSection";
 import { SectionsSection } from "./SectionsSection";
@@ -140,15 +140,9 @@ export default async function Dashboard() {
   const urlScan = restaurant ? `${siteUrl}/scan/${restaurant.slug}` : null;
   const qrDataUrl = urlScan
     ? await QRCode.toDataURL(urlScan, {
-        // Correction d'erreur élevée + marge blanche large + couleur garantie
-        // foncée → scannable même par un appareil photo Samsung/Android.
-        errorCorrectionLevel: "H",
-        width: 512,
-        margin: 4,
-        color: {
-          dark: couleurQrLisible(restaurant?.couleur_qr ?? "#380b15"),
-          light: "#ffffff",
-        },
+        width: 480,
+        margin: 2,
+        color: { dark: restaurant?.couleur_qr ?? "#380b15", light: "#ffffff" },
       })
     : null;
 
