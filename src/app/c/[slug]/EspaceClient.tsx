@@ -276,7 +276,7 @@ function BlocCarte({
     setMessage(null);
     startTransition(async () => {
       const resultat = await ajouterTampon(slug, carte.id);
-      if (resultat?.erreur) setErreur(resultat.erreur);
+      if (resultat?.erreur) setErreur(t(resultat.erreur as Parameters<typeof t>[0]));
       else setMessage(t("tampon_ajoute_merci"));
     });
   }
@@ -299,7 +299,7 @@ function BlocCarte({
     setMessage(null);
     startTransition(async () => {
       const resultat = await scannerEtAjouterTampon(slug, carte.id);
-      if (resultat?.erreur) setErreur(resultat.erreur);
+      if (resultat?.erreur) setErreur(t(resultat.erreur as Parameters<typeof t>[0]));
       else setMessage(t("tampon_ajoute_merci"));
     });
   }
@@ -310,7 +310,7 @@ function BlocCarte({
     startTransition(async () => {
       const resultat = await choisirRecompense(slug, carte.id, recompenseId);
       if (resultat?.erreur) {
-        setErreur(resultat.erreur);
+        setErreur(t(resultat.erreur as Parameters<typeof t>[0]));
         setChoix(false);
       } else {
         setChoix(false);
@@ -840,7 +840,7 @@ function RecompenseAttenteCard({
     setErreur(null);
     startTransition(async () => {
       const r = await utiliserRecompense(slug, recompense.id);
-      if (r?.erreur) setErreur(r.erreur);
+      if (r?.erreur) setErreur(t(r.erreur as Parameters<typeof t>[0]));
       else {
         setUtilisee(true);
         // Rejoue l'animation de récompense choisie par le restaurateur
@@ -1008,7 +1008,7 @@ function ModifierIdentite({
     formData.set("identite", valeur);
     startTransition(async () => {
       const r = await modifierIdentite(slug, formData);
-      if (r?.erreur) setErreur(r.erreur);
+      if (r?.erreur) setErreur(t(r.erreur as Parameters<typeof t>[0]));
       else {
         setSucces(true);
         router.refresh();
@@ -1071,7 +1071,7 @@ function BoutonDesinscription({
     setErreur(null);
     startTransition(async () => {
       const r = await desinscrireClient(slug);
-      if (r?.erreur) setErreur(r.erreur);
+      if (r?.erreur) setErreur(t(r.erreur as Parameters<typeof t>[0]));
       else {
         // Nettoyage côté navigateur pour repartir PROPRE à la réinscription :
         //  - efface le « refus » de notifications

@@ -63,7 +63,7 @@ export function FormulaireInscription({
 
       const resultat = await inscrireClient(slug, formData);
       if (resultat?.erreur) {
-        setErreur(resultat.erreur);
+        setErreur(t(resultat.erreur as Parameters<typeof t>[0]));
         return;
       }
 

@@ -36,7 +36,7 @@ export function ScannerClient({
     setOuvert(false);
     startTransition(async () => {
       const r = await scannerEtAjouterTampon(slug, carteId);
-      if (r?.erreur) setErreur(r.erreur);
+      if (r?.erreur) setErreur(t(r.erreur as Parameters<typeof t>[0]));
       else if ("ok" in r && r.ok) {
         setSucces(t("tampon_ajoute"));
         if ("recompense" in r && r.recompense) {

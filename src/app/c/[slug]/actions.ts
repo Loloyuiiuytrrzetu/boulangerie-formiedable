@@ -50,13 +50,13 @@ async function chargerClientViaCookie(
 // --- Première visite : création de la fiche avec le numéro de téléphone ---
 export async function inscrireClient(slug: string, formData: FormData) {
   const restaurant = await chargerRestaurant(slug);
-  if (!restaurant) return { erreur: "Commerce introuvable." };
+  if (!restaurant) return { erreur: "err_commerce_introuvable" };
 
   const telephone = normaliserTelephone(String(formData.get("telephone") ?? ""));
   if (!telephone)
-    return { erreur: "Numéro de téléphone invalide (format attendu : 06 12 34 56 78)." };
+    return { erreur: "err_tel_invalide" };
   const identite = String(formData.get("identite") ?? "").trim().slice(0, 80);
-  if (!identite) return { erreur: "Entrez au moins un nom ou un prénom." };
+  if (!identite) return { erreur: "err_nom_requis" };
 
   const admin = createAdminClient();
 
@@ -78,7 +78,7 @@ export async function inscrireClient(slug: string, formData: FormData) {
       identite,
       token_cookie: token,
     });
-    if (error) return { erreur: "Impossible de créer votre carte. Réessayez." };
+    if (error) return { erreur: "err_creation_carte" };
   }
 
   const cookieStore = await cookies();
@@ -95,11 +95,11 @@ export async function inscrireClient(slug: string, formData: FormData) {
 
 async function contexteCarte(slug: string, carteId: string) {
   const restaurant = await chargerRestaurant(slug);
-  if (!restaurant) return { erreur: "Commerce introuvable." as const };
+  if (!restaurant) return { erreur: "err_commerce_introuvable" as const };
 
   const client = await chargerClientViaCookie(restaurant);
   if (!client)
-    return { erreur: "Carte introuvable. Entrez votre numéro de téléphone." as const };
+    return { erreur: "err_carte_introuvable_tel" as const };
 
   const admin = createAdminClient();
   const { data: carte } = await admin
@@ -109,11 +109,11 @@ async function contexteCarte(slug: string, carteId: string) {
     .eq("restaurant_id", restaurant.id)
     .eq("actif", true)
     .maybeSingle<Carte>();
-  if (!carte) return { erreur: "Cette carte n'existe plus." as const };
+  if (!carte) return { erreur: "err_carte_nexiste_plus" as const };
 
   const aujourdHui = dateDuJour(restaurant.timezone ?? "Europe/Paris");
   if (carte.date_expiration && carte.date_expiration < aujourdHui)
-    return { erreur: "Cette carte a expiré." as const };
+    return { erreur: "err_carte_expiree" as const };
 
   const { data: progression } = await admin
     .from("cartes_clients")
@@ -136,8 +136,7 @@ export async function ajouterTampon(slug: string, carteId: string) {
   // re-vérifie ici pour empêcher tout appel direct à l'API.
   if (restaurant.tampon_restaurateur_only === true) {
     return {
-      erreur:
-        "Demandez au commerçant de scanner votre QR code personnel pour recevoir votre tampon.",
+      erreur: "err_demander_commercant",
     };
   }
 
@@ -147,22 +146,21 @@ export async function ajouterTampon(slug: string, carteId: string) {
   const cookieStore = await cookies();
   if (!cookieStore.get(nomCookieScan(restaurant.id))) {
     return {
-      erreur:
-        "Scannez le QR code affiché en caisse pour prendre votre tampon 📷",
+      erreur: "err_scannez_qr_caisse",
     };
   }
 
   // Règle "1 tampon toutes cartes confondues par jour" si option décochée
   if (restaurant.tampon_par_carte === false && client.date_dernier_tampon === aujourdHui)
     return {
-      erreur: "Vous avez déjà pris votre tampon du jour. À bientôt !",
+      erreur: "err_deja_tampon_jour",
     };
 
   if (progression) {
     if (progression.date_dernier_tampon === aujourdHui)
-      return { erreur: "Vous avez déjà pris votre tampon aujourd'hui sur cette carte." };
+      return { erreur: "err_deja_tampon_carte" };
     if (progression.tampons_actuels >= carte.nombre_tampons_requis)
-      return { erreur: "Carte pleine : choisissez d'abord votre récompense !" };
+      return { erreur: "err_carte_pleine" };
 
     const { data: majs, error } = await admin
       .from("cartes_clients")
@@ -175,7 +173,7 @@ export async function ajouterTampon(slug: string, carteId: string) {
       .lt("tampons_actuels", carte.nombre_tampons_requis)
       .or(`date_dernier_tampon.is.null,date_dernier_tampon.neq.${aujourdHui}`)
       .select("id");
-    if (error || !majs?.length) return { erreur: "Tampon déjà pris aujourd'hui." };
+    if (error || !majs?.length) return { erreur: "err_deja_tampon_jour" };
   } else {
     const { error } = await admin.from("cartes_clients").insert({
       carte_id: carte.id,
@@ -184,7 +182,7 @@ export async function ajouterTampon(slug: string, carteId: string) {
       tampons_total: 1,
       date_dernier_tampon: aujourdHui,
     });
-    if (error) return { erreur: "Impossible d'ajouter le tampon." };
+    if (error) return { erreur: "err_ajout_impossible" };
   }
 
   await admin
@@ -222,7 +220,7 @@ export async function choisirRecompense(
   const { admin, restaurant, client, carte, progression } = ctx;
 
   if (!progression || progression.tampons_actuels < carte.nombre_tampons_requis)
-    return { erreur: "Cette carte n'est pas encore pleine." };
+    return { erreur: "err_carte_pas_pleine" };
 
   const { data: recompense } = await admin
     .from("recompenses")
@@ -230,7 +228,7 @@ export async function choisirRecompense(
     .eq("id", recompenseId)
     .eq("carte_id", carte.id)
     .maybeSingle<Recompense>();
-  if (!recompense) return { erreur: "Récompense introuvable." };
+  if (!recompense) return { erreur: "err_recompense_introuvable" };
 
   // Reset atomique de la carte
   const { data: majs, error: errMaj } = await admin
@@ -242,7 +240,7 @@ export async function choisirRecompense(
     .eq("id", progression.id)
     .gte("tampons_actuels", carte.nombre_tampons_requis)
     .select("id");
-  if (errMaj || !majs?.length) return { erreur: "Récompense déjà choisie." };
+  if (errMaj || !majs?.length) return { erreur: "err_recompense_deja_choisie" };
 
   // Crédit dans le portefeuille de récompenses en attente
   await admin.from("recompenses_gagnees").insert({
@@ -269,10 +267,10 @@ export async function choisirRecompense(
 // --- Marquer une récompense en attente comme utilisée ---
 export async function utiliserRecompense(slug: string, recompenseGagneeId: string) {
   const restaurant = await chargerRestaurant(slug);
-  if (!restaurant) return { erreur: "Commerce introuvable." };
+  if (!restaurant) return { erreur: "err_commerce_introuvable" };
 
   const client = await chargerClientViaCookie(restaurant);
-  if (!client) return { erreur: "Carte introuvable." };
+  if (!client) return { erreur: "err_carte_introuvable" };
 
   const admin = createAdminClient();
   const { data: majs, error } = await admin
@@ -282,7 +280,7 @@ export async function utiliserRecompense(slug: string, recompenseGagneeId: strin
     .eq("client_id", client.id)
     .is("date_utilisee", null)
     .select("id");
-  if (error || !majs?.length) return { erreur: "Récompense déjà utilisée." };
+  if (error || !majs?.length) return { erreur: "err_recompense_deja_utilisee" };
 
   revalidatePath(`/c/${slug}`);
   return { ok: true };
@@ -291,10 +289,10 @@ export async function utiliserRecompense(slug: string, recompenseGagneeId: strin
 // --- Activation (optionnelle) des notifications : simple préférence ---
 export async function activerNotifications(slug: string, actif: boolean) {
   const restaurant = await chargerRestaurant(slug);
-  if (!restaurant) return { erreur: "Commerce introuvable." };
+  if (!restaurant) return { erreur: "err_commerce_introuvable" };
 
   const client = await chargerClientViaCookie(restaurant);
-  if (!client) return { erreur: "Carte introuvable." };
+  if (!client) return { erreur: "err_carte_introuvable" };
 
   const admin = createAdminClient();
   await admin
@@ -309,13 +307,13 @@ export async function activerNotifications(slug: string, actif: boolean) {
 // --- Modification du nom / prénom (onglet Info) ---
 export async function modifierIdentite(slug: string, formData: FormData) {
   const restaurant = await chargerRestaurant(slug);
-  if (!restaurant) return { erreur: "Commerce introuvable." };
+  if (!restaurant) return { erreur: "err_commerce_introuvable" };
 
   const client = await chargerClientViaCookie(restaurant);
-  if (!client) return { erreur: "Carte introuvable." };
+  if (!client) return { erreur: "err_carte_introuvable" };
 
   const identite = String(formData.get("identite") ?? "").trim().slice(0, 80);
-  if (!identite) return { erreur: "Entrez au moins un nom ou un prénom." };
+  if (!identite) return { erreur: "err_nom_requis" };
 
   const admin = createAdminClient();
   await admin
@@ -333,7 +331,7 @@ export async function modifierIdentite(slug: string, formData: FormData) {
 //     sélectionnée (ou la seule carte active si le commerçant n'en a qu'une).
 export async function scannerEtAjouterTampon(slug: string, carteId: string) {
   const restaurant = await chargerRestaurant(slug);
-  if (!restaurant) return { erreur: "Commerce introuvable." as const };
+  if (!restaurant) return { erreur: "err_commerce_introuvable" as const };
 
   // Pose le cookie "scan valide 15 min" comme si le client passait par
   // /scan/[slug], puis délègue à ajouterTampon qui gère toutes les règles
@@ -356,10 +354,10 @@ export async function scannerEtAjouterTampon(slug: string, carteId: string) {
 //     du QR code redémarre comme si c'était la première fois. ---
 export async function desinscrireClient(slug: string) {
   const restaurant = await chargerRestaurant(slug);
-  if (!restaurant) return { erreur: "Commerce introuvable." };
+  if (!restaurant) return { erreur: "err_commerce_introuvable" };
 
   const client = await chargerClientViaCookie(restaurant);
-  if (!client) return { erreur: "Carte introuvable." };
+  if (!client) return { erreur: "err_carte_introuvable" };
 
   const admin = createAdminClient();
   // On supprime le client — les tables liées (cartes_clients,
