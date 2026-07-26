@@ -229,14 +229,13 @@ export function ToggleNotifications({
   async function desactiver() {
     setEnCours(true);
     setMessage(null);
+    // On mémorise le refus + on supprime l'abonnement CÔTÉ SERVEUR (plus
+    // aucune notification ne sera envoyée). On NE casse PAS l'abonnement du
+    // navigateur avec sub.unsubscribe() : sur iPhone, une fois désabonné
+    // ainsi, se réabonner ensuite ne remarche pas. En gardant l'abonnement
+    // navigateur intact, réactiver le renvoie simplement au serveur
+    // (idempotent) et les notifications repartent — fiable sur tous les tél.
     localStorage.setItem(cleRefus, "1");
-    try {
-      const reg = await navigator.serviceWorker?.getRegistration("/sw.js");
-      const sub = await reg?.pushManager.getSubscription();
-      if (sub) await sub.unsubscribe();
-    } catch {
-      // ignore
-    }
     try {
       await fetch("/api/push/unsubscribe", {
         method: "POST",
