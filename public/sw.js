@@ -9,6 +9,26 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(self.clients.claim());
 });
 
+// Gestionnaire `fetch` — INDISPENSABLE pour l'installabilité PWA sur Android.
+// Sans lui, Chrome/Samsung Internet n'installe qu'un RACCOURCI (qui rouvre le
+// site avec la barre d'URL) au lieu d'une vraie app plein écran (WebAPK), et
+// l'invite native « Installer l'application » ne se déclenche pas.
+// On laisse le réseau gérer normalement (pas de cache) : on veut juste que le
+// service worker « contrôle » la navigation pour être reconnu comme une app.
+self.addEventListener("fetch", (event) => {
+  // Uniquement les navigations ; le reste suit le comportement par défaut.
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request).catch(function () {
+        return new Response(
+          "<!doctype html><meta charset='utf-8'><body style='font-family:sans-serif;padding:2rem;text-align:center'><h1>Hors ligne</h1><p>Vérifiez votre connexion internet puis réessayez.</p></body>",
+          { headers: { "Content-Type": "text/html; charset=utf-8" } }
+        );
+      })
+    );
+  }
+});
+
 self.addEventListener("push", (event) => {
   let data = {};
   try {
