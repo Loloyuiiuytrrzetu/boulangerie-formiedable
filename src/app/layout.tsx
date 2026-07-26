@@ -36,6 +36,19 @@ const SCRIPT_NO_ZOOM = `
   document.addEventListener('touchmove', function(e){
     if (e.touches.length > 1) { e.preventDefault(); }
   }, { passive: false });
+
+  // Android/Chrome : capture l'événement d'installation le plus tôt possible
+  // (il peut se déclencher avant le montage de React). On le stocke pour que
+  // la bannière « Ajouter à l'écran d'accueil » puisse le rejouer d'un clic.
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    window.__walletizBip = e;
+    window.dispatchEvent(new Event('walletiz-bip'));
+  });
+  window.addEventListener('appinstalled', function(){
+    window.__walletizBip = null;
+    window.dispatchEvent(new Event('walletiz-installed'));
+  });
 })();
 `;
 

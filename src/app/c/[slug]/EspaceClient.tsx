@@ -12,6 +12,7 @@ import {
 } from "./actions";
 import { AnimationRecompense } from "./Animation";
 import { InstallationIOS, BanniereInstallationIOS, reinitialiserPromptInstallation } from "./InstallationIOS";
+import { InstallationAndroid } from "./InstallationAndroid";
 import { AbonnementPush, InvitationNotifications } from "./AbonnementPush";
 import { ScannerClient } from "./ScannerClient";
 import { ScanCameraModal } from "./ScanCameraModal";
@@ -578,6 +579,7 @@ export function EspaceClient({
   return (
     <div className="space-y-6">
       <InstallationIOS couleur={couleur} nomCommerce={nomCommerce} />
+      <InstallationAndroid couleur={couleur} nomCommerce={nomCommerce} />
       <InvitationNotifications
         slug={slug}
         restaurantId={restaurantId}

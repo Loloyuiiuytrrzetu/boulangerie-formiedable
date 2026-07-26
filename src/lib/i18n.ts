@@ -95,6 +95,7 @@ type Cle =
   | "ajouter_a_ecran_titre"
   | "ajouter_a_ecran_desc_court"
   | "comment_faire"
+  | "installer_app"
   | "ne_plus_afficher"
   | "tampon_ajoute_merci"
   | "push_non_supporte"
@@ -199,6 +200,7 @@ const FR: Traductions = {
   ajouter_a_ecran_desc_court:
     "Pour recevoir nos promotions et alertes de récompenses par notification.",
   comment_faire: "Comment faire ?",
+  installer_app: "Ajouter à l'écran d'accueil",
   ne_plus_afficher: "Ne plus afficher",
   tampon_ajoute_merci: "Tampon ajouté, merci de votre visite ! 🎉",
   push_non_supporte: "Votre navigateur ne supporte pas les notifications push.",
@@ -301,6 +303,7 @@ const EN: Traductions = {
   ajouter_a_ecran_desc_court:
     "To receive our promotions and reward alerts by notification.",
   comment_faire: "How to?",
+  installer_app: "Add to Home Screen",
   ne_plus_afficher: "Don't show again",
   tampon_ajoute_merci: "Stamp added, thanks for your visit! 🎉",
   push_non_supporte: "Your browser does not support push notifications.",
@@ -404,6 +407,7 @@ const ES: Traductions = {
   ajouter_a_ecran_desc_court:
     "Para recibir nuestras promociones y avisos de recompensas por notificación.",
   comment_faire: "¿Cómo hacerlo?",
+  installer_app: "Añadir a pantalla de inicio",
   ne_plus_afficher: "No mostrar más",
   tampon_ajoute_merci: "¡Sello añadido, gracias por tu visita! 🎉",
   push_non_supporte: "Tu navegador no admite notificaciones push.",
@@ -508,6 +512,7 @@ const DE: Traductions = {
   ajouter_a_ecran_desc_court:
     "Um unsere Aktionen und Belohnungshinweise per Benachrichtigung zu erhalten.",
   comment_faire: "Wie geht das?",
+  installer_app: "Zum Home-Bildschirm hinzufügen",
   ne_plus_afficher: "Nicht mehr anzeigen",
   tampon_ajoute_merci: "Stempel hinzugefügt, danke für Ihren Besuch! 🎉",
   push_non_supporte: "Ihr Browser unterstützt keine Push-Benachrichtigungen.",
@@ -597,6 +602,7 @@ const ZH: Traductions = {
   ajouter_a_ecran_titre: "将 {nom} 添加到您的主屏幕",
   ajouter_a_ecran_desc_court: "以通过通知接收我们的促销和奖励提醒。",
   comment_faire: "怎么做?",
+  installer_app: "添加到主屏幕",
   ne_plus_afficher: "不再显示",
   tampon_ajoute_merci: "印章已添加，感谢您的光临！🎉",
   push_non_supporte: "您的浏览器不支持推送通知。",
@@ -693,6 +699,7 @@ const AR: Traductions = {
   ajouter_a_ecran_desc_court:
     "لتلقي عروضنا وتنبيهات المكافآت عبر الإشعارات.",
   comment_faire: "كيف؟",
+  installer_app: "إضافة إلى الشاشة الرئيسية",
   ne_plus_afficher: "عدم العرض مجدداً",
   tampon_ajoute_merci: "تمت إضافة الختم، شكراً لزيارتك! 🎉",
   push_non_supporte: "متصفحك لا يدعم إشعارات الدفع.",
@@ -794,6 +801,7 @@ const RU: Traductions = {
   ajouter_a_ecran_desc_court:
     "Чтобы получать наши акции и уведомления о наградах.",
   comment_faire: "Как это сделать?",
+  installer_app: "Добавить на главный экран",
   ne_plus_afficher: "Больше не показывать",
   tampon_ajoute_merci: "Печать добавлена, спасибо за визит! 🎉",
   push_non_supporte: "Ваш браузер не поддерживает push-уведомления.",
