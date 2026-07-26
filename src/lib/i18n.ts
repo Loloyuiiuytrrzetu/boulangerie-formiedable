@@ -96,6 +96,10 @@ type Cle =
   | "ajouter_a_ecran_desc_court"
   | "comment_faire"
   | "installer_app"
+  | "android_install_comment"
+  | "android_install_etape_1"
+  | "android_install_etape_2"
+  | "android_install_etape_3"
   | "ne_plus_afficher"
   | "tampon_ajoute_merci"
   | "push_non_supporte"
@@ -201,6 +205,10 @@ const FR: Traductions = {
     "Pour recevoir nos promotions et alertes de récompenses par notification.",
   comment_faire: "Comment faire ?",
   installer_app: "Ajouter à l'écran d'accueil",
+  android_install_comment: "Pour l'installer sur Android :",
+  android_install_etape_1: "Appuyez sur les 3 petits points ⋮ en bas à droite",
+  android_install_etape_2: "Appuyez sur « Ajouter la page à », puis « Écran d'accueil »",
+  android_install_etape_3: "Appuyez sur « Ajouter »",
   ne_plus_afficher: "Ne plus afficher",
   tampon_ajoute_merci: "Tampon ajouté, merci de votre visite ! 🎉",
   push_non_supporte: "Votre navigateur ne supporte pas les notifications push.",
@@ -304,6 +312,10 @@ const EN: Traductions = {
     "To receive our promotions and reward alerts by notification.",
   comment_faire: "How to?",
   installer_app: "Add to Home Screen",
+  android_install_comment: "To install it on Android:",
+  android_install_etape_1: "Tap the 3 dots ⋮ at the bottom right",
+  android_install_etape_2: "Tap “Add page to”, then “Home screen”",
+  android_install_etape_3: "Tap “Add”",
   ne_plus_afficher: "Don't show again",
   tampon_ajoute_merci: "Stamp added, thanks for your visit! 🎉",
   push_non_supporte: "Your browser does not support push notifications.",
@@ -408,6 +420,10 @@ const ES: Traductions = {
     "Para recibir nuestras promociones y avisos de recompensas por notificación.",
   comment_faire: "¿Cómo hacerlo?",
   installer_app: "Añadir a pantalla de inicio",
+  android_install_comment: "Para instalarla en Android:",
+  android_install_etape_1: "Toca los 3 puntos ⋮ abajo a la derecha",
+  android_install_etape_2: "Toca «Añadir página a», luego «Pantalla de inicio»",
+  android_install_etape_3: "Toca «Añadir»",
   ne_plus_afficher: "No mostrar más",
   tampon_ajoute_merci: "¡Sello añadido, gracias por tu visita! 🎉",
   push_non_supporte: "Tu navegador no admite notificaciones push.",
@@ -513,6 +529,10 @@ const DE: Traductions = {
     "Um unsere Aktionen und Belohnungshinweise per Benachrichtigung zu erhalten.",
   comment_faire: "Wie geht das?",
   installer_app: "Zum Home-Bildschirm hinzufügen",
+  android_install_comment: "So installieren Sie sie auf Android:",
+  android_install_etape_1: "Tippen Sie auf die 3 Punkte ⋮ unten rechts",
+  android_install_etape_2: "Tippen Sie auf „Seite hinzufügen zu“, dann „Startbildschirm“",
+  android_install_etape_3: "Tippen Sie auf „Hinzufügen“",
   ne_plus_afficher: "Nicht mehr anzeigen",
   tampon_ajoute_merci: "Stempel hinzugefügt, danke für Ihren Besuch! 🎉",
   push_non_supporte: "Ihr Browser unterstützt keine Push-Benachrichtigungen.",
@@ -603,6 +623,10 @@ const ZH: Traductions = {
   ajouter_a_ecran_desc_court: "以通过通知接收我们的促销和奖励提醒。",
   comment_faire: "怎么做?",
   installer_app: "添加到主屏幕",
+  android_install_comment: "在 Android 上安装：",
+  android_install_etape_1: "点击右下角的三个小点 ⋮",
+  android_install_etape_2: "点击「添加页面到」，然后「主屏幕」",
+  android_install_etape_3: "点击「添加」",
   ne_plus_afficher: "不再显示",
   tampon_ajoute_merci: "印章已添加，感谢您的光临！🎉",
   push_non_supporte: "您的浏览器不支持推送通知。",
@@ -700,6 +724,10 @@ const AR: Traductions = {
     "لتلقي عروضنا وتنبيهات المكافآت عبر الإشعارات.",
   comment_faire: "كيف؟",
   installer_app: "إضافة إلى الشاشة الرئيسية",
+  android_install_comment: "لتثبيته على أندرويد:",
+  android_install_etape_1: "اضغط على النقاط الثلاث ⋮ في أسفل اليمين",
+  android_install_etape_2: "اضغط على «إضافة الصفحة إلى»، ثم «الشاشة الرئيسية»",
+  android_install_etape_3: "اضغط على «إضافة»",
   ne_plus_afficher: "عدم العرض مجدداً",
   tampon_ajoute_merci: "تمت إضافة الختم، شكراً لزيارتك! 🎉",
   push_non_supporte: "متصفحك لا يدعم إشعارات الدفع.",
@@ -802,6 +830,10 @@ const RU: Traductions = {
     "Чтобы получать наши акции и уведомления о наградах.",
   comment_faire: "Как это сделать?",
   installer_app: "Добавить на главный экран",
+  android_install_comment: "Чтобы установить на Android:",
+  android_install_etape_1: "Нажмите на три точки ⋮ внизу справа",
+  android_install_etape_2: "Нажмите «Добавить страницу на», затем «Главный экран»",
+  android_install_etape_3: "Нажмите «Добавить»",
   ne_plus_afficher: "Больше не показывать",
   tampon_ajoute_merci: "Печать добавлена, спасибо за визит! 🎉",
   push_non_supporte: "Ваш браузер не поддерживает push-уведомления.",

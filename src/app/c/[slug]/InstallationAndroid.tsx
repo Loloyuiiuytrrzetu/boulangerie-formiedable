@@ -9,16 +9,19 @@ type BipEvent = Event & {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 };
 
-// Bannière d'installation pour ANDROID (Chrome / Samsung Internet).
+const CLE_MASQUE = "walletiz_android_install_hide";
+
+// Bloc d'installation pour ANDROID (Chrome / Samsung Internet).
 //
-// Contrairement à iOS (étapes manuelles), Android propose une installation
-// native en un seul geste via l'événement `beforeinstallprompt`. Une fois la
-// PWA installée, les notifications sont attribuées à l'app du commerce → logo
-// à gauche + nom, sans l'icône du navigateur ni l'adresse « www.walletiz.fr ».
+// Deux chemins proposés :
+//  1. Bouton natif « Installer » en un geste, quand le navigateur le propose
+//     (événement `beforeinstallprompt`, capté tôt dans le layout).
+//  2. Un GUIDE manuel de secours (toujours affiché) : sur Samsung Internet
+//     l'invite native n'apparaît pas toujours, donc on montre les étapes.
 //
-// L'événement est capté très tôt dans le layout (window.__walletizBip) car il
-// peut se déclencher avant le montage de React ; ici on ne fait que l'afficher
-// et le rejouer au clic.
+// Une fois la PWA installée, les notifications sont attribuées à l'app du
+// commerce → logo à gauche + nom, sans l'icône du navigateur ni l'adresse
+// « www.walletiz.fr ».
 export function InstallationAndroid({
   couleur,
   nomCommerce,
@@ -27,6 +30,7 @@ export function InstallationAndroid({
   nomCommerce: string;
 }) {
   const t = useT();
+  const [visible, setVisible] = useState(false);
   const [dispo, setDispo] = useState(false);
   const [enCours, setEnCours] = useState(false);
 
@@ -36,11 +40,13 @@ export function InstallationAndroid({
     const isStandalone =
       window.matchMedia("(display-mode: standalone)").matches ||
       (navigator as unknown as { standalone?: boolean }).standalone === true;
+    // Uniquement Android, hors app déjà installée, et si non masqué.
     if (!isAndroid || isStandalone) return;
+    if (localStorage.getItem(CLE_MASQUE) === "1") return;
+    setVisible(true);
 
-    // Enregistre le service worker : c'est une condition (avec le manifeste)
-    // pour qu'Android considère la page « installable » et déclenche
-    // `beforeinstallprompt`. Sans lui, aucune invite n'apparaît.
+    // Enregistre le service worker : condition (avec le manifeste) pour qu'Android
+    // considère la page « installable » et déclenche `beforeinstallprompt`.
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js").catch(() => {});
     }
@@ -49,10 +55,9 @@ export function InstallationAndroid({
     const maj = () => setDispo(Boolean(win.__walletizBip));
     maj(); // l'événement a pu se déclencher avant le montage
     window.addEventListener("walletiz-bip", maj);
-    window.addEventListener("walletiz-installed", maj);
+    window.addEventListener("walletiz-installed", () => setVisible(false));
     return () => {
       window.removeEventListener("walletiz-bip", maj);
-      window.removeEventListener("walletiz-installed", maj);
     };
   }, []);
 
@@ -63,18 +68,33 @@ export function InstallationAndroid({
     setEnCours(true);
     try {
       await e.prompt();
-      await e.userChoice;
+      const choix = await e.userChoice;
       win.__walletizBip = null;
       setDispo(false);
+      if (choix.outcome === "accepted") setVisible(false);
     } catch {
-      // l'utilisateur a annulé : on laisse la bannière disparaître
       setDispo(false);
     } finally {
       setEnCours(false);
     }
   }
 
-  if (!dispo) return null;
+  function masquer() {
+    try {
+      localStorage.setItem(CLE_MASQUE, "1");
+    } catch {
+      // sans importance
+    }
+    setVisible(false);
+  }
+
+  if (!visible) return null;
+
+  const etapes = [
+    t("android_install_etape_1"),
+    t("android_install_etape_2"),
+    t("android_install_etape_3"),
+  ];
 
   return (
     <div
@@ -95,14 +115,46 @@ export function InstallationAndroid({
           <p className="mt-1 text-xs text-stone-600">
             {t("ajouter_a_ecran_desc_court")}
           </p>
+
+          {/* Chemin 1 : bouton natif en un geste (si proposé par le navigateur) */}
+          {dispo && (
+            <button
+              type="button"
+              onClick={installer}
+              disabled={enCours}
+              className="mt-3 w-full rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 disabled:opacity-60"
+              style={{ backgroundColor: couleur }}
+            >
+              {enCours ? t("activation_en_cours") : `📲 ${t("installer_app")}`}
+            </button>
+          )}
+
+          {/* Chemin 2 : guide manuel (toujours affiché en secours) */}
+          <div className="mt-3">
+            <p className="text-xs font-semibold text-stone-700">
+              {t("android_install_comment")}
+            </p>
+            <ol className="mt-2 space-y-2 text-xs text-stone-700">
+              {etapes.map((etape, i) => (
+                <li key={i} className="flex items-start gap-2">
+                  <span
+                    className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-white"
+                    style={{ backgroundColor: couleur }}
+                  >
+                    {i + 1}
+                  </span>
+                  <span>{etape}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+
           <button
             type="button"
-            onClick={installer}
-            disabled={enCours}
-            className="mt-3 w-full rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 disabled:opacity-60"
-            style={{ backgroundColor: couleur }}
+            onClick={masquer}
+            className="mt-3 text-xs font-medium text-stone-500 underline hover:text-stone-700"
           >
-            {enCours ? t("activation_en_cours") : `📲 ${t("installer_app")}`}
+            {t("ne_plus_afficher")}
           </button>
         </div>
       </div>
