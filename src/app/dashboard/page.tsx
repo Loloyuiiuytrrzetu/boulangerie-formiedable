@@ -176,6 +176,25 @@ export default async function Dashboard() {
 
             <div>
               <div className="space-y-8">
+                {/* Nom du commerce bien visible en haut du dashboard */}
+                <div className="flex items-center gap-3">
+                  {restaurant.logo_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={restaurant.logo_url}
+                      alt={restaurant.nom}
+                      className="h-12 w-12 shrink-0 rounded-xl border border-stone-200 object-cover"
+                    />
+                  ) : (
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-bordeaux-50 text-2xl">
+                      🏪
+                    </span>
+                  )}
+                  <h1 className="min-w-0 truncate text-2xl font-extrabold text-stone-900 sm:text-3xl">
+                    {restaurant.nom}
+                  </h1>
+                </div>
+
                 <div className="mb-2 grid grid-cols-2 gap-4 sm:grid-cols-3">
                   <div className="rounded-2xl border border-stone-200 bg-white p-5">
                     <p className="text-sm text-stone-500">{td("clients_fidelises")}</p>
