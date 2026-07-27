@@ -11,10 +11,13 @@ import { LANGUES, type Langue } from "@/lib/i18n";
 // (langueInitiale est encore reçu pour rétrocompatibilité mais non utilisé.)
 export function NavigationSidebar({
   userEmail,
+  nomCommerce,
 }: {
   userEmail: string;
+  nomCommerce?: string;
   langueInitiale?: Langue;
 }) {
+  const titre = nomCommerce?.trim() || "Walletiz";
   const t = useTDash();
   const { langue, setLangue } = useLangueDashboard();
   const [enCoursLangue, startLangue] = useTransition();
@@ -56,14 +59,19 @@ export function NavigationSidebar({
           (position: fixed ; `sticky` était cassé par un parent en overflow). */}
       <header className="fixed inset-x-0 top-0 z-40 border-b border-stone-200 bg-white/95 shadow-sm backdrop-blur-md supports-[backdrop-filter]:bg-white/85 lg:hidden">
         <div className="flex items-center justify-between gap-2 px-4 py-3">
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 items-center gap-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/icon.png"
               alt="Walletiz"
-              className="h-8 w-8 rounded-lg object-cover"
+              className="h-8 w-8 shrink-0 rounded-lg object-cover"
             />
-            <span className="font-bold text-bordeaux-800">Walletiz</span>
+            <div className="min-w-0 leading-tight">
+              <p className="truncate font-bold text-bordeaux-800">{titre}</p>
+              {nomCommerce?.trim() && (
+                <p className="truncate text-[11px] text-stone-400">Walletiz</p>
+              )}
+            </div>
           </div>
           <button
             type="button"
@@ -96,10 +104,15 @@ export function NavigationSidebar({
 
           <div className="anim-slide-right absolute inset-y-0 right-0 flex h-dvh w-[85%] max-w-sm flex-col bg-bordeaux-800 text-white shadow-2xl">
             <div className="flex items-center justify-between border-b border-white/15 px-5 py-4">
-              <div className="flex items-center gap-2.5">
+              <div className="flex min-w-0 items-center gap-2.5">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/icon.png" alt="Walletiz" className="h-9 w-9 rounded-xl object-cover" />
-                <span className="text-lg font-extrabold text-white">Walletiz</span>
+                <img src="/icon.png" alt="Walletiz" className="h-9 w-9 shrink-0 rounded-xl object-cover" />
+                <div className="min-w-0 leading-tight">
+                  <span className="block truncate text-lg font-extrabold text-white">{titre}</span>
+                  {nomCommerce?.trim() && (
+                    <span className="block truncate text-xs text-white/60">Walletiz</span>
+                  )}
+                </div>
               </div>
               <button
                 type="button"
@@ -169,11 +182,13 @@ export function NavigationSidebar({
           <img
             src="/icon.png"
             alt="Walletiz"
-            className="h-10 w-10 rounded-xl object-cover"
+            className="h-10 w-10 shrink-0 rounded-xl object-cover"
           />
-          <div>
-            <p className="text-lg font-extrabold">Walletiz</p>
-            <p className="text-xs uppercase tracking-widest opacity-60">Dashboard</p>
+          <div className="min-w-0">
+            <p className="truncate text-lg font-extrabold">{titre}</p>
+            <p className="truncate text-xs uppercase tracking-widest opacity-60">
+              Walletiz Dashboard
+            </p>
           </div>
         </div>
 

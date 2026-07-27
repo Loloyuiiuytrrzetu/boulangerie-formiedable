@@ -159,6 +159,7 @@ export default async function Dashboard() {
       {effectif.impersonation && <BandeauImpersonation />}
       <NavigationSidebar
         userEmail={effectif.email}
+        nomCommerce={restaurant?.nom}
         langueInitiale={((restaurant?.langue ?? "fr") as Langue)}
       />
 
