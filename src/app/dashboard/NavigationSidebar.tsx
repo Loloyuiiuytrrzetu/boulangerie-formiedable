@@ -17,7 +17,7 @@ export function NavigationSidebar({
   nomCommerce?: string;
   langueInitiale?: Langue;
 }) {
-  const titre = nomCommerce?.trim() || "Walletiz";
+  const commerce = nomCommerce?.trim();
   const t = useTDash();
   const { langue, setLangue } = useLangueDashboard();
   const [enCoursLangue, startLangue] = useTransition();
@@ -67,9 +67,9 @@ export function NavigationSidebar({
               className="h-8 w-8 shrink-0 rounded-lg object-cover"
             />
             <div className="min-w-0 leading-tight">
-              <p className="truncate font-bold text-bordeaux-800">{titre}</p>
-              {nomCommerce?.trim() && (
-                <p className="truncate text-[11px] text-stone-400">Walletiz</p>
+              <p className="truncate font-bold text-bordeaux-800">Walletiz</p>
+              {commerce && (
+                <p className="truncate text-[11px] text-stone-400">{commerce}</p>
               )}
             </div>
           </div>
@@ -108,9 +108,9 @@ export function NavigationSidebar({
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/icon.png" alt="Walletiz" className="h-9 w-9 shrink-0 rounded-xl object-cover" />
                 <div className="min-w-0 leading-tight">
-                  <span className="block truncate text-lg font-extrabold text-white">{titre}</span>
-                  {nomCommerce?.trim() && (
-                    <span className="block truncate text-xs text-white/60">Walletiz</span>
+                  <span className="block truncate text-lg font-extrabold text-white">Walletiz</span>
+                  {commerce && (
+                    <span className="block truncate text-xs text-white/60">{commerce}</span>
                   )}
                 </div>
               </div>
@@ -185,9 +185,9 @@ export function NavigationSidebar({
             className="h-10 w-10 shrink-0 rounded-xl object-cover"
           />
           <div className="min-w-0">
-            <p className="truncate text-lg font-extrabold">{titre}</p>
+            <p className="truncate text-lg font-extrabold">Walletiz</p>
             <p className="truncate text-xs uppercase tracking-widest opacity-60">
-              Walletiz Dashboard
+              {commerce || "Dashboard"}
             </p>
           </div>
         </div>

@@ -22,6 +22,7 @@ import { GraphiquesTampons } from "./GraphiquesTampons";
 import { BandeauImpersonation } from "./BandeauImpersonation";
 import { NavigationSidebar } from "./NavigationSidebar";
 import { ClientsSection } from "./ClientsSection";
+import { TelechargerQr } from "./TelechargerQr";
 import { assurerSectionsParDefaut } from "@/lib/sections";
 import { NotificationsPushSection, type NotificationPush } from "./NotificationsPushSection";
 import { AbonnementSection } from "./AbonnementSection";
@@ -285,13 +286,12 @@ export default async function Dashboard() {
                     className="mx-auto mt-4 w-56 rounded-xl border border-stone-100"
                   />
                 )}
-                <a
-                  href={qrDataUrl!}
-                  download={`qrcode-${restaurant.slug}.png`}
-                  className="mt-4 inline-block rounded-lg bg-bordeaux-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-bordeaux-700"
-                >
-                  {td("telecharger_qr")}
-                </a>
+                {qrDataUrl && (
+                  <TelechargerQr
+                    dataUrl={qrDataUrl}
+                    filename={`qrcode-${restaurant.slug}.png`}
+                  />
+                )}
               </aside>
               </div>
             </div>
