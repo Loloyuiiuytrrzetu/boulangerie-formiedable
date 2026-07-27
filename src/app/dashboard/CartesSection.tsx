@@ -359,15 +359,12 @@ function LigneRecompense({ recompense }: { recompense: Recompense }) {
             type="file"
             accept="image/*"
             className="sr-only"
+            disabled={enCours}
+            // Envoi automatique dès qu'un fichier est choisi : plus besoin d'un
+            // bouton « Image » séparé (qui n'apportait rien).
+            onChange={(e) => e.currentTarget.form?.requestSubmit()}
           />
         </label>
-        <button
-          type="submit"
-          disabled={enCours}
-          className="rounded-lg bg-bordeaux-800 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-bordeaux-700 disabled:opacity-60"
-        >
-          {t("image_recompense")}
-        </button>
         {recompense.image_url && (
           <button
             type="button"

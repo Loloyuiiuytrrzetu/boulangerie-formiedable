@@ -73,23 +73,23 @@ function Contenu({
   return (
     <main className="min-h-screen bg-stone-50">
       <header className="border-b border-stone-200 bg-white">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
-          <div className="flex items-center gap-3">
+        <div className="mx-auto flex max-w-3xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
+          <div className="flex min-w-0 items-center gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/icon.png"
               alt="Walletiz"
-              className="h-9 w-9 rounded-xl object-cover"
+              className="h-9 w-9 shrink-0 rounded-xl object-cover"
             />
-            <div>
+            <div className="min-w-0">
               <p className="font-bold text-bordeaux-800">Walletiz</p>
-              <p className="text-xs text-stone-500">
+              <p className="truncate text-xs text-stone-500">
                 {sousCompte ? `${t("sous_compte")} — ` : ""}
                 {nomCommerce}
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 sm:shrink-0">
             <select
               value={langue}
               onChange={(e) => changer(e.target.value as Langue)}
