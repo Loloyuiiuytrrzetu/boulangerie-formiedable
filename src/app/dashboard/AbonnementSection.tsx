@@ -4,7 +4,18 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { annulerAbonnement, reactiverAbonnement } from "./abonnement-actions";
 import type { Restaurant } from "@/lib/types";
-import { useTDash } from "@/lib/langue-dashboard";
+import { useLangueDashboard, useTDash } from "@/lib/langue-dashboard";
+import type { Langue } from "@/lib/i18n";
+
+const LOCALES: Record<Langue, string> = {
+  fr: "fr-FR",
+  en: "en-GB",
+  es: "es-ES",
+  de: "de-DE",
+  zh: "zh-CN",
+  ar: "ar",
+  ru: "ru-RU",
+};
 
 // Montant facturé selon le plan choisi.
 const PRIX: Record<"mensuel" | "annuel", number> = { mensuel: 64, annuel: 614 };
@@ -38,6 +49,7 @@ function formatDate(iso: string | null, timezone: string): string {
 
 export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
   const t = useTDash();
+  const { langue } = useLangueDashboard();
   const router = useRouter();
   const [enCours, startTransition] = useTransition();
   const [confirmation, setConfirmation] = useState(false);
@@ -64,6 +76,20 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
     (essaiTermine && restaurant.essai_fin_le
       ? prochainePrelevementDepuis(restaurant.essai_fin_le, type)
       : null);
+
+  // Jour (et mois pour l'annuel) du prélèvement, pour afficher la récurrence
+  // (ex. « le 8 de chaque mois »), dans la langue du dashboard.
+  const locale = LOCALES[langue] ?? "fr-FR";
+  const jourPrelevement = prochainPrelevement
+    ? new Intl.DateTimeFormat(locale, { day: "numeric", timeZone: tz }).format(
+        new Date(prochainPrelevement)
+      )
+    : null;
+  const moisPrelevement = prochainPrelevement
+    ? new Intl.DateTimeFormat(locale, { month: "long", timeZone: tz }).format(
+        new Date(prochainPrelevement)
+      )
+    : null;
 
   function annuler() {
     setErreur(null);
@@ -121,6 +147,15 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
             <strong>{formatDate(prochainPrelevement, tz)}</strong>
             {" "}({montant}€)
           </p>
+          {jourPrelevement && (
+            <p className="mt-1 text-xs text-bordeaux-700">
+              {type === "annuel"
+                ? t("preleve_chaque_annee", {
+                    date: `${jourPrelevement} ${moisPrelevement}`,
+                  })
+                : t("preleve_chaque_mois", { jour: jourPrelevement })}
+            </p>
+          )}
         </div>
       )}
 

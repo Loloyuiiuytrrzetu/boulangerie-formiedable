@@ -140,6 +140,8 @@ type CleDash =
   | "essai_gratuit"
   | "essai_termine"
   | "essai_termine_desc"
+  | "preleve_chaque_mois"
+  | "preleve_chaque_annee"
   | "plan_pro"
   | "plan_pro_annuel"
   | "annule"
@@ -327,6 +329,8 @@ const FR: Traductions = {
   essai_gratuit: "Essai gratuit",
   essai_termine: "Essai terminé",
   essai_termine_desc: "Votre essai gratuit est terminé.",
+  preleve_chaque_mois: "Prélèvement le {jour} de chaque mois",
+  preleve_chaque_annee: "Prélèvement chaque année le {date}",
   plan_pro: "Plan Pro",
   plan_pro_annuel: "Plan Pro annuel",
   annule: "Annulé",
@@ -512,6 +516,8 @@ const EN: Traductions = {
   essai_gratuit: "Free trial",
   essai_termine: "Trial ended",
   essai_termine_desc: "Your free trial has ended.",
+  preleve_chaque_mois: "Charged on the {jour} of every month",
+  preleve_chaque_annee: "Charged every year on {date}",
   plan_pro: "Pro plan",
   plan_pro_annuel: "Annual Pro plan",
   annule: "Cancelled",
@@ -697,6 +703,8 @@ const ES: Traductions = {
   essai_gratuit: "Prueba gratuita",
   essai_termine: "Prueba finalizada",
   essai_termine_desc: "Tu prueba gratuita ha finalizado.",
+  preleve_chaque_mois: "Cobro el día {jour} de cada mes",
+  preleve_chaque_annee: "Cobro cada año el {date}",
   plan_pro: "Plan Pro",
   plan_pro_annuel: "Plan Pro anual",
   annule: "Cancelado",
@@ -882,6 +890,8 @@ const DE: Traductions = {
   essai_gratuit: "Kostenlose Testphase",
   essai_termine: "Testphase beendet",
   essai_termine_desc: "Ihre kostenlose Testphase ist beendet.",
+  preleve_chaque_mois: "Abbuchung am {jour}. jedes Monats",
+  preleve_chaque_annee: "Abbuchung jedes Jahr am {date}",
   plan_pro: "Pro-Plan",
   plan_pro_annuel: "Jahres-Pro-Plan",
   annule: "Storniert",
@@ -1066,6 +1076,8 @@ const ZH: Traductions = {
   essai_gratuit: "免费试用",
   essai_termine: "试用已结束",
   essai_termine_desc: "您的免费试用已结束。",
+  preleve_chaque_mois: "每月 {jour} 号扣款",
+  preleve_chaque_annee: "每年 {date} 扣款",
   plan_pro: "专业版",
   plan_pro_annuel: "年度专业版",
   annule: "已取消",
@@ -1249,6 +1261,8 @@ const AR: Traductions = {
   essai_gratuit: "تجربة مجانية",
   essai_termine: "انتهت التجربة",
   essai_termine_desc: "انتهت تجربتك المجانية.",
+  preleve_chaque_mois: "الخصم في اليوم {jour} من كل شهر",
+  preleve_chaque_annee: "الخصم كل عام في {date}",
   plan_pro: "الخطة الاحترافية",
   plan_pro_annuel: "الخطة الاحترافية السنوية",
   annule: "ملغاة",
@@ -1434,6 +1448,8 @@ const RU: Traductions = {
   essai_gratuit: "Бесплатный пробный период",
   essai_termine: "Пробный период завершён",
   essai_termine_desc: "Ваш бесплатный пробный период завершён.",
+  preleve_chaque_mois: "Списание {jour}-го числа каждого месяца",
+  preleve_chaque_annee: "Списание каждый год {date}",
   plan_pro: "План Pro",
   plan_pro_annuel: "Годовой план Pro",
   annule: "Отменён",
