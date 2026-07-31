@@ -6,12 +6,24 @@ import { annulerAbonnement, reactiverAbonnement } from "./abonnement-actions";
 import type { Restaurant } from "@/lib/types";
 import { useTDash } from "@/lib/langue-dashboard";
 
-const PRIX_ABO = 64;
+// Montant facturé selon le plan choisi.
+const PRIX: Record<"mensuel" | "annuel", number> = { mensuel: 64, annuel: 614 };
 
-function joursRestants(iso: string | null): number | null {
-  if (!iso) return null;
-  const diff = new Date(iso).getTime() - Date.now();
-  return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+// Calcule la prochaine date de prélèvement à partir d'une date d'ancrage
+// (fin d'essai), en avançant d'un mois (ou d'un an) jusqu'à dépasser
+// aujourd'hui. Sert quand Stripe n'a pas encore renseigné la date.
+function prochainePrelevementDepuis(
+  base: string,
+  type: "mensuel" | "annuel"
+): string {
+  const d = new Date(base);
+  let i = 0;
+  while (d.getTime() <= Date.now() && i < 600) {
+    if (type === "annuel") d.setFullYear(d.getFullYear() + 1);
+    else d.setMonth(d.getMonth() + 1);
+    i++;
+  }
+  return d.toISOString();
 }
 
 function formatDate(iso: string | null, timezone: string): string {
@@ -32,15 +44,26 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
   const [erreur, setErreur] = useState<string | null>(null);
 
   const tz = restaurant.timezone ?? "Europe/Paris";
+  const type: "mensuel" | "annuel" = restaurant.abonnement_type ?? "mensuel";
+  const montant = PRIX[type];
+
   // Le statut stocké peut rester « essai » alors que la date de fin est
-  // dépassée (webhook Stripe non déclenché pour ce compte). On calcule donc
-  // un statut EFFECTIF : un essai dont la date de fin est passée est traité
-  // comme terminé, pour ne plus afficher « Essai gratuit » à tort.
+  // dépassée (webhook Stripe non déclenché à temps). Dans ce cas l'essai est
+  // terminé → l'abonnement payant démarre : on bascule l'affichage sur
+  // « actif » pour montrer au restaurateur son PROCHAIN PRÉLÈVEMENT.
   const essaiTermine =
     restaurant.abonnement_statut === "essai" &&
     !!restaurant.essai_fin_le &&
     new Date(restaurant.essai_fin_le).getTime() < Date.now();
-  const statut = essaiTermine ? "expire" : restaurant.abonnement_statut;
+  const statut = essaiTermine ? "actif" : restaurant.abonnement_statut;
+
+  // Date du prochain prélèvement : celle de Stripe si disponible, sinon
+  // calculée à partir de la fin d'essai (mois/an selon le plan).
+  const prochainPrelevement =
+    restaurant.abonnement_prochaine_facture_le ??
+    (essaiTermine && restaurant.essai_fin_le
+      ? prochainePrelevementDepuis(restaurant.essai_fin_le, type)
+      : null);
 
   function annuler() {
     setErreur(null);
@@ -74,7 +97,7 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
             {t("abonnement_desc")}
           </p>
         </div>
-        <StatutBadge statut={statut} essaiTermine={essaiTermine} />
+        <StatutBadge statut={statut} />
       </div>
 
       {statut === "essai" && (
@@ -91,14 +114,12 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
       {statut === "actif" && (
         <div className="mt-5 rounded-xl border border-bordeaux-200 bg-bordeaux-50 p-4">
           <p className="text-sm font-bold text-bordeaux-900">
-            ✓ {t("plan_pro")}
+            ✓ {type === "annuel" ? t("plan_pro_annuel") : t("plan_pro")}
           </p>
           <p className="mt-1 text-sm text-bordeaux-800">
             {t("prochaine_facture")}{" "}
-            <strong>
-              {formatDate(restaurant.abonnement_prochaine_facture_le, tz)}
-            </strong>
-            {" "}({PRIX_ABO}€)
+            <strong>{formatDate(prochainPrelevement, tz)}</strong>
+            {" "}({montant}€)
           </p>
         </div>
       )}
@@ -120,19 +141,7 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
         </div>
       )}
 
-      {statut === "expire" && essaiTermine && (
-        <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
-          <p className="text-sm font-bold text-amber-900">
-            ⌛ {t("essai_termine")}
-          </p>
-          <p className="mt-2 text-xs text-amber-800">
-            {t("essai_termine_desc")}{" "}
-            <strong>{formatDate(restaurant.essai_fin_le, tz)}</strong>
-          </p>
-        </div>
-      )}
-
-      {statut === "expire" && !essaiTermine && (
+      {statut === "expire" && (
         <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4">
           <p className="text-sm font-bold text-red-900">
             ⛔ {t("expire")}
@@ -210,21 +219,8 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
   );
 }
 
-function StatutBadge({
-  statut,
-  essaiTermine,
-}: {
-  statut: Restaurant["abonnement_statut"];
-  essaiTermine?: boolean;
-}) {
+function StatutBadge({ statut }: { statut: Restaurant["abonnement_statut"] }) {
   const t = useTDash();
-  if (essaiTermine) {
-    return (
-      <span className="shrink-0 rounded-full bg-amber-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-800">
-        {t("essai_termine")}
-      </span>
-    );
-  }
   const config = {
     essai: { label: t("essai_gratuit"), classes: "bg-green-100 text-green-800" },
     actif: { label: t("plan_pro"), classes: "bg-bordeaux-100 text-bordeaux-800" },
