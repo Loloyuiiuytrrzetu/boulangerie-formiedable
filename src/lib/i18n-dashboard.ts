@@ -138,6 +138,8 @@ type CleDash =
   | "abonnement_desc"
   | "statut_actuel"
   | "essai_gratuit"
+  | "essai_termine"
+  | "essai_termine_desc"
   | "plan_pro"
   | "plan_pro_annuel"
   | "annule"
@@ -323,6 +325,8 @@ const FR: Traductions = {
   abonnement_desc: "Gérez votre abonnement Walletiz.",
   statut_actuel: "Statut actuel",
   essai_gratuit: "Essai gratuit",
+  essai_termine: "Essai terminé",
+  essai_termine_desc: "Votre essai gratuit est terminé.",
   plan_pro: "Plan Pro",
   plan_pro_annuel: "Plan Pro annuel",
   annule: "Annulé",
@@ -506,6 +510,8 @@ const EN: Traductions = {
   abonnement_desc: "Manage your Walletiz subscription.",
   statut_actuel: "Current status",
   essai_gratuit: "Free trial",
+  essai_termine: "Trial ended",
+  essai_termine_desc: "Your free trial has ended.",
   plan_pro: "Pro plan",
   plan_pro_annuel: "Annual Pro plan",
   annule: "Cancelled",
@@ -689,6 +695,8 @@ const ES: Traductions = {
   abonnement_desc: "Gestiona tu suscripción Walletiz.",
   statut_actuel: "Estado actual",
   essai_gratuit: "Prueba gratuita",
+  essai_termine: "Prueba finalizada",
+  essai_termine_desc: "Tu prueba gratuita ha finalizado.",
   plan_pro: "Plan Pro",
   plan_pro_annuel: "Plan Pro anual",
   annule: "Cancelado",
@@ -872,6 +880,8 @@ const DE: Traductions = {
   abonnement_desc: "Verwalten Sie Ihr Walletiz-Abonnement.",
   statut_actuel: "Aktueller Status",
   essai_gratuit: "Kostenlose Testphase",
+  essai_termine: "Testphase beendet",
+  essai_termine_desc: "Ihre kostenlose Testphase ist beendet.",
   plan_pro: "Pro-Plan",
   plan_pro_annuel: "Jahres-Pro-Plan",
   annule: "Storniert",
@@ -1054,6 +1064,8 @@ const ZH: Traductions = {
   abonnement_desc: "管理您的 Walletiz 订阅。",
   statut_actuel: "当前状态",
   essai_gratuit: "免费试用",
+  essai_termine: "试用已结束",
+  essai_termine_desc: "您的免费试用已结束。",
   plan_pro: "专业版",
   plan_pro_annuel: "年度专业版",
   annule: "已取消",
@@ -1235,6 +1247,8 @@ const AR: Traductions = {
   abonnement_desc: "إدارة اشتراكك في Walletiz.",
   statut_actuel: "الحالة الحالية",
   essai_gratuit: "تجربة مجانية",
+  essai_termine: "انتهت التجربة",
+  essai_termine_desc: "انتهت تجربتك المجانية.",
   plan_pro: "الخطة الاحترافية",
   plan_pro_annuel: "الخطة الاحترافية السنوية",
   annule: "ملغاة",
@@ -1418,6 +1432,8 @@ const RU: Traductions = {
   abonnement_desc: "Управляйте вашей подпиской Walletiz.",
   statut_actuel: "Текущий статус",
   essai_gratuit: "Бесплатный пробный период",
+  essai_termine: "Пробный период завершён",
+  essai_termine_desc: "Ваш бесплатный пробный период завершён.",
   plan_pro: "План Pro",
   plan_pro_annuel: "Годовой план Pro",
   annule: "Отменён",

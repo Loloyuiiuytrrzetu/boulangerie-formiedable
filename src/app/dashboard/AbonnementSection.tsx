@@ -31,9 +31,16 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
   const [confirmation, setConfirmation] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
 
-  const statut = restaurant.abonnement_statut;
-  const joursEssai = joursRestants(restaurant.essai_fin_le);
   const tz = restaurant.timezone ?? "Europe/Paris";
+  // Le statut stocké peut rester « essai » alors que la date de fin est
+  // dépassée (webhook Stripe non déclenché pour ce compte). On calcule donc
+  // un statut EFFECTIF : un essai dont la date de fin est passée est traité
+  // comme terminé, pour ne plus afficher « Essai gratuit » à tort.
+  const essaiTermine =
+    restaurant.abonnement_statut === "essai" &&
+    !!restaurant.essai_fin_le &&
+    new Date(restaurant.essai_fin_le).getTime() < Date.now();
+  const statut = essaiTermine ? "expire" : restaurant.abonnement_statut;
 
   function annuler() {
     setErreur(null);
@@ -67,7 +74,7 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
             {t("abonnement_desc")}
           </p>
         </div>
-        <StatutBadge statut={statut} />
+        <StatutBadge statut={statut} essaiTermine={essaiTermine} />
       </div>
 
       {statut === "essai" && (
@@ -113,7 +120,19 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
         </div>
       )}
 
-      {statut === "expire" && (
+      {statut === "expire" && essaiTermine && (
+        <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <p className="text-sm font-bold text-amber-900">
+            ⌛ {t("essai_termine")}
+          </p>
+          <p className="mt-2 text-xs text-amber-800">
+            {t("essai_termine_desc")}{" "}
+            <strong>{formatDate(restaurant.essai_fin_le, tz)}</strong>
+          </p>
+        </div>
+      )}
+
+      {statut === "expire" && !essaiTermine && (
         <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4">
           <p className="text-sm font-bold text-red-900">
             ⛔ {t("expire")}
@@ -191,8 +210,21 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
   );
 }
 
-function StatutBadge({ statut }: { statut: Restaurant["abonnement_statut"] }) {
+function StatutBadge({
+  statut,
+  essaiTermine,
+}: {
+  statut: Restaurant["abonnement_statut"];
+  essaiTermine?: boolean;
+}) {
   const t = useTDash();
+  if (essaiTermine) {
+    return (
+      <span className="shrink-0 rounded-full bg-amber-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-800">
+        {t("essai_termine")}
+      </span>
+    );
+  }
   const config = {
     essai: { label: t("essai_gratuit"), classes: "bg-green-100 text-green-800" },
     actif: { label: t("plan_pro"), classes: "bg-bordeaux-100 text-bordeaux-800" },
