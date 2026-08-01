@@ -11,7 +11,7 @@ import { LANGUES, type Langue } from "@/lib/i18n";
 // permettre le changement de langue à la volée (LangueProvider partagé
 // avec la page cliente /c/[slug]).
 
-const EMAIL = "contact@walletiz.fr";
+const EMAIL = "walletiz.fr@gmail.com";
 const TEL_AFFICHE = "+590 690 98 85 38";
 const TEL_LIEN = "+590690988538";
 const CALENDLY = "https://calendly.com/walletiz-fr";
