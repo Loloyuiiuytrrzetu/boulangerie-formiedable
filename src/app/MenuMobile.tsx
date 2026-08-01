@@ -28,6 +28,7 @@ export function MenuMobile() {
     { href: "#tarif", label: t("nav_tarif"), icone: "💳" },
     { href: "#sites-web", label: t("nav_sites_web"), icone: "🛠️" },
     { href: "#contact", label: t("nav_contact"), icone: "📞" },
+    { href: "#faq", label: "FAQ", icone: "❓" },
   ];
 
   return (

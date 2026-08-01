@@ -79,6 +79,9 @@ function VitrineContenu() {
             <a href="#contact" className="text-sm font-medium text-stone-600 hover:text-bordeaux-700">
               {t("nav_contact")}
             </a>
+            <a href="#faq" className="text-sm font-medium text-stone-600 hover:text-bordeaux-700">
+              FAQ
+            </a>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="hidden md:block">
