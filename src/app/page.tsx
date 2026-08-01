@@ -541,6 +541,33 @@ function VitrineContenu() {
         </div>
       </section>
 
+      {/* ==================== FAQ ==================== */}
+      <section id="faq" className="border-t border-stone-100 bg-white py-20 sm:py-28">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6">
+          <h2 className="text-center text-3xl font-extrabold text-stone-900 sm:text-5xl">
+            {t("faq_titre")}
+          </h2>
+          <div className="mt-12 space-y-3">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <details
+                key={i}
+                className="group rounded-2xl border border-stone-200 bg-white p-5 transition open:border-bordeaux-300 open:shadow-sm"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-bold text-stone-900">
+                  <span>{t(`faq_q${i}` as Parameters<typeof t>[0])}</span>
+                  <span className="shrink-0 text-xl font-normal text-bordeaux-700 transition-transform group-open:rotate-45">
+                    +
+                  </span>
+                </summary>
+                <p className="mt-3 leading-relaxed text-stone-600">
+                  {t(`faq_a${i}` as Parameters<typeof t>[0])}
+                </p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ==================== FOOTER ==================== */}
       <footer className="border-t border-stone-200 bg-stone-50 py-10">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 sm:flex-row sm:px-6">

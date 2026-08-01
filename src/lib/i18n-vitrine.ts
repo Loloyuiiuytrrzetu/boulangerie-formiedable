@@ -190,7 +190,18 @@ type CleV =
   | "demo_7_derniers_jours"
   | "demo_historique_conserve"
   | "demo_promo_croissants_long"
-  | "demo_recompense_attend";
+  | "demo_recompense_attend"
+  | "faq_titre"
+  | "faq_q1"
+  | "faq_a1"
+  | "faq_q2"
+  | "faq_a2"
+  | "faq_q3"
+  | "faq_a3"
+  | "faq_q4"
+  | "faq_a4"
+  | "faq_q5"
+  | "faq_a5";
 
 type T = Record<CleV, string>;
 
@@ -368,6 +379,17 @@ const FR: T = {
     "Historique conservé — vous pouvez revenir sur les années précédentes.",
   demo_promo_croissants_long: "Croissants -30% ce midi jusqu'à 14h !",
   demo_recompense_attend: "Votre récompense vous attend ✨",
+  faq_titre: "Questions fréquentes",
+  faq_q1: "Si j'ai plusieurs commerces, puis-je utiliser la même carte ?",
+  faq_a1: "Oui, la même carte de fidélité peut être affichée dans plusieurs commerces. En revanche, chaque commerce nécessite son propre abonnement : un abonnement est dédié à un seul commerce. Avec deux commerces, l'abonnement est donc doublé.",
+  faq_q2: "Combien de temps faut-il pour voir les résultats ?",
+  faq_a2: "Comptez en général entre 2 et 3 mois pour remarquer une croissance de votre commerce grâce à la fidélisation de vos clients.",
+  faq_q3: "La carte de fidélité est-elle 100 % personnalisable ?",
+  faq_a3: "Oui, entièrement. Vous personnalisez votre logo, vos couleurs, l'image de fond, la forme et l'icône des tampons, le nombre de tampons à collecter ainsi que vos récompenses. Votre carte reflète parfaitement l'image de votre commerce.",
+  faq_q4: "Mes clients doivent-ils télécharger une application ?",
+  faq_a4: "Non. Vos clients scannent simplement un QR code et leur carte s'ouvre directement sur leur téléphone, sans aucune application à installer. Ils peuvent l'ajouter à leur écran d'accueil s'ils le souhaitent.",
+  faq_q5: "Combien de temps pour obtenir une réponse en cas de difficulté sur mon tableau de bord ?",
+  faq_a5: "Si vous rencontrez une difficulté à comprendre quelque chose sur votre tableau de bord administrateur, vous obtenez une réponse en moins de 48h.",
 };
 
 const EN: T = {
@@ -544,6 +566,17 @@ const EN: T = {
     "History kept — you can go back to previous years.",
   demo_promo_croissants_long: "Croissants -30% today until 2pm!",
   demo_recompense_attend: "Your reward is waiting ✨",
+  faq_titre: "Frequently asked questions",
+  faq_q1: "If I have several businesses, can I use the same card?",
+  faq_a1: "Yes, the same loyalty card can be displayed in several businesses. However, each business requires its own subscription: one subscription is dedicated to a single business. With two businesses, the subscription is therefore doubled.",
+  faq_q2: "How long does it take to see results?",
+  faq_a2: "Generally count between 2 and 3 months to notice growth in your business thanks to customer loyalty.",
+  faq_q3: "Is the loyalty card 100% customizable?",
+  faq_a3: "Yes, entirely. You customize your logo, your colors, the background image, the shape and icon of the stamps, the number of stamps to collect and your rewards. Your card perfectly reflects your brand.",
+  faq_q4: "Do my customers need to download an app?",
+  faq_a4: "No. Your customers simply scan a QR code and their card opens directly on their phone, with no app to install. They can add it to their home screen if they wish.",
+  faq_q5: "How long to get a reply if I have trouble on my dashboard?",
+  faq_a5: "If you have trouble understanding something on your admin dashboard, you get a reply in less than 48 hours.",
 };
 
 const ES: T = {
@@ -720,6 +753,17 @@ const ES: T = {
     "Historial guardado — puedes volver a años anteriores.",
   demo_promo_croissants_long: "¡Croissants -30% hoy hasta las 14h!",
   demo_recompense_attend: "Tu recompensa te espera ✨",
+  faq_titre: "Preguntas frecuentes",
+  faq_q1: "Si tengo varios comercios, ¿puedo usar la misma tarjeta?",
+  faq_a1: "Sí, la misma tarjeta de fidelidad puede mostrarse en varios comercios. Sin embargo, cada comercio requiere su propia suscripción: una suscripción está dedicada a un solo comercio. Con dos comercios, la suscripción se duplica.",
+  faq_q2: "¿Cuánto tiempo se tarda en ver resultados?",
+  faq_a2: "En general, cuente entre 2 y 3 meses para notar un crecimiento de su comercio gracias a la fidelización de sus clientes.",
+  faq_q3: "¿La tarjeta de fidelidad es 100 % personalizable?",
+  faq_a3: "Sí, por completo. Personaliza tu logo, tus colores, la imagen de fondo, la forma y el icono de los sellos, el número de sellos a coleccionar y tus recompensas. Tu tarjeta refleja perfectamente la imagen de tu comercio.",
+  faq_q4: "¿Mis clientes tienen que descargar una aplicación?",
+  faq_a4: "No. Tus clientes solo escanean un código QR y su tarjeta se abre directamente en su teléfono, sin ninguna aplicación que instalar. Pueden añadirla a su pantalla de inicio si lo desean.",
+  faq_q5: "¿Cuánto tiempo para obtener una respuesta si tengo una dificultad en mi panel?",
+  faq_a5: "Si tienes dificultad para entender algo en tu panel de administración, obtienes una respuesta en menos de 48 h.",
 };
 
 const DE: T = {
@@ -896,6 +940,17 @@ const DE: T = {
     "Verlauf gespeichert — Sie können zu früheren Jahren zurückkehren.",
   demo_promo_croissants_long: "Croissants -30% heute bis 14 Uhr!",
   demo_recompense_attend: "Ihre Belohnung wartet ✨",
+  faq_titre: "Häufige Fragen",
+  faq_q1: "Wenn ich mehrere Geschäfte habe, kann ich dieselbe Karte verwenden?",
+  faq_a1: "Ja, dieselbe Treuekarte kann in mehreren Geschäften angezeigt werden. Jedes Geschäft benötigt jedoch ein eigenes Abonnement: Ein Abonnement ist einem einzigen Geschäft gewidmet. Bei zwei Geschäften verdoppelt sich das Abonnement also.",
+  faq_q2: "Wie lange dauert es, bis man Ergebnisse sieht?",
+  faq_a2: "Rechnen Sie in der Regel mit 2 bis 3 Monaten, um dank der Kundenbindung ein Wachstum Ihres Geschäfts zu bemerken.",
+  faq_q3: "Ist die Treuekarte zu 100 % anpassbar?",
+  faq_a3: "Ja, vollständig. Sie passen Ihr Logo, Ihre Farben, das Hintergrundbild, die Form und das Symbol der Stempel, die Anzahl der zu sammelnden Stempel sowie Ihre Belohnungen an. Ihre Karte spiegelt das Image Ihres Geschäfts perfekt wider.",
+  faq_q4: "Müssen meine Kunden eine App herunterladen?",
+  faq_a4: "Nein. Ihre Kunden scannen einfach einen QR-Code und ihre Karte öffnet sich direkt auf ihrem Telefon, ohne App-Installation. Sie können sie bei Bedarf zum Startbildschirm hinzufügen.",
+  faq_q5: "Wie lange dauert eine Antwort, wenn ich Schwierigkeiten im Dashboard habe?",
+  faq_a5: "Wenn Sie etwas in Ihrem Verwaltungs-Dashboard nicht verstehen, erhalten Sie in weniger als 48 Stunden eine Antwort.",
 };
 
 const ZH: T = {
@@ -1071,6 +1126,17 @@ const ZH: T = {
   demo_historique_conserve: "保留历史记录 — 您可以查看往年数据。",
   demo_promo_croissants_long: "牛角包今天7折，截至14点！",
   demo_recompense_attend: "您的奖励在等着您 ✨",
+  faq_titre: "常见问题",
+  faq_q1: "如果我有多家商铺，可以使用同一张卡吗？",
+  faq_a1: "可以，同一张会员卡可以在多家商铺展示。但每家商铺都需要各自的订阅：一个订阅专属于一家商铺。因此，两家商铺的订阅费用会翻倍。",
+  faq_q2: "多久才能看到效果？",
+  faq_a2: "一般来说，通过客户忠诚度，约需 2 到 3 个月即可看到您商铺的增长。",
+  faq_q3: "会员卡是否 100% 可定制？",
+  faq_a3: "是的，完全可定制。您可以自定义您的标志、颜色、背景图片、印章的形状和图标、需要收集的印章数量以及奖励。您的卡片将完美体现您商铺的形象。",
+  faq_q4: "我的顾客需要下载应用程序吗？",
+  faq_a4: "不需要。您的顾客只需扫描二维码，卡片便会直接在其手机上打开，无需安装任何应用。如果愿意，他们可以将其添加到主屏幕。",
+  faq_q5: "如果我在管理后台遇到问题，多久能得到回复？",
+  faq_a5: "如果您在管理后台有不明白的地方，您将在 48 小时内获得回复。",
 };
 
 const AR: T = {
@@ -1246,6 +1312,17 @@ const AR: T = {
   demo_historique_conserve: "السجل محفوظ — يمكنك العودة إلى السنوات السابقة.",
   demo_promo_croissants_long: "كرواسون -30% اليوم حتى الساعة 14!",
   demo_recompense_attend: "مكافأتك في انتظارك ✨",
+  faq_titre: "الأسئلة الشائعة",
+  faq_q1: "إذا كان لديّ عدة متاجر، هل يمكنني استخدام نفس البطاقة؟",
+  faq_a1: "نعم، يمكن عرض نفس بطاقة الولاء في عدة متاجر. لكن كل متجر يتطلب اشتراكه الخاص: الاشتراك مخصص لمتجر واحد فقط. لذا مع متجرين يتضاعف الاشتراك.",
+  faq_q2: "كم من الوقت يلزم لرؤية النتائج؟",
+  faq_a2: "بشكل عام، احسب ما بين شهرين إلى ثلاثة أشهر لملاحظة نمو متجرك بفضل ولاء عملائك.",
+  faq_q3: "هل بطاقة الولاء قابلة للتخصيص بنسبة 100%؟",
+  faq_a3: "نعم، بالكامل. يمكنك تخصيص شعارك وألوانك وصورة الخلفية وشكل الأختام وأيقونتها وعدد الأختام المطلوب جمعها ومكافآتك. تعكس بطاقتك صورة متجرك تمامًا.",
+  faq_q4: "هل يحتاج عملائي إلى تنزيل تطبيق؟",
+  faq_a4: "لا. يكتفي عملاؤك بمسح رمز QR وتُفتح بطاقتهم مباشرة على هواتفهم، دون أي تطبيق للتثبيت. ويمكنهم إضافتها إلى الشاشة الرئيسية إذا رغبوا.",
+  faq_q5: "كم من الوقت للحصول على رد إذا واجهت صعوبة في لوحة التحكم؟",
+  faq_a5: "إذا واجهت صعوبة في فهم شيء ما في لوحة التحكم، ستحصل على رد في أقل من 48 ساعة.",
 };
 
 const RU: T = {
@@ -1422,6 +1499,17 @@ const RU: T = {
     "История сохраняется — вы можете вернуться к прошлым годам.",
   demo_promo_croissants_long: "Круассаны -30% сегодня до 14:00!",
   demo_recompense_attend: "Ваша награда ждёт вас ✨",
+  faq_titre: "Частые вопросы",
+  faq_q1: "Если у меня несколько заведений, могу ли я использовать одну карту?",
+  faq_a1: "Да, одну и ту же карту лояльности можно показывать в нескольких заведениях. Однако каждое заведение требует собственной подписки: подписка привязана к одному заведению. С двумя заведениями подписка, соответственно, удваивается.",
+  faq_q2: "Сколько времени нужно, чтобы увидеть результаты?",
+  faq_a2: "Обычно рассчитывайте на 2–3 месяца, чтобы заметить рост вашего заведения благодаря лояльности клиентов.",
+  faq_q3: "Карта лояльности на 100% настраиваемая?",
+  faq_a3: "Да, полностью. Вы настраиваете логотип, цвета, фоновое изображение, форму и иконку штампов, число штампов для сбора, а также награды. Ваша карта идеально отражает образ вашего заведения.",
+  faq_q4: "Нужно ли моим клиентам скачивать приложение?",
+  faq_a4: "Нет. Ваши клиенты просто сканируют QR-код, и их карта открывается прямо на телефоне — без установки приложения. При желании они могут добавить её на главный экран.",
+  faq_q5: "Сколько ждать ответа, если у меня трудность в панели управления?",
+  faq_a5: "Если вам что-то непонятно в панели управления, вы получите ответ менее чем за 48 часов.",
 };
 
 const TRAD: Record<Langue, T> = { fr: FR, en: EN, es: ES, de: DE, zh: ZH, ar: AR, ru: RU };
