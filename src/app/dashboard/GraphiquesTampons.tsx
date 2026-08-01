@@ -71,10 +71,22 @@ function Courbe({
 }) {
   const largeur = 900;
   const maxBrut = Math.max(1, ...valeurs);
-  // Arrondit le max au multiple supérieur "propre" (1,2,5,10,20,50,100…)
-  const puissance = Math.pow(10, Math.floor(Math.log10(maxBrut)));
-  const bases = [1, 2, 5, 10];
-  const max = bases.map((b) => b * puissance).find((v) => v >= maxBrut) ?? maxBrut;
+  // Graduations ENTIÈRES et régulières. On choisit un "pas" propre
+  // (1, 2, 5, 10, 20, 50…) donnant ~5 lignes, puis on arrondit le max au
+  // multiple supérieur de ce pas. Ainsi 0, pas, 2·pas… tombent toujours sur
+  // des entiers : plus de "2" manquant ni de valeur à moitié, et les points
+  // sont pile sur leur graduation.
+  const rough = maxBrut / 5;
+  const pow = Math.pow(10, Math.floor(Math.log10(rough)));
+  const pas = Math.max(
+    1,
+    [1, 2, 5, 10].map((b) => b * pow).find((v) => v >= rough) ?? pow * 10
+  );
+  const max = Math.ceil(maxBrut / pas) * pas;
+  const graduations = Array.from(
+    { length: Math.round(max / pas) + 1 },
+    (_, i) => i * pas
+  );
   const paddingBas = 30;
   const paddingHaut = 28;
   // paddingLat adaptatif : "10 000" prend plus de place que "50"
@@ -100,12 +112,12 @@ function Courbe({
         className="w-full"
         preserveAspectRatio="xMidYMid meet"
       >
-        {/* Grille */}
-        {[0, 1, 2, 3, 4].map((i) => {
-          const y = paddingHaut + (i / 4) * (height - paddingBas - paddingHaut);
-          const valeur = Math.round(max - (i / 4) * max);
+        {/* Grille — une ligne par graduation entière */}
+        {graduations.map((val) => {
+          const y =
+            paddingHaut + (1 - val / max) * (height - paddingBas - paddingHaut);
           return (
-            <g key={i}>
+            <g key={val}>
               <line
                 x1={paddingLat}
                 x2={largeur - 10}
@@ -122,7 +134,7 @@ function Courbe({
                 fill="#78716c"
                 fontWeight={500}
               >
-                {formatNb(valeur)}
+                {formatNb(val)}
               </text>
             </g>
           );
