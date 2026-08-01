@@ -13,7 +13,8 @@
 --   4. Exécute. À lancer UNE SEULE FOIS (relancer ajoute encore des données).
 --
 -- Sécurité : n'insère QUE dans le resto choisi. Les clients démo ont un
--- numéro préfixé « 069000 » pour être facilement repérables/supprimables.
+-- token « demo-... » (repérables/supprimables) et de vrais numéros français
+-- (06/07) réalistes.
 -- =====================================================================
 do $$
 declare
@@ -30,6 +31,9 @@ declare
   i        int;
   j        int;
   v_total  int;
+  v_reco_id  uuid;
+  v_reco_txt text;
+  v_reco_img text;
   v_ids    uuid[] := '{}';
   v_noms   text[] := array[
     'Léa Martin','Hugo Bernard','Emma Dubois','Gabriel Thomas','Jade Robert',
@@ -82,12 +86,14 @@ begin
        date_dernier_tampon, token_cookie, notifications_push_actif, created_at)
     values
       (v_resto,
-       '069000' || lpad(i::text, 4, '0'),
+       -- Vrai numéro français réaliste (06/07), unique par client.
+       '0' || (case when i % 2 = 0 then '6' else '7' end)
+            || lpad(((i * 73421 + 10007) % 100000000)::text, 8, '0'),
        v_noms[1 + ((i - 1) % array_length(v_noms, 1))],
        (random() * (v_requis - 1))::int,
        v_total,
        current_date - (random() * 5)::int,
-       gen_random_uuid()::text,
+       'demo-' || gen_random_uuid()::text,
        true,
        now() - ((random() * v_nb_jours)::int || ' days')::interval)
     on conflict (restaurant_id, numero_telephone) do nothing
@@ -136,6 +142,20 @@ begin
       (v_resto, v_carte, v_client, 1, current_date, now() - (random() * interval '8 hours'));
   end loop;
 
+  -- ---- 2 bis) Récompenses gagnées (en attente) pour du réalisme côté client ----
+  select id, texte, image_url into v_reco_id, v_reco_txt, v_reco_img
+  from public.recompenses where carte_id = v_carte order by created_at asc limit 1;
+  if v_reco_id is not null and array_length(v_ids, 1) is not null then
+    for i in 1..10 loop
+      v_client := v_ids[1 + (random() * (array_length(v_ids, 1) - 1))::int];
+      insert into public.recompenses_gagnees
+        (carte_id, client_id, recompense_id, texte_recompense, image_url, date_gagnee)
+      values
+        (v_carte, v_client, v_reco_id, v_reco_txt, v_reco_img,
+         now() - ((random() * 30)::int || ' days')::interval);
+    end loop;
+  end if;
+
   -- ---- 3) Notifications déjà envoyées (historique du dashboard) ----
   for i in 1..array_length(v_titres, 1) loop
     insert into public.notifications_push
@@ -153,8 +173,9 @@ end $$;
 
 -- =====================================================================
 -- POUR REMETTRE À ZÉRO CE RESTO DÉMO (optionnel) — décommente et exécute
--- en remplaçant le slug. Supprime les clients démo (préfixe 069000),
--- tout l'historique et toutes les notifications de CE resto.
+-- en remplaçant le slug. Supprime les clients démo (token « demo-... »,
+-- ce qui supprime en cascade leurs cartes_clients / récompenses gagnées /
+-- historique lié), plus tout l'historique et toutes les notifications du resto.
 -- =====================================================================
 -- do $$
 -- declare v_resto uuid;
@@ -163,5 +184,5 @@ end $$;
 --   delete from public.notifications_push where restaurant_id = v_resto;
 --   delete from public.tampons_historique where restaurant_id = v_resto;
 --   delete from public.clients_fidelite
---     where restaurant_id = v_resto and numero_telephone like '069000%';
+--     where restaurant_id = v_resto and token_cookie like 'demo-%';
 -- end $$;
