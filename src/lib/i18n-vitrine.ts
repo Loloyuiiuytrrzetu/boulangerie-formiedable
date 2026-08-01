@@ -387,7 +387,7 @@ const FR: T = {
   faq_q3: "La carte de fidélité est-elle 100 % personnalisable ?",
   faq_a3: "Oui, entièrement. Vous personnalisez votre logo, vos couleurs, l'image de fond, la forme et l'icône des tampons, le nombre de tampons à collecter ainsi que vos récompenses. Votre carte reflète parfaitement l'image de votre commerce.",
   faq_q4: "Mes clients doivent-ils télécharger une application ?",
-  faq_a4: "Non. Vos clients scannent simplement un QR code et leur carte s'ouvre directement sur leur téléphone, sans aucune application à installer. Ils peuvent l'ajouter à leur écran d'accueil s'ils le souhaitent.",
+  faq_a4: "Non. Vos clients scannent simplement un QR code et leur carte s'ouvre directement sur leur téléphone, sans aucune application à installer. Ils peuvent l'ajouter à leur écran d'accueil s'ils veulent recevoir des notifications push.",
   faq_q5: "Combien de temps pour obtenir une réponse en cas de difficulté sur mon tableau de bord ?",
   faq_a5: "Si vous rencontrez une difficulté à comprendre quelque chose sur votre tableau de bord administrateur, vous obtenez une réponse en moins de 48h.",
 };
@@ -574,7 +574,7 @@ const EN: T = {
   faq_q3: "Is the loyalty card 100% customizable?",
   faq_a3: "Yes, entirely. You customize your logo, your colors, the background image, the shape and icon of the stamps, the number of stamps to collect and your rewards. Your card perfectly reflects your brand.",
   faq_q4: "Do my customers need to download an app?",
-  faq_a4: "No. Your customers simply scan a QR code and their card opens directly on their phone, with no app to install. They can add it to their home screen if they wish.",
+  faq_a4: "No. Your customers simply scan a QR code and their card opens directly on their phone, with no app to install. They can add it to their home screen if they want to receive push notifications.",
   faq_q5: "How long to get a reply if I have trouble on my dashboard?",
   faq_a5: "If you have trouble understanding something on your admin dashboard, you get a reply in less than 48 hours.",
 };
@@ -761,7 +761,7 @@ const ES: T = {
   faq_q3: "¿La tarjeta de fidelidad es 100 % personalizable?",
   faq_a3: "Sí, por completo. Personaliza tu logo, tus colores, la imagen de fondo, la forma y el icono de los sellos, el número de sellos a coleccionar y tus recompensas. Tu tarjeta refleja perfectamente la imagen de tu comercio.",
   faq_q4: "¿Mis clientes tienen que descargar una aplicación?",
-  faq_a4: "No. Tus clientes solo escanean un código QR y su tarjeta se abre directamente en su teléfono, sin ninguna aplicación que instalar. Pueden añadirla a su pantalla de inicio si lo desean.",
+  faq_a4: "No. Tus clientes solo escanean un código QR y su tarjeta se abre directamente en su teléfono, sin ninguna aplicación que instalar. Pueden añadirla a su pantalla de inicio si quieren recibir notificaciones push.",
   faq_q5: "¿Cuánto tiempo para obtener una respuesta si tengo una dificultad en mi panel?",
   faq_a5: "Si tienes dificultad para entender algo en tu panel de administración, obtienes una respuesta en menos de 48 h.",
 };
@@ -948,7 +948,7 @@ const DE: T = {
   faq_q3: "Ist die Treuekarte zu 100 % anpassbar?",
   faq_a3: "Ja, vollständig. Sie passen Ihr Logo, Ihre Farben, das Hintergrundbild, die Form und das Symbol der Stempel, die Anzahl der zu sammelnden Stempel sowie Ihre Belohnungen an. Ihre Karte spiegelt das Image Ihres Geschäfts perfekt wider.",
   faq_q4: "Müssen meine Kunden eine App herunterladen?",
-  faq_a4: "Nein. Ihre Kunden scannen einfach einen QR-Code und ihre Karte öffnet sich direkt auf ihrem Telefon, ohne App-Installation. Sie können sie bei Bedarf zum Startbildschirm hinzufügen.",
+  faq_a4: "Nein. Ihre Kunden scannen einfach einen QR-Code und ihre Karte öffnet sich direkt auf ihrem Telefon, ohne App-Installation. Sie können sie zum Startbildschirm hinzufügen, wenn sie Push-Benachrichtigungen erhalten möchten.",
   faq_q5: "Wie lange dauert eine Antwort, wenn ich Schwierigkeiten im Dashboard habe?",
   faq_a5: "Wenn Sie etwas in Ihrem Verwaltungs-Dashboard nicht verstehen, erhalten Sie in weniger als 48 Stunden eine Antwort.",
 };
@@ -1134,7 +1134,7 @@ const ZH: T = {
   faq_q3: "会员卡是否 100% 可定制？",
   faq_a3: "是的，完全可定制。您可以自定义您的标志、颜色、背景图片、印章的形状和图标、需要收集的印章数量以及奖励。您的卡片将完美体现您商铺的形象。",
   faq_q4: "我的顾客需要下载应用程序吗？",
-  faq_a4: "不需要。您的顾客只需扫描二维码，卡片便会直接在其手机上打开，无需安装任何应用。如果愿意，他们可以将其添加到主屏幕。",
+  faq_a4: "不需要。您的顾客只需扫描二维码，卡片便会直接在其手机上打开，无需安装任何应用。如果他们想接收推送通知，可以将其添加到主屏幕。",
   faq_q5: "如果我在管理后台遇到问题，多久能得到回复？",
   faq_a5: "如果您在管理后台有不明白的地方，您将在 48 小时内获得回复。",
 };
@@ -1320,7 +1320,7 @@ const AR: T = {
   faq_q3: "هل بطاقة الولاء قابلة للتخصيص بنسبة 100%؟",
   faq_a3: "نعم، بالكامل. يمكنك تخصيص شعارك وألوانك وصورة الخلفية وشكل الأختام وأيقونتها وعدد الأختام المطلوب جمعها ومكافآتك. تعكس بطاقتك صورة متجرك تمامًا.",
   faq_q4: "هل يحتاج عملائي إلى تنزيل تطبيق؟",
-  faq_a4: "لا. يكتفي عملاؤك بمسح رمز QR وتُفتح بطاقتهم مباشرة على هواتفهم، دون أي تطبيق للتثبيت. ويمكنهم إضافتها إلى الشاشة الرئيسية إذا رغبوا.",
+  faq_a4: "لا. يكتفي عملاؤك بمسح رمز QR وتُفتح بطاقتهم مباشرة على هواتفهم، دون أي تطبيق للتثبيت. ويمكنهم إضافتها إلى الشاشة الرئيسية إذا رغبوا في تلقّي الإشعارات.",
   faq_q5: "كم من الوقت للحصول على رد إذا واجهت صعوبة في لوحة التحكم؟",
   faq_a5: "إذا واجهت صعوبة في فهم شيء ما في لوحة التحكم، ستحصل على رد في أقل من 48 ساعة.",
 };
@@ -1507,7 +1507,7 @@ const RU: T = {
   faq_q3: "Карта лояльности на 100% настраиваемая?",
   faq_a3: "Да, полностью. Вы настраиваете логотип, цвета, фоновое изображение, форму и иконку штампов, число штампов для сбора, а также награды. Ваша карта идеально отражает образ вашего заведения.",
   faq_q4: "Нужно ли моим клиентам скачивать приложение?",
-  faq_a4: "Нет. Ваши клиенты просто сканируют QR-код, и их карта открывается прямо на телефоне — без установки приложения. При желании они могут добавить её на главный экран.",
+  faq_a4: "Нет. Ваши клиенты просто сканируют QR-код, и их карта открывается прямо на телефоне — без установки приложения. Если они хотят получать push-уведомления, они могут добавить её на главный экран.",
   faq_q5: "Сколько ждать ответа, если у меня трудность в панели управления?",
   faq_a5: "Если вам что-то непонятно в панели управления, вы получите ответ менее чем за 48 часов.",
 };
