@@ -25,12 +25,20 @@ export function TelechargerQr({
       const blob = await (await fetch(dataUrl)).blob();
       const file = new File([blob], filename, { type: "image/png" });
 
-      // Mobile : partage natif (permet d'enregistrer dans Photos / Fichiers).
+      // MOBILE uniquement : partage natif (permet d'enregistrer dans Photos /
+      // Fichiers, seul moyen fiable sur iPhone). Sur ORDINATEUR (dont
+      // Chromebook), on NE passe PAS par le partage — qui y ouvre une feuille
+      // « Partager » au lieu de télécharger — mais par le téléchargement
+      // direct ci-dessous.
+      const ua = navigator.userAgent;
+      const estMobile =
+        /Android|iPhone|iPad|iPod/i.test(ua) ||
+        (navigator.maxTouchPoints > 1 && /Macintosh/.test(ua)); // iPad récent
       const nav = navigator as Navigator & {
         canShare?: (data?: { files?: File[] }) => boolean;
         share?: (data?: { files?: File[]; title?: string }) => Promise<void>;
       };
-      if (nav.canShare?.({ files: [file] }) && nav.share) {
+      if (estMobile && nav.canShare?.({ files: [file] }) && nav.share) {
         try {
           await nav.share({ files: [file], title: filename });
         } catch {
