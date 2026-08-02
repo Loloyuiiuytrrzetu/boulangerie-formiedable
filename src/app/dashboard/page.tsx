@@ -75,7 +75,7 @@ export default async function Dashboard() {
         .order("created_at", { ascending: true }),
       supabase
         .from("clients_fidelite")
-        .select("tampons_total")
+        .select("id", { count: "exact", head: true })
         .eq("restaurant_id", restaurant.id),
       supabase
         .from("sous_comptes")
@@ -100,7 +100,7 @@ export default async function Dashboard() {
 
     cartes = (resCartes.data as Carte[]) ?? [];
     recompenses = (resRecompenses.data as Recompense[]) ?? [];
-    nbClients = resClients.data?.length ?? 0;
+    nbClients = resClients.count ?? 0;
     // Tampons distribués aujourd'hui uniquement, selon le fuseau horaire du
     // commerce. Chaque jour à minuit local, ce compteur repart de zéro tout
     // seul — sans opération de maintenance, c'est un filtre à la lecture.

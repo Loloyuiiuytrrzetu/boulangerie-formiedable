@@ -26,8 +26,7 @@
 do $$
 declare
   v_slug        text := 'cafe-d-or';  -- <<< slug de Top Burger (page /c/cafe-d-or)
-  v_nb_clients  int  := 320;  -- nombre de clients démo (base réaliste)
-  v_nb_jours    int  := 90;   -- profondeur de l'historique (jours)
+  v_nb_clients  int  := 1800; -- grande base de clients (cohérente avec le volume)
 
   v_resto   uuid;
   v_carte   uuid;
@@ -37,6 +36,7 @@ declare
   v_debut   date;
   v_fin     date;
   v_rows    int;
+  v_target  int;
   i         int;
   j         int;
   v_total   int;
@@ -100,7 +100,7 @@ begin
   -- ---- 1) Clients démo (+ progression). ~70 % ont activé les notifs. ----
   for i in 1..v_nb_clients loop
     v_client := null;
-    v_total  := 4 + (random() * 90)::int;
+    v_total  := 3 + (random() * 45)::int;   -- cumul par client (cohérent avec le total)
     v_actif  := random() < 0.7;   -- 70 % activent les notifications, 30 % non
     insert into public.clients_fidelite
       (restaurant_id, numero_telephone, identite, tampons_actuels, tampons_total,
@@ -146,25 +146,44 @@ begin
   from public.clients_fidelite
   where restaurant_id = v_resto and notifications_push_actif = true;
 
-  -- ---- 2) Historique des tampons (tendance croissante + week-ends forts) ----
-  -- Volume modéré (~700 tampons, sous le plafond de lecture de Supabase),
-  -- réparti sur chaque jour des 5 mois complets (mars → juillet). Le mois en
-  -- cours (août) ne reçoit AUCUN tampon → il reste à 0, comme un mois qui
-  -- vient de commencer.
+  -- ---- 2) Historique des tampons (gros volume, tendance croissante) ----
+  -- Une VRAIE boulangerie fait ~500 passages/jour. Pour rester SOUS le plafond
+  -- de lecture de Supabase (~1000 lignes) tout en affichant des vrais chiffres,
+  -- on agrège : UNE ligne par jour dont « nombre » = le total de tampons du jour
+  -- (ex. ~130 au début → ~500 en fin de période, + week-ends renforcés). Le
+  -- dashboard additionne la colonne « nombre », donc le graphique du mois grimpe
+  -- doucement et dépasse largement 1000 tampons/mois.
+  --   • v_target = base croissante + bonus week-end + un peu d'aléa.
+  -- Le mois en cours (ex. août) ne reçoit AUCUN tampon → il reste à 0, comme un
+  -- mois qui vient de commencer.
   for v_jour in
     select gs::date
     from generate_series(v_debut::timestamp, v_fin::timestamp, interval '1 day') gs
   loop
-    v_rows := 3
-            + (case when extract(dow from v_jour) in (0, 6) then 2 else 0 end)  -- bonus week-end
-            + (random() * 4)::int;
-    for i in 1..v_rows loop
-      v_client := v_ids[1 + (random() * (array_length(v_ids, 1) - 1))::int];
-      insert into public.tampons_historique
-        (restaurant_id, carte_id, client_id, nombre, date_attribution, created_at)
-      values
-        (v_resto, v_carte, v_client, 1, v_jour, v_jour + (random() * interval '12 hours'));
-    end loop;
+    v_target := (
+        130
+      + 360.0 * ((v_jour - v_debut)::float / greatest(1, (v_fin - v_debut)))  -- montée douce ~130 → ~490
+      + (case when extract(dow from v_jour) in (0, 6) then 80 else 0 end)      -- week-ends renforcés
+      + random() * 60                                                          -- variation naturelle
+    )::int;
+    v_client := v_ids[1 + (random() * (array_length(v_ids, 1) - 1))::int];
+    insert into public.tampons_historique
+      (restaurant_id, carte_id, client_id, nombre, date_attribution, created_at)
+    values
+      (v_resto, v_carte, v_client, v_target, v_jour, v_jour + interval '12 hours');
+  end loop;
+
+  -- Dernier jour (le plus récent avec des données) : ~90 passages en lignes
+  -- INDIVIDUELLES pour alimenter la liste « Derniers tampons donnés » (chaque
+  -- ligne = un client, une heure réaliste). On les met sur v_fin (dernier jour
+  -- du mois précédent) et non aujourd'hui, pour que le mois en cours reste à 0.
+  for i in 1..90 loop
+    v_client := v_ids[1 + (random() * (array_length(v_ids, 1) - 1))::int];
+    insert into public.tampons_historique
+      (restaurant_id, carte_id, client_id, nombre, date_attribution, created_at)
+    values
+      (v_resto, v_carte, v_client, 1, v_fin,
+       v_fin::timestamptz + interval '7 hours' + (random() * interval '11 hours'));
   end loop;
 
   -- ---- 2 bis) Récompenses gagnées (en attente) pour du réalisme côté client ----
