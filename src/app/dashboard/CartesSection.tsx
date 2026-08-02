@@ -391,15 +391,6 @@ function BlocCarte({
     });
   }
 
-  function retirerTampon() {
-    if (!window.confirm(t("supprimer") + " ?")) return;
-    startTransition(async () => {
-      const r = await retirerImageTampon(carte.id);
-      if (r?.erreur) setErreur(r.erreur);
-      else router.refresh();
-    });
-  }
-
   function nouvelleRecompense(formData: FormData) {
     setErreur(null);
     startTransition(async () => {
@@ -454,7 +445,7 @@ function BlocCarte({
         <div className="border-t border-stone-100 px-5 py-5">
           <form key={`${carte.id}-${carte.tampon_icone}-${carte.tampon_forme}`} action={enregistrer}>
             <ChampsCarte carte={carte} />
-            <div className="mt-4 flex items-center gap-3">
+            <div className="mt-4 flex flex-wrap items-center gap-3">
               <button
                 type="submit"
                 disabled={enCours}
@@ -462,25 +453,15 @@ function BlocCarte({
               >
                 {t("enregistrer")}
               </button>
-              {carte.tampon_image_url && (
-                <button
-                  type="button"
-                  onClick={retirerTampon}
-                  disabled={enCours}
-                  className="rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-stone-600 transition hover:bg-stone-100 disabled:opacity-60"
-                >
-                  {t("supprimer")}
-                </button>
-              )}
               <button
                 type="button"
                 onClick={supprimer}
                 disabled={enCours}
                 className="rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-60"
               >
-                {t("supprimer")}
+                🗑 {t("supprimer_la_carte")}
               </button>
-              {succes && <span className="text-sm text-green-600">{t("enregistre")}</span>}
+              {succes && <span className="text-sm text-green-600">✓ {t("enregistre")}</span>}
             </div>
           </form>
 

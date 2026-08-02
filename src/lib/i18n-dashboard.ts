@@ -85,6 +85,7 @@ type CleDash =
   | "hexagone"
   | "etoile"
   | "confirmer_suppression_carte"
+  | "supprimer_la_carte"
   | "confirmer_suppression_recompense"
   | "expiree"
   | "expire_le"
@@ -276,6 +277,7 @@ const FR: Traductions = {
   hexagone: "Hexagone",
   etoile: "Étoile",
   confirmer_suppression_carte: "Supprimer cette carte ? Tous les tampons et récompenses associés seront perdus.",
+  supprimer_la_carte: "Supprimer la carte",
   confirmer_suppression_recompense: "Supprimer cette récompense ?",
   expiree: "⚠️ expirée",
   expire_le: "expire le",
@@ -463,6 +465,7 @@ const EN: Traductions = {
   hexagone: "Hexagon",
   etoile: "Star",
   confirmer_suppression_carte: "Delete this card? All associated stamps and rewards will be lost.",
+  supprimer_la_carte: "Delete card",
   confirmer_suppression_recompense: "Delete this reward?",
   expiree: "⚠️ expired",
   expire_le: "expires on",
@@ -650,6 +653,7 @@ const ES: Traductions = {
   hexagone: "Hexágono",
   etoile: "Estrella",
   confirmer_suppression_carte: "¿Eliminar esta tarjeta? Todos los sellos y recompensas asociados se perderán.",
+  supprimer_la_carte: "Eliminar la tarjeta",
   confirmer_suppression_recompense: "¿Eliminar esta recompensa?",
   expiree: "⚠️ expirada",
   expire_le: "expira el",
@@ -837,6 +841,7 @@ const DE: Traductions = {
   hexagone: "Sechseck",
   etoile: "Stern",
   confirmer_suppression_carte: "Diese Karte löschen? Alle zugehörigen Stempel und Belohnungen gehen verloren.",
+  supprimer_la_carte: "Karte löschen",
   confirmer_suppression_recompense: "Diese Belohnung löschen?",
   expiree: "⚠️ abgelaufen",
   expire_le: "läuft ab am",
@@ -1023,6 +1028,7 @@ const ZH: Traductions = {
   hexagone: "六边形",
   etoile: "星形",
   confirmer_suppression_carte: "删除此卡片？所有相关印章和奖励将丢失。",
+  supprimer_la_carte: "删除卡片",
   confirmer_suppression_recompense: "删除此奖励？",
   expiree: "⚠️ 已过期",
   expire_le: "到期日",
@@ -1208,6 +1214,7 @@ const AR: Traductions = {
   hexagone: "سداسي",
   etoile: "نجمة",
   confirmer_suppression_carte: "حذف هذه البطاقة؟ ستفقد جميع الأختام والمكافآت المرتبطة.",
+  supprimer_la_carte: "حذف البطاقة",
   confirmer_suppression_recompense: "حذف هذه المكافأة؟",
   expiree: "⚠️ منتهية",
   expire_le: "تنتهي في",
@@ -1395,6 +1402,7 @@ const RU: Traductions = {
   hexagone: "Шестиугольник",
   etoile: "Звезда",
   confirmer_suppression_carte: "Удалить эту карту? Все связанные печати и награды будут потеряны.",
+  supprimer_la_carte: "Удалить карту",
   confirmer_suppression_recompense: "Удалить эту награду?",
   expiree: "⚠️ истекла",
   expire_le: "истекает",
