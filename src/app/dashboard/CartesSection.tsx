@@ -12,7 +12,7 @@ import {
   supprimerCarte,
   supprimerRecompense,
 } from "./actions";
-import { TAMPON_ICONES, iconeEmoji } from "@/lib/icons";
+import { iconeEmoji } from "@/lib/icons";
 import type { Carte, Recompense } from "@/lib/types";
 import { compresserChampsImage } from "@/lib/compresser-image";
 import { useTDash } from "@/lib/langue-dashboard";
@@ -63,10 +63,11 @@ function ChampsCarte({
   const [retraitEnCours, startRetrait] = useTransition();
   const [imageRetiree, setImageRetiree] = useState(false);
   const [dateExp, setDateExp] = useState(carte?.date_expiration ?? "");
-  const [icone, setIcone] = useState(carte?.tampon_icone ?? "cafe");
-  const [emojiCustom, setEmojiCustom] = useState(
-    carte?.tampon_icone?.startsWith("custom:") ? carte.tampon_icone.slice(7) : ""
-  );
+  // Icône du tampon : un seul champ emoji, l'emoji saisi est la source de
+  // vérité (on le stocke sous la forme "custom:<emoji>").
+  const emojiInitial = carte?.tampon_icone ? iconeEmoji(carte.tampon_icone) : "☕";
+  const [emojiCustom, setEmojiCustom] = useState(emojiInitial);
+  const [icone, setIcone] = useState(`custom:${emojiInitial}`);
   const [forme, setForme] = useState<"carre" | "cercle" | "hexagone" | "etoile">(
     carte?.tampon_forme ?? "carre"
   );
@@ -96,64 +97,32 @@ function ChampsCarte({
             ⚠️ {t("image_tampon")}
           </p>
         )}
-        {/* Palette d'icônes prédéfinies (scrollable) */}
+        {/* Un seul champ : le restaurateur saisit l'emoji de son choix
+            (via le clavier emoji de son téléphone/ordinateur). */}
         <div
-          className={`max-h-56 overflow-y-auto rounded-xl border border-stone-200 bg-stone-50 p-2 ${
+          className={`flex items-center gap-3 ${
             carte?.tampon_image_url ? "pointer-events-none opacity-40" : ""
           }`}
         >
-          <div className="grid grid-cols-6 gap-2 sm:grid-cols-8">
-            {Object.entries(TAMPON_ICONES).map(([cle, { emoji, label }]) => (
-              <button
-                key={cle}
-                type="button"
-                title={label}
-                onClick={() => {
-                  setIcone(cle);
-                  setEmojiCustom("");
-                }}
-                className={`flex h-11 items-center justify-center rounded-xl border text-xl transition ${
-                  icone === cle
-                    ? "border-bordeaux-700 bg-bordeaux-50 ring-2 ring-bordeaux-200"
-                    : "border-stone-200 bg-white hover:border-stone-300"
-                }`}
-              >
-                {emoji}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Emoji personnalisé — n'importe quel emoji que le clavier permet */}
-        <div className="mt-3 rounded-xl border border-stone-200 bg-white p-3">
-          <p className="text-xs font-semibold text-stone-700">
-            {t("icone_tampon")} (emoji)
-          </p>
-          <div className="mt-2 flex items-center gap-2">
-            <input
-              type="text"
-              maxLength={4}
-              value={emojiCustom}
-              onChange={(e) => {
-                const val = e.target.value;
-                setEmojiCustom(val);
-                if (val.trim()) setIcone(`custom:${val.trim()}`);
-              }}
-              placeholder="🍔"
-              className="w-24 rounded-lg border border-stone-300 px-3 py-2 text-center text-xl focus:border-bordeaux-500 focus:outline-none"
-            />
-            {emojiCustom.trim() && (
-              <span
-                className={`flex h-11 items-center justify-center rounded-xl border px-3 text-xl ${
-                  icone === `custom:${emojiCustom.trim()}`
-                    ? "border-bordeaux-700 bg-bordeaux-50 ring-2 ring-bordeaux-200"
-                    : "border-stone-200 bg-white"
-                }`}
-              >
-                {emojiCustom}
-              </span>
-            )}
-          </div>
+          <input
+            type="text"
+            maxLength={4}
+            value={emojiCustom}
+            onChange={(e) => {
+              const val = e.target.value;
+              setEmojiCustom(val);
+              if (val.trim()) setIcone(`custom:${val.trim()}`);
+            }}
+            placeholder="🍔"
+            aria-label={t("icone_tampon")}
+            className="w-20 rounded-xl border border-stone-300 px-3 py-2.5 text-center text-2xl focus:border-bordeaux-500 focus:outline-none"
+          />
+          <span
+            aria-hidden
+            className="flex h-12 w-12 items-center justify-center rounded-xl border border-stone-200 bg-white text-2xl"
+          >
+            {emojiCustom.trim() || "🍔"}
+          </span>
         </div>
 
         {/* Image personnalisée (remplace l'icône si présente) */}
