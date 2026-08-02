@@ -39,19 +39,21 @@ export function GuideUtilisation({ guides }: { guides: GuideVideo[] }) {
       </h2>
       <p className="mt-1 text-sm text-stone-500">{DESC[langue] ?? DESC.fr}</p>
 
-      <div className="mt-5 grid gap-5 sm:grid-cols-2">
+      {/* Rangée de petites vidéos carrées que l'on fait défiler
+          horizontalement (comme un carrousel). Chaque vidéo se lit en plein
+          écran au tap. */}
+      <div className="-mx-2 mt-5 flex snap-x gap-4 overflow-x-auto px-2 pb-2">
         {guides.map((g) => (
-          <div key={g.id}>
-            <p className="mb-2 text-sm font-semibold text-stone-800">
-              {g.titre}
-            </p>
+          <div key={g.id} className="w-44 shrink-0 snap-start">
             <video
               src={g.video_url}
               controls
               preload="metadata"
-              playsInline
-              className="w-full rounded-xl border border-stone-200 bg-black"
+              className="h-44 w-44 rounded-xl border border-stone-200 bg-black object-cover"
             />
+            <p className="mt-2 truncate text-sm font-semibold text-stone-800">
+              {g.titre}
+            </p>
           </div>
         ))}
       </div>
