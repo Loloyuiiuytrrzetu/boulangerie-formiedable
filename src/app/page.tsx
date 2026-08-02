@@ -195,7 +195,7 @@ function VitrineContenu() {
       </section>
 
       {/* ==================== COMMENT ÇA MARCHE ==================== */}
-      <section id="comment" className="py-20 sm:py-28">
+      <section id="comment" className="scroll-mt-20 py-20 sm:py-28">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="text-center">
             <p className="text-sm font-bold uppercase tracking-widest text-bordeaux-700">{t("cm_eyebrow")}</p>
@@ -297,7 +297,7 @@ function VitrineContenu() {
       </section>
 
       {/* ==================== FONCTIONNALITÉS ==================== */}
-      <section id="fonctions" className="py-20 sm:py-28">
+      <section id="fonctions" className="scroll-mt-20 py-20 sm:py-28">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="text-center">
             <p className="text-sm font-bold uppercase tracking-widest text-bordeaux-700">{t("fc_eyebrow")}</p>
@@ -350,7 +350,7 @@ function VitrineContenu() {
       </section>
 
       {/* ==================== TARIF ==================== */}
-      <section id="tarif" className="py-20 sm:py-28">
+      <section id="tarif" className="scroll-mt-20 py-20 sm:py-28">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="text-center">
             <p className="text-sm font-bold uppercase tracking-widest text-bordeaux-700">{t("tarif_eyebrow")}</p>
@@ -459,7 +459,7 @@ function VitrineContenu() {
       </section>
 
       {/* ==================== SITES WEB SUR MESURE ==================== */}
-      <section id="sites-web" className="relative overflow-hidden border-y border-bordeaux-100 bg-gradient-to-br from-bordeaux-50/60 via-white to-white py-20 sm:py-28">
+      <section id="sites-web" className="scroll-mt-20 relative overflow-hidden border-y border-bordeaux-100 bg-gradient-to-br from-bordeaux-50/60 via-white to-white py-20 sm:py-28">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="mx-auto max-w-3xl text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-bordeaux-200 bg-white px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-bordeaux-800 shadow-sm">
@@ -510,7 +510,7 @@ function VitrineContenu() {
       </section>
 
       {/* ==================== CONTACT ==================== */}
-      <section id="contact" className="relative overflow-hidden border-t border-stone-100 bg-gradient-to-br from-white via-bordeaux-50/30 to-white py-20 sm:py-28">
+      <section id="contact" className="scroll-mt-20 relative overflow-hidden border-t border-stone-100 bg-gradient-to-br from-white via-bordeaux-50/30 to-white py-20 sm:py-28">
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
           <p className="text-sm font-bold uppercase tracking-widest text-bordeaux-700">{t("ct_eyebrow")}</p>
           <h2 className="mt-3 text-3xl font-extrabold text-stone-900 sm:text-5xl">{t("ct_titre")}</h2>
@@ -545,7 +545,7 @@ function VitrineContenu() {
       </section>
 
       {/* ==================== FAQ ==================== */}
-      <section id="faq" className="border-t border-stone-100 bg-white py-20 sm:py-28">
+      <section id="faq" className="scroll-mt-20 border-t border-stone-100 bg-white py-20 sm:py-28">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <h2 className="text-center text-3xl font-extrabold text-stone-900 sm:text-5xl">
             {t("faq_titre")}

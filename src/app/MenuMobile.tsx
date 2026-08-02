@@ -22,6 +22,26 @@ export function MenuMobile() {
     }
   }, [ouvert]);
 
+  // Navigation vers une section : on ferme le menu puis on scrolle nous-mêmes
+  // avec le bon décalage (barre fixe). Sinon le saut d'ancre natif se produit
+  // pendant que le <body> est en overflow:hidden (menu ouvert) → on atterrit
+  // trop bas, le titre passe sous la barre.
+  const HAUTEUR_BARRE = 68;
+  function naviguer(e: React.MouseEvent, href: string) {
+    const id = href.replace("#", "");
+    const el =
+      typeof document !== "undefined" ? document.getElementById(id) : null;
+    if (!el) return;
+    e.preventDefault();
+    setOuvert(false);
+    setTimeout(() => {
+      const cible =
+        el.getBoundingClientRect().top + window.scrollY - HAUTEUR_BARRE;
+      window.scrollTo({ top: Math.max(0, cible), behavior: "smooth" });
+      if (typeof history !== "undefined") history.replaceState(null, "", href);
+    }, 90);
+  }
+
   const LIENS = [
     { href: "#comment", label: t("nav_comment"), icone: "🚀" },
     { href: "#fonctions", label: t("nav_fonctions"), icone: "✨" },
@@ -98,7 +118,7 @@ export function MenuMobile() {
                 <a
                   key={l.href}
                   href={l.href}
-                  onClick={() => setOuvert(false)}
+                  onClick={(e) => naviguer(e, l.href)}
                   className="mb-1 flex items-center gap-3 rounded-xl px-4 py-3.5 text-base font-semibold text-white/90 transition hover:bg-white/10 hover:text-white active:bg-white/15"
                 >
                   <span className="text-xl">{l.icone}</span>

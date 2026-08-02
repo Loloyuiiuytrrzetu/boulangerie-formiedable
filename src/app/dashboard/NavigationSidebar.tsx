@@ -40,6 +40,32 @@ export function NavigationSidebar({
     });
   }
 
+  // Navigation vers une section depuis le menu burger (mobile).
+  // On NE laisse PAS le navigateur faire le saut d'ancre natif : au moment du
+  // clic, le menu est ouvert et le <body> est en overflow:hidden, ce qui
+  // fausse complètement la position finale (on atterrit trop bas, le titre
+  // passe sous la barre fixe). On ferme le menu, puis on scrolle nous-mêmes
+  // vers l'élément avec le bon décalage (hauteur de la barre fixe).
+  const HAUTEUR_BARRE = 68; // barre fixe (~57px) + petite marge
+  function naviguer(e: React.MouseEvent, href: string) {
+    const id = href.replace("#", "");
+    const el =
+      typeof document !== "undefined" ? document.getElementById(id) : null;
+    if (!el) return; // au pire, comportement par défaut
+    e.preventDefault();
+    setMenuOuvert(false);
+    // Attend le retrait de overflow:hidden (fermeture du menu) avant de
+    // mesurer et scroller, sinon la mesure est faussée.
+    setTimeout(() => {
+      const cible =
+        el.getBoundingClientRect().top + window.scrollY - HAUTEUR_BARRE;
+      window.scrollTo({ top: Math.max(0, cible), behavior: "smooth" });
+      if (typeof history !== "undefined") {
+        history.replaceState(null, "", href);
+      }
+    }, 90);
+  }
+
   const items = [
     { href: "#graphiques", label: t("graphiques"), icone: "📊" },
     { href: "#commerce", label: t("mon_commerce"), icone: "🏪" },
@@ -151,7 +177,7 @@ export function NavigationSidebar({
                 <a
                   key={item.href}
                   href={item.href}
-                  onClick={() => setMenuOuvert(false)}
+                  onClick={(e) => naviguer(e, item.href)}
                   className="mb-1 flex items-center gap-3 rounded-xl px-4 py-3.5 text-base font-semibold text-white/90 transition hover:bg-white/10 hover:text-white active:bg-white/15"
                 >
                   <span className="text-xl">{item.icone}</span>
