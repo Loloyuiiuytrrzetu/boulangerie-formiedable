@@ -22,6 +22,9 @@ export function ClientsSection({
   parPage: number;
 }) {
   const t = useTDash();
+  // Liste repliée par défaut : avec des milliers de clients, elle est trop
+  // longue. Le restaurateur la déplie quand il en a besoin.
+  const [ouvert, setOuvert] = useState(false);
   const [clients, setClients] = useState<ClientListe[]>(clientsInitiaux);
   const [total, setTotal] = useState(totalInitial);
   const [page, setPage] = useState(0);
@@ -56,8 +59,10 @@ export function ClientsSection({
     []
   );
 
-  // Rafraîchissement automatique + au retour sur l'onglet.
+  // Rafraîchissement automatique + au retour sur l'onglet. Uniquement quand la
+  // liste est dépliée (inutile de solliciter le serveur si elle est masquée).
   useEffect(() => {
+    if (!ouvert) return;
     const id = setInterval(() => charger(pageRef.current, true), RAFRAICHIR_MS);
     const surFocus = () => {
       if (document.visibilityState === "visible") charger(pageRef.current, true);
@@ -67,7 +72,7 @@ export function ClientsSection({
       clearInterval(id);
       document.removeEventListener("visibilitychange", surFocus);
     };
-  }, [charger]);
+  }, [charger, ouvert]);
 
   function allerA(p: number) {
     if (p < 0 || p >= nbPages || enCours) return;
@@ -103,15 +108,29 @@ export function ClientsSection({
 
   return (
     <section className="rounded-2xl border border-stone-200 bg-white p-5 sm:p-6">
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="text-lg font-bold text-stone-900">👤 {t("mes_clients")}</h2>
+      <button
+        type="button"
+        onClick={() => setOuvert((v) => !v)}
+        className="flex w-full flex-wrap items-baseline justify-between gap-2 text-left"
+      >
+        <span className="flex items-baseline gap-2">
+          <h2 className="text-lg font-bold text-stone-900">
+            👤 {t("mes_clients")}
+          </h2>
+          <span className="text-xs font-semibold text-stone-500">
+            {ouvert ? `▲ ${t("reduire_liste")}` : `▼ ${t("afficher_liste")}`}
+          </span>
+        </span>
         <span className="text-sm font-medium text-stone-500">
           {t("clients_au_total", { n: String(total) })}
         </span>
-      </div>
-      <p className="mt-1 text-sm text-stone-500">{t("mes_clients_desc")}</p>
+      </button>
 
-      {clients.length === 0 ? (
+      {ouvert && (
+        <p className="mt-2 text-sm text-stone-500">{t("mes_clients_desc")}</p>
+      )}
+
+      {!ouvert ? null : clients.length === 0 ? (
         <p className="mt-6 rounded-xl bg-stone-50 px-4 py-8 text-center text-sm text-stone-500">
           {t("aucun_client")}
         </p>

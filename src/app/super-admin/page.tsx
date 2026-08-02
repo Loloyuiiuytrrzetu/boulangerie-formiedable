@@ -89,7 +89,7 @@ export default async function SuperAdmin() {
     new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 }).format(n);
 
   return (
-    <main className="min-h-screen bg-stone-50">
+    <main className="min-h-screen overflow-x-hidden bg-stone-50">
       <header className="border-b border-stone-200 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
@@ -150,8 +150,8 @@ export default async function SuperAdmin() {
           </div>
         </section>
 
-        <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
-          <section className="rounded-2xl border border-stone-200 bg-white">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+          <section className="min-w-0 rounded-2xl border border-stone-200 bg-white">
             <h2 className="border-b border-stone-100 px-6 py-4 font-bold text-stone-900">
               Restaurants ({lignes.length})
             </h2>
