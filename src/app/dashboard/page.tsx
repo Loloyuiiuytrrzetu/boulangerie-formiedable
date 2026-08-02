@@ -4,6 +4,7 @@ import Link from "next/link";
 import type {
   Carte,
   ClientListe,
+  GuideVideo,
   Recompense,
   Restaurant,
   Section,
@@ -22,6 +23,7 @@ import { BandeauImpersonation } from "./BandeauImpersonation";
 import { NavigationSidebar } from "./NavigationSidebar";
 import { ClientsSection } from "./ClientsSection";
 import { TelechargerQr } from "./TelechargerQr";
+import { GuideUtilisation } from "./GuideUtilisation";
 import { assurerSectionsParDefaut } from "@/lib/sections";
 import { NotificationsPushSection, type NotificationPush } from "./NotificationsPushSection";
 import { AbonnementSection } from "./AbonnementSection";
@@ -53,6 +55,7 @@ export default async function Dashboard() {
   let sections: Section[] = [];
   let sousCompte: SousCompte | null = null;
   let stats: StatsTampons = { parJour: {}, parMois: [] };
+  let guides: GuideVideo[] = [];
   let notificationsPush: NotificationPush[] = [];
   let premiersClients: ClientListe[] = [];
   let nbClients = 0;
@@ -126,6 +129,14 @@ export default async function Dashboard() {
       .order("created_at", { ascending: false })
       .limit(50);
     notificationsPush = (resNotifs as NotificationPush[]) ?? [];
+
+    // Guide d'utilisation (vidéos gérées par le super admin) — commun à tous
+    // les restaurateurs, affiché en bas du dashboard.
+    const { data: resGuides } = await supabase
+      .from("guides_video")
+      .select("*")
+      .order("ordre", { ascending: true });
+    guides = (resGuides as GuideVideo[]) ?? [];
 
     // Première page de la liste des clients (les suivantes sont chargées à la
     // demande côté client via l'action listerClients).
@@ -303,6 +314,8 @@ export default async function Dashboard() {
                   />
                 )}
               </aside>
+
+              <GuideUtilisation guides={guides} />
               </div>
             </div>
           </>

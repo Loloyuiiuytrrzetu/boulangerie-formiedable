@@ -127,6 +127,15 @@ export type Section = {
   created_at: string;
 };
 
+export type GuideVideo = {
+  id: string;
+  titre: string;
+  video_url: string;
+  chemin: string | null;
+  ordre: number;
+  created_at: string;
+};
+
 export type RecompenseGagnee = {
   id: string;
   carte_id: string;

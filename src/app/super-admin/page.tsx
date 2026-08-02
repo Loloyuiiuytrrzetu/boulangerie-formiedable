@@ -5,6 +5,8 @@ import type { Restaurant } from "@/lib/types";
 import { BoutonDeconnexion } from "../dashboard/BoutonDeconnexion";
 import { CreerRestaurateurForm } from "./CreerRestaurateurForm";
 import { LigneRestaurant } from "./LigneRestaurant";
+import { GuidesVideoSection } from "./GuidesVideoSection";
+import type { GuideVideo } from "@/lib/types";
 
 export type RestaurantAvecStats = Restaurant & {
   email: string;
@@ -37,6 +39,12 @@ export default async function SuperAdmin() {
   const { data: clients } = await admin
     .from("clients_fidelite")
     .select("restaurant_id, tampons_total");
+
+  const { data: guides } = await admin
+    .from("guides_video")
+    .select("*")
+    .order("ordre", { ascending: true })
+    .returns<GuideVideo[]>();
 
   const { data: utilisateurs } = await admin.auth.admin.listUsers({
     perPage: 1000,
@@ -163,6 +171,8 @@ export default async function SuperAdmin() {
 
           <CreerRestaurateurForm />
         </div>
+
+        <GuidesVideoSection guides={guides ?? []} />
       </div>
     </main>
   );
