@@ -39,12 +39,15 @@ function prochainePrelevementDepuis(
 
 function formatDate(iso: string | null, timezone: string): string {
   if (!iso) return "—";
+  const d = new Date(iso);
+  // Intl.format lève une exception sur une date invalide → on se protège.
+  if (isNaN(d.getTime())) return "—";
   return new Intl.DateTimeFormat("fr-FR", {
     timeZone: timezone,
     day: "2-digit",
     month: "long",
     year: "numeric",
-  }).format(new Date(iso));
+  }).format(d);
 }
 
 export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
@@ -80,14 +83,16 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
   // Jour (et mois pour l'annuel) du prélèvement, pour afficher la récurrence
   // (ex. « le 8 de chaque mois »), dans la langue du dashboard.
   const locale = LOCALES[langue] ?? "fr-FR";
-  const jourPrelevement = prochainPrelevement
+  const dPrelevement = prochainPrelevement ? new Date(prochainPrelevement) : null;
+  const prelevementValide = !!dPrelevement && !isNaN(dPrelevement.getTime());
+  const jourPrelevement = prelevementValide
     ? new Intl.DateTimeFormat(locale, { day: "numeric", timeZone: tz }).format(
-        new Date(prochainPrelevement)
+        dPrelevement!
       )
     : null;
-  const moisPrelevement = prochainPrelevement
+  const moisPrelevement = prelevementValide
     ? new Intl.DateTimeFormat(locale, { month: "long", timeZone: tz }).format(
-        new Date(prochainPrelevement)
+        dPrelevement!
       )
     : null;
 
@@ -256,12 +261,19 @@ export function AbonnementSection({ restaurant }: { restaurant: Restaurant }) {
 
 function StatutBadge({ statut }: { statut: Restaurant["abonnement_statut"] }) {
   const t = useTDash();
-  const config = {
-    essai: { label: t("essai_gratuit"), classes: "bg-green-100 text-green-800" },
-    actif: { label: t("plan_pro"), classes: "bg-bordeaux-100 text-bordeaux-800" },
-    annule: { label: t("annule"), classes: "bg-amber-100 text-amber-800" },
-    expire: { label: t("expire"), classes: "bg-red-100 text-red-800" },
-  }[statut];
+  // Fallback OBLIGATOIRE : un statut inattendu (null, valeur inconnue) ne doit
+  // JAMAIS faire planter le dashboard. Sans ce défaut, config serait undefined
+  // et `config.classes` lèverait une exception côté client (écran blanc).
+  const config =
+    {
+      essai: { label: t("essai_gratuit"), classes: "bg-green-100 text-green-800" },
+      actif: { label: t("plan_pro"), classes: "bg-bordeaux-100 text-bordeaux-800" },
+      annule: { label: t("annule"), classes: "bg-amber-100 text-amber-800" },
+      expire: { label: t("expire"), classes: "bg-red-100 text-red-800" },
+    }[statut as string] ?? {
+      label: t("essai_gratuit"),
+      classes: "bg-stone-100 text-stone-700",
+    };
   return (
     <span
       className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider ${config.classes}`}
