@@ -140,12 +140,15 @@ begin
   where restaurant_id = v_resto and notifications_push_actif = true;
 
   -- ---- 2) Historique des tampons (tendance croissante + week-ends forts) ----
+  -- Volume modéré (~700 tampons au total, sous le plafond de lecture de
+  -- Supabase) réparti sur chaque jour, y compris cette semaine → le graphique
+  -- « cette semaine » est bien rempli et cohérent.
   for j in 0..v_nb_jours loop
     v_jour := current_date - j;
-    v_rows := 12
-            + ((v_nb_jours - j) / 6)                                    -- plus récent = plus de tampons
-            + (case when extract(dow from v_jour) in (0, 6) then 8 else 0 end)  -- bonus week-end
-            + (random() * 8)::int;
+    v_rows := 4
+            + ((v_nb_jours - j) / 15)                                   -- plus récent = un peu plus
+            + (case when extract(dow from v_jour) in (0, 6) then 3 else 0 end)  -- bonus week-end
+            + (random() * 3)::int;
     for i in 1..v_rows loop
       v_client := v_ids[1 + (random() * (array_length(v_ids, 1) - 1))::int];
       insert into public.tampons_historique
@@ -155,8 +158,9 @@ begin
     end loop;
   end loop;
 
-  -- Pic AUJOURD'HUI (pour le compteur « Tampons distribués aujourd'hui »)
-  for i in 1..45 loop
+  -- Quelques tampons de plus AUJOURD'HUI (compteur du jour), sans écraser la
+  -- liste récente ni le graphique.
+  for i in 1..8 loop
     v_client := v_ids[1 + (random() * (array_length(v_ids, 1) - 1))::int];
     insert into public.tampons_historique
       (restaurant_id, carte_id, client_id, nombre, date_attribution, created_at)

@@ -88,12 +88,14 @@ export default async function Dashboard() {
         .eq("restaurant_id", restaurant.id)
         .order("ordre", { ascending: true }),
     ]);
-    // Historique des tampons (tout, pour permettre la navigation entre années)
+    // Historique des tampons. Ordre DÉCROISSANT : Supabase plafonne à ~1000
+    // lignes ; en prenant les plus RÉCENTES, les graphiques (semaine + mois en
+    // cours) restent corrects même pour un commerce à très gros volume.
     const { data: resHistorique } = await supabase
       .from("tampons_historique")
       .select("*")
       .eq("restaurant_id", restaurant.id)
-      .order("date_attribution", { ascending: true });
+      .order("date_attribution", { ascending: false });
     historique = (resHistorique as TamponHistorique[]) ?? [];
 
     cartes = (resCartes.data as Carte[]) ?? [];

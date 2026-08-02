@@ -76,12 +76,13 @@ export default async function Scanner({
   // Derniers tampons donnés (pour vérifier rapidement à qui on vient de
   // donner des tampons). On récupère les 12 dernières attributions puis on
   // complète avec le nom/téléphone du client et le titre de la carte.
-  const { data: histo } = await admin
+  const TAMPONS_PAR_PAGE = 12;
+  const { data: histo, count: totalTampons } = await admin
     .from("tampons_historique")
-    .select("id, nombre, created_at, client_id, carte_id")
+    .select("id, nombre, created_at, client_id, carte_id", { count: "exact" })
     .eq("restaurant_id", restaurant.id)
     .order("created_at", { ascending: false })
-    .limit(12);
+    .range(0, TAMPONS_PAR_PAGE - 1);
 
   const recents: TamponRecent[] = [];
   if (histo && histo.length > 0) {
@@ -137,6 +138,8 @@ export default async function Scanner({
       telephonePrecharge={clientPrecharge?.telephone ?? ""}
       identitePrecharge={clientPrecharge?.identite ?? null}
       recents={recents}
+      totalRecents={totalTampons ?? 0}
+      parPageRecents={TAMPONS_PAR_PAGE}
     />
   );
 }

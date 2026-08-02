@@ -29,6 +29,8 @@ export function ScannerPageClient(props: {
   telephonePrecharge: string;
   identitePrecharge: string | null;
   recents: TamponRecent[];
+  totalRecents: number;
+  parPageRecents: number;
 }) {
   return (
     <LangueDashboardProvider langueInitiale={props.langueInitiale}>
@@ -47,6 +49,8 @@ function Contenu({
   telephonePrecharge,
   identitePrecharge,
   recents,
+  totalRecents,
+  parPageRecents,
 }: {
   langueInitiale: Langue;
   sousCompte: boolean;
@@ -58,6 +62,8 @@ function Contenu({
   telephonePrecharge: string;
   identitePrecharge: string | null;
   recents: TamponRecent[];
+  totalRecents: number;
+  parPageRecents: number;
 }) {
   const t = useTDash();
   const { langue, setLangue } = useLangueDashboard();
@@ -130,7 +136,12 @@ function Contenu({
           />
         </div>
 
-        <DerniersTampons tampons={recents} timezone={timezone} />
+        <DerniersTampons
+          tampons={recents}
+          totalInitial={totalRecents}
+          parPage={parPageRecents}
+          timezone={timezone}
+        />
       </div>
     </main>
   );
