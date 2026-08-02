@@ -37,9 +37,12 @@ create policy "guides_video: ecriture super admin"
   with check (public.is_super_admin());
 
 -- ---- Bucket de stockage (public en lecture) ----
-insert into storage.buckets (id, name, public)
-values ('guides', 'guides', true)
-on conflict (id) do nothing;
+-- file_size_limit : 2 Go par vidéo. ATTENTION : cette limite ne peut pas
+-- dépasser la « Upload file size limit » globale du projet (Dashboard →
+-- Storage → Settings), qu'il faut monter d'abord (plan Pro requis).
+insert into storage.buckets (id, name, public, file_size_limit)
+values ('guides', 'guides', true, 2147483648)
+on conflict (id) do update set file_size_limit = excluded.file_size_limit;
 
 -- Lecture publique des fichiers du bucket (nécessaire pour lire les vidéos).
 drop policy if exists "guides: lecture publique" on storage.objects;
