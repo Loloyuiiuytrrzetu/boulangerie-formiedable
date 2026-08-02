@@ -32,8 +32,8 @@ export function LigneRestaurant({ restaurant }: { restaurant: RestaurantAvecStat
   return (
     <li className="px-6 py-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="min-w-0">
-          <div className="flex items-center gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
             {restaurant.logo_url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -71,7 +71,7 @@ export function LigneRestaurant({ restaurant }: { restaurant: RestaurantAvecStat
           </p>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
           <form
             action={async () => {
               await voirCommerce(restaurant.id);

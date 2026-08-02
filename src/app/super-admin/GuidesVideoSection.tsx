@@ -174,7 +174,7 @@ export function GuidesVideoSection({ guides }: { guides: GuideVideo[] }) {
       ) : (
         <ul className="divide-y divide-stone-100">
           {guides.map((g, i) => (
-            <li key={g.id} className="flex items-center gap-3 px-6 py-4">
+            <li key={g.id} className="flex flex-wrap items-center gap-3 px-4 py-4 sm:px-6">
               <span className="text-sm font-bold text-stone-400">{i + 1}</span>
               <video
                 src={g.video_url}
@@ -187,7 +187,7 @@ export function GuidesVideoSection({ guides }: { guides: GuideVideo[] }) {
                   {g.titre}
                 </p>
               </div>
-              <div className="flex shrink-0 items-center gap-1">
+              <div className="flex w-full flex-wrap items-center gap-1 sm:w-auto">
                 <button
                   type="button"
                   onClick={() => deplacer(g.id, "haut")}
