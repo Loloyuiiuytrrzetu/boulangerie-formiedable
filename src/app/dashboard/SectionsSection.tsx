@@ -134,7 +134,7 @@ function BlocSection({ section }: { section: Section }) {
       {ouvert && (
         <div className="border-t border-stone-100 px-5 py-5">
           {section.type === "cartes" ? (
-            <form action={enregistrer} className="space-y-3">
+            <form id={`form-section-${section.id}`} action={enregistrer} className="space-y-3">
               <div>
                 <label className="mb-1 block text-sm font-medium text-stone-700">
                   {t("titre_section")}
@@ -152,7 +152,7 @@ function BlocSection({ section }: { section: Section }) {
               </p>
             </form>
           ) : section.type === "info" ? (
-            <form action={enregistrer} className="space-y-3">
+            <form id={`form-section-${section.id}`} action={enregistrer} className="space-y-3">
               <div>
                 <label className="mb-1 block text-sm font-medium text-stone-700">
                   {t("titre_section")}
@@ -183,19 +183,24 @@ function BlocSection({ section }: { section: Section }) {
               </p>
             </form>
           ) : (
-            <form action={enregistrer}>
+            <form id={`form-section-${section.id}`} action={enregistrer}>
               <ChampsSection section={section} />
             </form>
           )}
 
           <div className="mt-4 flex items-center gap-3">
             <button
-              form={undefined}
-              type="submit"
+              type="button"
               disabled={enCours}
-              onClick={(e) => {
-                const form = (e.currentTarget as HTMLButtonElement).closest("div")?.querySelector("form");
-                if (form) (form as HTMLFormElement).requestSubmit();
+              onClick={() => {
+                // Soumission FIABLE par id (le bouton est hors du <form>) :
+                // requestSubmit déclenche l'action serveur, sur mobile ET
+                // ordinateur. L'ancienne version cherchait le form au mauvais
+                // endroit du DOM → rien ne se passait sur téléphone.
+                const form = document.getElementById(
+                  `form-section-${section.id}`
+                ) as HTMLFormElement | null;
+                form?.requestSubmit();
               }}
               className="rounded-lg bg-bordeaux-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-bordeaux-700 disabled:opacity-60"
             >
