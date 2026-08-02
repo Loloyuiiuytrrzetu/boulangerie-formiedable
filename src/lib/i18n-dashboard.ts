@@ -29,6 +29,7 @@ type CleDash =
   | "tampons_distribues_aujourdhui"
   | "votre_page_client"
   | "attribuer_tampons_client"
+  | "attribuer_tampons_meme_client"
   | "scanner_qr_client"
   | "client_montre_qr"
   | "qr_pas_client_walletiz"
@@ -221,6 +222,7 @@ const FR: Traductions = {
   tampons_distribues_aujourdhui: "Tampons distribués aujourd'hui",
   votre_page_client: "Votre page client",
   attribuer_tampons_client: "🎯 Attribuer des tampons à un client",
+  attribuer_tampons_meme_client: "Attribuer des tampons au même client",
   scanner_qr_client: "📷 Scanner le QR code du client",
   client_montre_qr: "Le client vous montre son QR code (onglet Info de sa page)",
   qr_pas_client_walletiz: "Ce QR code n'est pas un QR code client Walletiz.",
@@ -411,6 +413,7 @@ const EN: Traductions = {
   tampons_distribues_aujourdhui: "Stamps given today",
   votre_page_client: "Your customer page",
   attribuer_tampons_client: "🎯 Give stamps to a customer",
+  attribuer_tampons_meme_client: "Give stamps to the same customer",
   scanner_qr_client: "📷 Scan the customer's QR code",
   client_montre_qr: "The customer shows you their QR code (Info tab of their page)",
   qr_pas_client_walletiz: "This is not a Walletiz customer QR code.",
@@ -601,6 +604,7 @@ const ES: Traductions = {
   tampons_distribues_aujourdhui: "Sellos entregados hoy",
   votre_page_client: "Tu página de cliente",
   attribuer_tampons_client: "🎯 Dar sellos a un cliente",
+  attribuer_tampons_meme_client: "Dar sellos al mismo cliente",
   scanner_qr_client: "📷 Escanear el código QR del cliente",
   client_montre_qr: "El cliente te muestra su código QR (pestaña Info de su página)",
   qr_pas_client_walletiz: "Este no es un código QR de cliente de Walletiz.",
@@ -791,6 +795,7 @@ const DE: Traductions = {
   tampons_distribues_aujourdhui: "Heute vergebene Stempel",
   votre_page_client: "Ihre Kundenseite",
   attribuer_tampons_client: "🎯 Stempel an einen Kunden geben",
+  attribuer_tampons_meme_client: "Stempel demselben Kunden geben",
   scanner_qr_client: "📷 QR-Code des Kunden scannen",
   client_montre_qr: "Der Kunde zeigt Ihnen seinen QR-Code (Tab Info seiner Seite)",
   qr_pas_client_walletiz: "Dies ist kein Walletiz-Kunden-QR-Code.",
@@ -981,6 +986,7 @@ const ZH: Traductions = {
   tampons_distribues_aujourdhui: "今日发放的印章",
   votre_page_client: "您的客户页面",
   attribuer_tampons_client: "🎯 给客户发印章",
+  attribuer_tampons_meme_client: "给同一位客户发印章",
   scanner_qr_client: "📷 扫描客户的二维码",
   client_montre_qr: "客户向您出示其二维码（其页面的“信息”标签）",
   qr_pas_client_walletiz: "这不是 Walletiz 客户二维码。",
@@ -1169,6 +1175,7 @@ const AR: Traductions = {
   tampons_distribues_aujourdhui: "الأختام الموزعة اليوم",
   votre_page_client: "صفحة عملائك",
   attribuer_tampons_client: "🎯 منح أختام لعميل",
+  attribuer_tampons_meme_client: "منح أختام لنفس العميل",
   scanner_qr_client: "📷 مسح رمز QR الخاص بالعميل",
   client_montre_qr: "يعرض عليك العميل رمز QR الخاص به (تبويب المعلومات في صفحته)",
   qr_pas_client_walletiz: "هذا ليس رمز QR لعميل Walletiz.",
@@ -1358,6 +1365,7 @@ const RU: Traductions = {
   tampons_distribues_aujourdhui: "Печатей выдано сегодня",
   votre_page_client: "Ваша клиентская страница",
   attribuer_tampons_client: "🎯 Выдать печати клиенту",
+  attribuer_tampons_meme_client: "Выдать печати тому же клиенту",
   scanner_qr_client: "📷 Сканировать QR-код клиента",
   client_montre_qr: "Клиент показывает свой QR-код (вкладка «Инфо» его страницы)",
   qr_pas_client_walletiz: "Это не QR-код клиента Walletiz.",

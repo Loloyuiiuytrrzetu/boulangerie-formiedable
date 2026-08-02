@@ -131,7 +131,7 @@ export function ScannerForm({
           disabled={enCours || !carteChoisie}
           className="w-full rounded-xl bg-bordeaux-800 px-6 py-3 font-semibold text-white transition hover:bg-bordeaux-700 disabled:opacity-60"
         >
-          {enCours ? "…" : `🎯 ${t("attribuer_tampons_client").replace("🎯 ", "")}`}
+          {enCours ? "…" : `🎯 ${t("attribuer_tampons_meme_client")}`}
         </button>
 
         <a
