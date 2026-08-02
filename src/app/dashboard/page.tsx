@@ -8,7 +8,6 @@ import type {
   Restaurant,
   Section,
   SousCompte,
-  TamponHistorique,
 } from "@/lib/types";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { utilisateurEffectif } from "@/lib/impersonate";
@@ -18,7 +17,7 @@ import { CartesSection } from "./CartesSection";
 import { SectionsSection } from "./SectionsSection";
 import { CreationForm } from "./CreationForm";
 import { SousCompteSection } from "./SousCompteSection";
-import { GraphiquesTampons } from "./GraphiquesTampons";
+import { GraphiquesTampons, type StatsTampons, type StatParMois } from "./GraphiquesTampons";
 import { BandeauImpersonation } from "./BandeauImpersonation";
 import { NavigationSidebar } from "./NavigationSidebar";
 import { ClientsSection } from "./ClientsSection";
@@ -53,7 +52,7 @@ export default async function Dashboard() {
   let recompenses: Recompense[] = [];
   let sections: Section[] = [];
   let sousCompte: SousCompte | null = null;
-  let historique: TamponHistorique[] = [];
+  let stats: StatsTampons = { parJour: {}, parMois: [] };
   let notificationsPush: NotificationPush[] = [];
   let premiersClients: ClientListe[] = [];
   let nbClients = 0;
@@ -88,26 +87,35 @@ export default async function Dashboard() {
         .eq("restaurant_id", restaurant.id)
         .order("ordre", { ascending: true }),
     ]);
-    // Historique des tampons. Ordre DÉCROISSANT : Supabase plafonne à ~1000
-    // lignes ; en prenant les plus RÉCENTES, les graphiques (semaine + mois en
-    // cours) restent corrects même pour un commerce à très gros volume.
-    const { data: resHistorique } = await supabase
-      .from("tampons_historique")
-      .select("*")
-      .eq("restaurant_id", restaurant.id)
-      .order("date_attribution", { ascending: false });
-    historique = (resHistorique as TamponHistorique[]) ?? [];
+    // Statistiques de tampons AGRÉGÉES PAR LA BASE (sum côté SQL) : totaux
+    // exacts par jour et par mois quel que soit le volume, jamais bridés par
+    // le plafond de lecture (~1000 lignes) de Supabase.
+    const { data: resStats } = await supabase.rpc("stats_tampons", {
+      p_restaurant: restaurant.id,
+    });
+    {
+      const brut = (resStats ?? {}) as {
+        par_jour?: { jour: string; total: number }[];
+        par_mois?: StatParMois[];
+      };
+      const parJour: Record<string, number> = {};
+      for (const j of brut.par_jour ?? []) parJour[j.jour] = Number(j.total);
+      const parMois: StatParMois[] = (brut.par_mois ?? []).map((m) => ({
+        annee: Number(m.annee),
+        mois: Number(m.mois),
+        total: Number(m.total),
+      }));
+      stats = { parJour, parMois };
+    }
 
     cartes = (resCartes.data as Carte[]) ?? [];
     recompenses = (resRecompenses.data as Recompense[]) ?? [];
     nbClients = resClients.count ?? 0;
     // Tampons distribués aujourd'hui uniquement, selon le fuseau horaire du
     // commerce. Chaque jour à minuit local, ce compteur repart de zéro tout
-    // seul — sans opération de maintenance, c'est un filtre à la lecture.
+    // seul — le total du jour vient de l'agrégat exact ci-dessus.
     aujourdHui = dateDuJour(restaurant.timezone ?? "Europe/Paris");
-    nbTampons = historique
-      .filter((h) => h.date_attribution === aujourdHui)
-      .reduce((somme, h) => somme + h.nombre, 0);
+    nbTampons = stats.parJour[aujourdHui] ?? 0;
     sousCompte = resSc.data ?? null;
     sections = (resSections.data as Section[]) ?? [];
 
@@ -233,7 +241,7 @@ export default async function Dashboard() {
 
                 <div id="graphiques" className="scroll-mt-24">
                   <GraphiquesTampons
-                    historique={historique}
+                    stats={stats}
                     couleur={restaurant.couleur}
                     timezone={restaurant.timezone ?? "Europe/Paris"}
                   />

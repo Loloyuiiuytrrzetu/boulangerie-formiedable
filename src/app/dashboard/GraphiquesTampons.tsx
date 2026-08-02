@@ -1,9 +1,18 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { TamponHistorique } from "@/lib/types";
 import { useTDash } from "@/lib/langue-dashboard";
 import { useLangueDashboard } from "@/lib/langue-dashboard";
+
+// Totaux déjà agrégés PAR LA BASE (sum côté SQL) → exacts quel que soit le
+// volume, jamais bridés par le plafond de lecture de Supabase.
+export type StatParMois = { annee: number; mois: number; total: number };
+export type StatsTampons = {
+  // total par jour "YYYY-MM-DD" (45 derniers jours) pour le graphique semaine
+  parJour: Record<string, number>;
+  // total exact par (année, mois) sur tout l'historique
+  parMois: StatParMois[];
+};
 
 // Palette du composant : bordeaux + reprise de la couleur principale.
 const TRAIT = "#7A1E2E";
@@ -184,11 +193,11 @@ function Courbe({
 }
 
 export function GraphiquesTampons({
-  historique,
+  stats,
   couleur = TRAIT,
   timezone = "Europe/Paris",
 }: {
-  historique: TamponHistorique[];
+  stats: StatsTampons;
   couleur?: string;
   timezone?: string;
 }) {
@@ -201,11 +210,9 @@ export function GraphiquesTampons({
   const anneeCourante = parseDateUTC(aujourdHuiIso).getUTCFullYear();
   const annees = useMemo(() => {
     const set = new Set<number>([anneeCourante]);
-    historique.forEach((h) =>
-      set.add(parseDateUTC(h.date_attribution).getUTCFullYear())
-    );
+    stats.parMois.forEach((m) => set.add(m.annee));
     return Array.from(set).sort((a, b) => b - a);
-  }, [historique, anneeCourante]);
+  }, [stats.parMois, anneeCourante]);
 
   const [annee, setAnnee] = useState(anneeCourante);
   const { langue } = useLangueDashboard();
@@ -229,31 +236,31 @@ export function GraphiquesTampons({
     });
   }, [langue]);
 
-  // Graphique 1 : 7 derniers jours (aujourd'hui inclus)
+  // Graphique 1 : 7 derniers jours (aujourd'hui inclus). Les totaux par jour
+  // sont déjà calculés par la base (exacts), on ne fait que les lire.
   const semaine = useMemo(() => {
     const jours: string[] = [];
     const valeurs: number[] = [];
     for (let i = 6; i >= 0; i--) {
       const iso = isoMoinsJours(aujourdHuiIso, i);
       jours.push(jourNoms[jourSemaine(iso)]);
-      const total = historique
-        .filter((h) => h.date_attribution === iso)
-        .reduce((s, h) => s + h.nombre, 0);
-      valeurs.push(total);
+      valeurs.push(stats.parJour[iso] ?? 0);
     }
     return { jours, valeurs };
-  }, [historique, aujourdHuiIso, jourNoms]);
+  }, [stats.parJour, aujourdHuiIso, jourNoms]);
 
-  // Graphique 2 : 12 mois de l'année sélectionnée
+  // Graphique 2 : 12 mois de l'année sélectionnée. Totaux exacts fournis par
+  // la base, additionnés côté SQL (aucune limite de lignes).
   const mois = useMemo(() => {
     const noms = moisNoms;
     const valeurs = new Array(12).fill(0) as number[];
-    historique.forEach((h) => {
-      const d = parseDateUTC(h.date_attribution);
-      if (d.getUTCFullYear() === annee) valeurs[d.getUTCMonth()] += h.nombre;
+    stats.parMois.forEach((m) => {
+      if (m.annee === annee && m.mois >= 1 && m.mois <= 12) {
+        valeurs[m.mois - 1] = m.total;
+      }
     });
     return { noms, valeurs };
-  }, [historique, annee, moisNoms]);
+  }, [stats.parMois, annee, moisNoms]);
 
   const totalSemaine = semaine.valeurs.reduce((s, v) => s + v, 0);
   const totalAnnee = mois.valeurs.reduce((s, v) => s + v, 0);
