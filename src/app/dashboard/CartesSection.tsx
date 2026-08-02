@@ -149,9 +149,9 @@ function ChampsCarte({
                     router.refresh();
                   })
                 }
-                className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-60"
+                className="rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-600 transition hover:bg-stone-100 disabled:opacity-60"
               >
-                {retraitEnCours ? "…" : t("supprimer")}
+                {retraitEnCours ? "…" : t("retirer_image")}
               </button>
             </div>
           )}
@@ -365,6 +365,7 @@ function BlocCarte({
   const [ouvert, setOuvert] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
   const [succes, setSucces] = useState(false);
+  const [confirmSuppr, setConfirmSuppr] = useState(false);
   const [enCours, startTransition] = useTransition();
   const formRecompense = useRef<HTMLFormElement>(null);
 
@@ -382,8 +383,12 @@ function BlocCarte({
     });
   }
 
+  // Suppression avec confirmation EN APP (pas window.confirm, qui est bloqué
+  // silencieusement sur certains navigateurs mobiles → « ça marche sur
+  // ordinateur mais pas sur téléphone »).
   function supprimer() {
-    if (!window.confirm(t("confirmer_suppression_carte"))) return;
+    setConfirmSuppr(false);
+    setErreur(null);
     startTransition(async () => {
       const r = await supprimerCarte(carte.id);
       if (r?.erreur) setErreur(r.erreur);
@@ -455,7 +460,7 @@ function BlocCarte({
               </button>
               <button
                 type="button"
-                onClick={supprimer}
+                onClick={() => setConfirmSuppr(true)}
                 disabled={enCours}
                 className="rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-60"
               >
@@ -463,6 +468,32 @@ function BlocCarte({
               </button>
               {succes && <span className="text-sm text-green-600">✓ {t("enregistre")}</span>}
             </div>
+
+            {confirmSuppr && (
+              <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3">
+                <p className="text-sm text-red-800">
+                  {t("confirmer_suppression_carte")}
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={supprimer}
+                    disabled={enCours}
+                    className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-60"
+                  >
+                    {enCours ? "…" : `🗑 ${t("supprimer_la_carte")}`}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmSuppr(false)}
+                    disabled={enCours}
+                    className="rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-stone-600 transition hover:bg-stone-100 disabled:opacity-60"
+                  >
+                    {t("annuler")}
+                  </button>
+                </div>
+              </div>
+            )}
           </form>
 
           {/* ----- Récompenses de la carte ----- */}
