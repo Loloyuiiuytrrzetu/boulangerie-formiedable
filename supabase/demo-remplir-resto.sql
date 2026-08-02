@@ -34,6 +34,8 @@ declare
   v_requis  int;
   v_client  uuid;
   v_jour    date;
+  v_debut   date;
+  v_fin     date;
   v_rows    int;
   i         int;
   j         int;
@@ -90,6 +92,11 @@ begin
     raise exception 'Ce resto n''a aucune carte de fidélité active. Crée une carte d''abord.';
   end if;
 
+  -- Fenêtre des données : les 5 mois COMPLETS précédant le mois en cours.
+  -- Le mois en cours (ex. août) reste à 0 tampon, comme un mois qui démarre.
+  v_fin   := date_trunc('month', current_date)::date - 1;   -- dernier jour du mois précédent
+  v_debut := (date_trunc('month', current_date) - interval '5 months')::date; -- 1er jour, 5 mois avant
+
   -- ---- 1) Clients démo (+ progression). ~70 % ont activé les notifs. ----
   for i in 1..v_nb_clients loop
     v_client := null;
@@ -108,10 +115,10 @@ begin
        v_noms[1 + (random() * (array_length(v_noms, 1) - 1))::int],
        (random() * (v_requis - 1))::int,
        v_total,
-       current_date - (random() * 7)::int,
+       v_fin - (random() * 20)::int,
        'demo-' || gen_random_uuid()::text,
        v_actif,
-       now() - ((random() * v_nb_jours)::int || ' days')::interval)
+       (v_fin - (random() * 150)::int)::timestamptz)
     on conflict (restaurant_id, numero_telephone) do nothing
     returning id into v_client;
 
@@ -122,7 +129,7 @@ begin
          recompenses_reclamees, date_dernier_tampon)
       values
         (v_carte, v_client, (random() * (v_requis - 1))::int, v_total,
-         (random() * 5)::int, current_date - (random() * 7)::int)
+         (random() * 5)::int, v_fin - (random() * 20)::int)
       on conflict (carte_id, client_id) do nothing;
     end if;
   end loop;
@@ -140,15 +147,17 @@ begin
   where restaurant_id = v_resto and notifications_push_actif = true;
 
   -- ---- 2) Historique des tampons (tendance croissante + week-ends forts) ----
-  -- Volume modéré (~700 tampons au total, sous le plafond de lecture de
-  -- Supabase) réparti sur chaque jour, y compris cette semaine → le graphique
-  -- « cette semaine » est bien rempli et cohérent.
-  for j in 0..v_nb_jours loop
-    v_jour := current_date - j;
-    v_rows := 4
-            + ((v_nb_jours - j) / 15)                                   -- plus récent = un peu plus
-            + (case when extract(dow from v_jour) in (0, 6) then 3 else 0 end)  -- bonus week-end
-            + (random() * 3)::int;
+  -- Volume modéré (~700 tampons, sous le plafond de lecture de Supabase),
+  -- réparti sur chaque jour des 5 mois complets (mars → juillet). Le mois en
+  -- cours (août) ne reçoit AUCUN tampon → il reste à 0, comme un mois qui
+  -- vient de commencer.
+  for v_jour in
+    select gs::date
+    from generate_series(v_debut::timestamp, v_fin::timestamp, interval '1 day') gs
+  loop
+    v_rows := 3
+            + (case when extract(dow from v_jour) in (0, 6) then 2 else 0 end)  -- bonus week-end
+            + (random() * 4)::int;
     for i in 1..v_rows loop
       v_client := v_ids[1 + (random() * (array_length(v_ids, 1) - 1))::int];
       insert into public.tampons_historique
@@ -156,16 +165,6 @@ begin
       values
         (v_resto, v_carte, v_client, 1, v_jour, v_jour + (random() * interval '12 hours'));
     end loop;
-  end loop;
-
-  -- Quelques tampons de plus AUJOURD'HUI (compteur du jour), sans écraser la
-  -- liste récente ni le graphique.
-  for i in 1..8 loop
-    v_client := v_ids[1 + (random() * (array_length(v_ids, 1) - 1))::int];
-    insert into public.tampons_historique
-      (restaurant_id, carte_id, client_id, nombre, date_attribution, created_at)
-    values
-      (v_resto, v_carte, v_client, 1, current_date, now() - (random() * interval '8 hours'));
   end loop;
 
   -- ---- 2 bis) Récompenses gagnées (en attente) pour du réalisme côté client ----
@@ -178,7 +177,7 @@ begin
         (carte_id, client_id, recompense_id, texte_recompense, image_url, date_gagnee)
       values
         (v_carte, v_client, v_reco_id, v_reco_txt, v_reco_img,
-         now() - ((random() * 30)::int || ' days')::interval);
+         (v_fin - (random() * 40)::int)::timestamptz);
     end loop;
   end if;
 
@@ -191,9 +190,9 @@ begin
       (restaurant_id, titre, message, date_programmee, envoyee_at, nb_envois, created_at)
     values
       (v_resto, v_titres[i], v_msgs[i], null,
-       now() - ((i * 4) || ' days')::interval,
+       (v_fin - (i * 3))::timestamptz,
        v_env,
-       now() - ((i * 4) || ' days')::interval);
+       (v_fin - (i * 3))::timestamptz);
   end loop;
 
   raise notice 'Resto démo rempli : % clients (dont % abonnés), % notifications.',
