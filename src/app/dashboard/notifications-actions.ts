@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { utilisateurEffectif } from "@/lib/impersonate";
-import { getWebPush } from "@/lib/push";
+import { getWebPush, chargerTousLesAbonnes } from "@/lib/push";
 
 async function chargerRestaurant() {
   const effectif = await utilisateurEffectif();
@@ -60,12 +60,10 @@ async function envoyerAuxAbonnes(restaurantId: string, notification: {
   slug: string;
 }) {
   const admin = createAdminClient();
-  const { data: subs } = await admin
-    .from("push_subscriptions")
-    .select("id, endpoint, p256dh, auth")
-    .eq("restaurant_id", restaurantId);
+  // TOUS les abonnés, sans plafond (pagination interne par lots de 1000).
+  const subs = await chargerTousLesAbonnes(admin, restaurantId);
 
-  if (!subs || subs.length === 0) return 0;
+  if (subs.length === 0) return 0;
 
   const wp = getWebPush();
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";

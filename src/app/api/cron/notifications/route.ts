@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getWebPush } from "@/lib/push";
+import { getWebPush, chargerTousLesAbonnes } from "@/lib/push";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -49,10 +49,8 @@ export async function GET(req: Request) {
       .eq("id", n.restaurant_id)
       .maybeSingle();
 
-    const { data: subs } = await admin
-      .from("push_subscriptions")
-      .select("id, endpoint, p256dh, auth")
-      .eq("restaurant_id", n.restaurant_id);
+    // TOUS les abonnés, sans plafond (pagination interne par lots de 1000).
+    const subs = await chargerTousLesAbonnes(admin, n.restaurant_id);
 
     let envois = 0;
     const aSupprimer: string[] = [];
@@ -64,7 +62,7 @@ export async function GET(req: Request) {
     });
 
     await Promise.all(
-      (subs ?? []).map(async (s) => {
+      subs.map(async (s) => {
         try {
           await wp!.sendNotification(
             { endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } },
