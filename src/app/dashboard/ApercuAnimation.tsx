@@ -15,15 +15,19 @@ export function ApercuAnimation({
 }) {
   const t = useTDash();
   const [animation, setAnimation] = useState<string | null>(null);
+  const [aucune, setAucune] = useState(false);
 
   function lancer() {
     if (typeof document === "undefined") return;
     const select = document.getElementById(selectId) as HTMLSelectElement | null;
     const type = select?.value ?? "etoiles";
     if (type === "aucune") {
-      alert("« Aucune animation » sélectionnée — rien à prévisualiser.");
+      // Message intégré (pas alert(), bloqué sur mobile).
+      setAucune(true);
+      setTimeout(() => setAucune(false), 2500);
       return;
     }
+    setAucune(false);
     setAnimation(type);
   }
 
@@ -36,6 +40,9 @@ export function ApercuAnimation({
       >
         {t("voir_apercu")}
       </button>
+      {aucune && (
+        <p className="mt-1 text-xs text-stone-500">{t("aucune_animation_apercu")}</p>
+      )}
       {animation && (
         <AnimationRecompense
           type={animation}

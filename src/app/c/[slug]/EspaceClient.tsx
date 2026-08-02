@@ -17,6 +17,7 @@ import { ToggleNotifications, InvitationNotifications } from "./AbonnementPush";
 import { ScannerClient } from "./ScannerClient";
 import { ScanCameraModal } from "./ScanCameraModal";
 import { useLangue, useT } from "@/lib/langue";
+import { useConfirmation } from "@/components/useConfirmation";
 import { AutoTraduit } from "@/lib/auto-traduction";
 import { LANGUES } from "@/lib/i18n";
 import { iconeEmoji } from "@/lib/icons";
@@ -831,12 +832,20 @@ function RecompenseAttenteCard({
   onAnimation?: () => void;
 }) {
   const t = useT();
+  const { confirmer, confirmationUI } = useConfirmation();
   const [erreur, setErreur] = useState<string | null>(null);
   const [enCours, startTransition] = useTransition();
   const [utilisee, setUtilisee] = useState(false);
 
-  function utiliser() {
-    if (!window.confirm(t("confirmer_utilisation"))) return;
+  async function utiliser() {
+    if (
+      !(await confirmer({
+        message: t("confirmer_utilisation"),
+        confirmer: "✅ OK",
+        annuler: t("annuler"),
+      }))
+    )
+      return;
     setErreur(null);
     startTransition(async () => {
       const r = await utiliserRecompense(slug, recompense.id);
@@ -856,6 +865,7 @@ function RecompenseAttenteCard({
       className="overflow-hidden rounded-3xl border-2 shadow-lg"
       style={{ borderColor: couleur }}
     >
+      {confirmationUI}
       <div className="flex items-center gap-3 p-4" style={{ backgroundColor: `${couleur}14` }}>
         {recompense.image_url ? (
           // eslint-disable-next-line @next/next/no-img-element

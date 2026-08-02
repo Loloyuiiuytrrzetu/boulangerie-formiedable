@@ -58,6 +58,7 @@ type CleDash =
   | "animation_recompense_desc"
   | "couleur_animation"
   | "voir_apercu"
+  | "aucune_animation_apercu"
   | "enregistrer"
   | "enregistre"
   | "annuler"
@@ -252,6 +253,7 @@ const FR: Traductions = {
     "L'effet qui s'affiche quand le client choisit sa récompense.",
   couleur_animation: "Couleur de l'animation",
   voir_apercu: "Voir l'aperçu",
+  aucune_animation_apercu: "« Aucune animation » sélectionnée — rien à prévisualiser.",
   enregistrer: "Enregistrer",
   enregistre: "Enregistré ✓",
   annuler: "Annuler",
@@ -441,6 +443,7 @@ const EN: Traductions = {
     "The effect that plays when the customer picks their reward.",
   couleur_animation: "Animation color",
   voir_apercu: "Preview",
+  aucune_animation_apercu: "\"No animation\" selected — nothing to preview.",
   enregistrer: "Save",
   enregistre: "Saved ✓",
   annuler: "Cancel",
@@ -630,6 +633,7 @@ const ES: Traductions = {
     "El efecto que se muestra cuando el cliente elige su recompensa.",
   couleur_animation: "Color de la animación",
   voir_apercu: "Ver vista previa",
+  aucune_animation_apercu: "«Sin animación» seleccionada — nada que previsualizar.",
   enregistrer: "Guardar",
   enregistre: "Guardado ✓",
   annuler: "Cancelar",
@@ -819,6 +823,7 @@ const DE: Traductions = {
     "Der Effekt, der angezeigt wird, wenn der Kunde seine Belohnung wählt.",
   couleur_animation: "Farbe der Animation",
   voir_apercu: "Vorschau anzeigen",
+  aucune_animation_apercu: "„Keine Animation\" ausgewählt — nichts zur Vorschau.",
   enregistrer: "Speichern",
   enregistre: "Gespeichert ✓",
   annuler: "Abbrechen",
@@ -1007,6 +1012,7 @@ const ZH: Traductions = {
   animation_recompense_desc: "客户选择奖励时显示的效果。",
   couleur_animation: "动画颜色",
   voir_apercu: "查看预览",
+  aucune_animation_apercu: "已选择“无动画”——没有可预览的内容。",
   enregistrer: "保存",
   enregistre: "已保存 ✓",
   annuler: "取消",
@@ -1194,6 +1200,7 @@ const AR: Traductions = {
   animation_recompense_desc: "التأثير الذي يظهر عندما يختار العميل مكافأته.",
   couleur_animation: "لون الحركة",
   voir_apercu: "عرض المعاينة",
+  aucune_animation_apercu: "تم اختيار «بدون رسوم متحركة» — لا شيء للمعاينة.",
   enregistrer: "حفظ",
   enregistre: "تم الحفظ ✓",
   annuler: "إلغاء",
@@ -1383,6 +1390,7 @@ const RU: Traductions = {
     "Эффект, который отображается, когда клиент выбирает награду.",
   couleur_animation: "Цвет анимации",
   voir_apercu: "Посмотреть предпросмотр",
+  aucune_animation_apercu: "Выбрано «Без анимации» — нечего показывать.",
   enregistrer: "Сохранить",
   enregistre: "Сохранено ✓",
   annuler: "Отмена",

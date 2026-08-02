@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 import { basculerActif, supprimerRestaurant, voirCommerce } from "./actions";
 import type { RestaurantAvecStats } from "./page";
+import { useConfirmation } from "@/components/useConfirmation";
 
 export function LigneRestaurant({ restaurant }: { restaurant: RestaurantAvecStats }) {
+  const { confirmer, confirmationUI } = useConfirmation();
   const [erreur, setErreur] = useState<string | null>(null);
   const [enCours, startTransition] = useTransition();
 
@@ -17,11 +19,13 @@ export function LigneRestaurant({ restaurant }: { restaurant: RestaurantAvecStat
     });
   }
 
-  function supprimer() {
-    const confirmation = window.confirm(
-      `Supprimer définitivement « ${restaurant.nom} » ?\n\nLe compte du restaurateur, sa configuration et TOUTES les cartes de fidélité de ses clients seront effacés. Cette action est irréversible.`
-    );
-    if (!confirmation) return;
+  async function supprimer() {
+    const ok = await confirmer({
+      message: `Supprimer définitivement « ${restaurant.nom} » ? Le compte du restaurateur, sa configuration et TOUTES les cartes de fidélité de ses clients seront effacés. Cette action est irréversible.`,
+      confirmer: "Supprimer",
+      annuler: "Annuler",
+    });
+    if (!ok) return;
     setErreur(null);
     startTransition(async () => {
       const resultat = await supprimerRestaurant(restaurant.id);
@@ -31,6 +35,7 @@ export function LigneRestaurant({ restaurant }: { restaurant: RestaurantAvecStat
 
   return (
     <li className="px-6 py-4">
+      {confirmationUI}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">

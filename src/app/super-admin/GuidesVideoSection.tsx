@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useConfirmation } from "@/components/useConfirmation";
 import type { GuideVideo } from "@/lib/types";
 import {
   enregistrerGuideVideo,
@@ -30,6 +31,9 @@ export function GuidesVideoSection({ guides }: { guides: GuideVideo[] }) {
   const [erreur, setErreur] = useState<string | null>(null);
   const [enCours, startTransition] = useTransition();
   const inputFichier = useRef<HTMLInputElement>(null);
+  const { confirmer, confirmationUI } = useConfirmation();
+  // Renommage en ligne (remplace prompt(), bloqué sur mobile).
+  const [edition, setEdition] = useState<{ id: string; val: string } | null>(null);
 
   async function ajouter() {
     setErreur(null);
@@ -85,8 +89,13 @@ export function GuidesVideoSection({ guides }: { guides: GuideVideo[] }) {
     }
   }
 
-  function supprimer(id: string) {
-    if (!confirm("Supprimer cette vidéo du guide ?")) return;
+  async function supprimer(id: string) {
+    const ok = await confirmer({
+      message: "Supprimer cette vidéo du guide ?",
+      confirmer: "Supprimer",
+      annuler: "Annuler",
+    });
+    if (!ok) return;
     startTransition(async () => {
       await supprimerGuideVideo(id);
       router.refresh();
@@ -100,17 +109,19 @@ export function GuidesVideoSection({ guides }: { guides: GuideVideo[] }) {
     });
   }
 
-  function renommer(id: string, actuel: string) {
-    const nouveau = prompt("Nouveau titre :", actuel);
-    if (nouveau === null) return;
+  function validerRenommage() {
+    if (!edition) return;
+    const { id, val } = edition;
+    setEdition(null);
     startTransition(async () => {
-      await renommerGuideVideo(id, nouveau);
+      await renommerGuideVideo(id, val);
       router.refresh();
     });
   }
 
   return (
     <section className="mt-8 rounded-2xl border border-stone-200 bg-white">
+      {confirmationUI}
       <div className="border-b border-stone-100 px-6 py-4">
         <h2 className="font-bold text-stone-900">
           🎥 Guide d&apos;utilisation (vidéos)
@@ -183,9 +194,38 @@ export function GuidesVideoSection({ guides }: { guides: GuideVideo[] }) {
                 className="h-20 w-32 shrink-0 rounded-lg bg-black object-cover"
               />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-stone-900">
-                  {g.titre}
-                </p>
+                {edition?.id === g.id ? (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <input
+                      type="text"
+                      value={edition.val}
+                      onChange={(e) =>
+                        setEdition({ id: g.id, val: e.target.value })
+                      }
+                      autoFocus
+                      className="min-w-0 flex-1 rounded-lg border border-stone-300 px-2 py-1 text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={validerRenommage}
+                      disabled={enCours}
+                      className="rounded-md bg-bordeaux-800 px-2 py-1 text-xs font-semibold text-white"
+                    >
+                      OK
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEdition(null)}
+                      className="rounded-md border border-stone-300 px-2 py-1 text-xs text-stone-600"
+                    >
+                      Annuler
+                    </button>
+                  </div>
+                ) : (
+                  <p className="truncate text-sm font-semibold text-stone-900">
+                    {g.titre}
+                  </p>
+                )}
               </div>
               <div className="flex w-full flex-wrap items-center gap-1 sm:w-auto">
                 <button
@@ -208,7 +248,7 @@ export function GuidesVideoSection({ guides }: { guides: GuideVideo[] }) {
                 </button>
                 <button
                   type="button"
-                  onClick={() => renommer(g.id, g.titre)}
+                  onClick={() => setEdition({ id: g.id, val: g.titre })}
                   disabled={enCours}
                   className="rounded-md border border-stone-300 px-2 py-1 text-xs text-stone-600"
                 >

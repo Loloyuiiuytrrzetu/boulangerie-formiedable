@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { creerSection, modifierSection, supprimerSection } from "./actions";
 import type { Section } from "@/lib/types";
 import { useTDash } from "@/lib/langue-dashboard";
+import { useConfirmation } from "@/components/useConfirmation";
 
 const classesInput =
   "w-full rounded-lg border border-stone-300 px-3.5 py-2.5 outline-none transition focus:border-bordeaux-700 focus:ring-2 focus:ring-bordeaux-200";
@@ -67,6 +68,7 @@ function ChampsSection({ section }: { section?: Partial<Section> }) {
 
 function BlocSection({ section }: { section: Section }) {
   const t = useTDash();
+  const { confirmer, confirmationUI } = useConfirmation();
   const router = useRouter();
   const [ouvert, setOuvert] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
@@ -82,8 +84,15 @@ function BlocSection({ section }: { section: Section }) {
     });
   }
 
-  function supprimer() {
-    if (!window.confirm(t("supprimer") + " ?")) return;
+  async function supprimer() {
+    if (
+      !(await confirmer({
+        message: t("supprimer") + " ?",
+        confirmer: t("supprimer"),
+        annuler: t("annuler"),
+      }))
+    )
+      return;
     startTransition(async () => {
       const r = await supprimerSection(section.id);
       if (r?.erreur) setErreur(r.erreur);
@@ -100,6 +109,7 @@ function BlocSection({ section }: { section: Section }) {
 
   return (
     <div className="rounded-2xl border border-stone-200 bg-white">
+      {confirmationUI}
       <button
         type="button"
         onClick={() => setOuvert(!ouvert)}

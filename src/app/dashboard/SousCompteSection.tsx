@@ -11,9 +11,11 @@ import {
 } from "./actions";
 import type { SousCompte } from "@/lib/types";
 import { useTDash } from "@/lib/langue-dashboard";
+import { useConfirmation } from "@/components/useConfirmation";
 
 export function SousCompteSection({ sousCompte }: { sousCompte: SousCompte | null }) {
   const t = useTDash();
+  const { confirmer, confirmationUI } = useConfirmation();
   const router = useRouter();
   const [creation, setCreation] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
@@ -33,8 +35,15 @@ export function SousCompteSection({ sousCompte }: { sousCompte: SousCompte | nul
     });
   }
 
-  function supprimer() {
-    if (!window.confirm(t("supprimer_sous_compte") + " ?")) return;
+  async function supprimer() {
+    if (
+      !(await confirmer({
+        message: t("supprimer_sous_compte") + " ?",
+        confirmer: t("supprimer"),
+        annuler: t("annuler"),
+      }))
+    )
+      return;
     startTransition(async () => {
       const r = await supprimerSousCompte();
       if (r?.erreur) setErreur(r.erreur);
@@ -52,6 +61,7 @@ export function SousCompteSection({ sousCompte }: { sousCompte: SousCompte | nul
 
   return (
     <section className="rounded-2xl border border-stone-200 bg-white p-6">
+      {confirmationUI}
       <h2 className="text-lg font-bold text-stone-900">{t("sous_compte")}</h2>
       <p className="mt-1 text-sm text-stone-500">{t("sous_compte_desc")}</p>
 
