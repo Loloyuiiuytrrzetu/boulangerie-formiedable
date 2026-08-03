@@ -120,3 +120,8 @@ html {
     animation: none !important;
   }
 }
+
+/* Masque la barre de défilement (garde le scroll) — utilisé sur les menus
+   latéraux pour éviter la grosse barre noire du navigateur. */
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }

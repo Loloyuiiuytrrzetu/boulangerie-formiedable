@@ -48,6 +48,17 @@ export function DerniersTampons({
     hour: "2-digit",
     minute: "2-digit",
   });
+  // Formatage protégé : une date invalide fait planter Intl.format (écran
+  // blanc). On renvoie "—" plutôt que de casser toute la page.
+  function formaterDate(iso: string): string {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return "—";
+    try {
+      return fmt.format(d);
+    } catch {
+      return "—";
+    }
+  }
 
   const charger = useCallback(
     (p: number, silencieux = false) => {
@@ -123,7 +134,7 @@ export function DerniersTampons({
                         +{tp.nombre}
                       </p>
                       <p className="text-[11px] text-stone-400">
-                        {fmt.format(new Date(tp.created_at))}
+                        {formaterDate(tp.created_at)}
                       </p>
                     </div>
                   </li>

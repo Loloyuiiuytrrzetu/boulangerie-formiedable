@@ -172,7 +172,7 @@ export function NavigationSidebar({
               </select>
             </div>
 
-            <nav className="flex-1 overflow-y-auto px-3 py-4">
+            <nav className="no-scrollbar flex-1 overflow-y-auto px-3 py-4">
               {items.map((item) => (
                 <a
                   key={item.href}
@@ -218,7 +218,7 @@ export function NavigationSidebar({
           </div>
         </div>
 
-        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+        <nav className="no-scrollbar flex-1 space-y-1 overflow-y-auto px-3 py-4">
           {items.map((item) => (
             <a
               key={item.href}
