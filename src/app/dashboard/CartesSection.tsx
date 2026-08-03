@@ -63,6 +63,10 @@ function ChampsCarte({
   const [retraitEnCours, startRetrait] = useTransition();
   const [imageRetiree, setImageRetiree] = useState(false);
   const [dateExp, setDateExp] = useState(carte?.date_expiration ?? "");
+  // La date d'expiration est cachée derrière une case à cocher : le sélecteur
+  // de date natif s'inscrivait tout seul (date du jour) au moindre toucher sur
+  // iPhone. Il n'apparaît donc que si le restaurateur le demande explicitement.
+  const [aExpiration, setAExpiration] = useState(Boolean(carte?.date_expiration));
   // Icône du tampon : un seul champ emoji, l'emoji saisi est la source de
   // vérité (on le stocke sous la forme "custom:<emoji>").
   const emojiInitial = carte?.tampon_icone ? iconeEmoji(carte.tampon_icone) : "☕";
@@ -209,27 +213,33 @@ function ChampsCarte({
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-stone-700">
+          <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-stone-700">
+            <input
+              type="checkbox"
+              checked={aExpiration}
+              onChange={(e) => {
+                setAExpiration(e.target.checked);
+                if (!e.target.checked) setDateExp("");
+              }}
+              className="h-4 w-4 accent-bordeaux-800"
+            />
             {t("date_expiration")}
           </label>
-          <div className="flex items-center gap-2">
+          {/* La valeur réellement envoyée : vide tant que la case n'est pas
+              cochée → aucune date inscrite par accident. */}
+          <input
+            type="hidden"
+            name="date_expiration"
+            value={aExpiration ? dateExp : ""}
+          />
+          {aExpiration && (
             <input
-              name="date_expiration"
               type="date"
               value={dateExp}
               onChange={(e) => setDateExp(e.target.value)}
               className={classesInput}
             />
-            {dateExp && (
-              <button
-                type="button"
-                onClick={() => setDateExp("")}
-                className="shrink-0 rounded-lg border border-stone-300 px-3 py-2.5 text-xs font-medium text-stone-600 transition hover:bg-stone-100"
-              >
-                {t("effacer")}
-              </button>
-            )}
-          </div>
+          )}
         </div>
       </div>
 
