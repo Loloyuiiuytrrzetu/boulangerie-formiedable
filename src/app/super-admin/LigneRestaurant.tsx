@@ -11,6 +11,15 @@ export function LigneRestaurant({ restaurant }: { restaurant: RestaurantAvecStat
   const [erreur, setErreur] = useState<string | null>(null);
   const [enCours, startTransition] = useTransition();
 
+  // Statut EFFECTIF : un essai dont la date de fin est dépassée est en réalité
+  // un abonnement payant démarré (le webhook Stripe n'a pas toujours basculé le
+  // statut). On affiche alors « Pro » plutôt que « Essai ».
+  const essaiTermine =
+    restaurant.abonnement_statut === "essai" &&
+    !!restaurant.essai_fin_le &&
+    new Date(restaurant.essai_fin_le).getTime() < Date.now();
+  const statutEffectif = essaiTermine ? "actif" : restaurant.abonnement_statut;
+
   function basculer() {
     setErreur(null);
     startTransition(async () => {
@@ -65,7 +74,7 @@ export function LigneRestaurant({ restaurant }: { restaurant: RestaurantAvecStat
                 désactivé
               </span>
             )}
-            <BadgeAbonnement statut={restaurant.abonnement_statut} />
+            <BadgeAbonnement statut={statutEffectif} />
             <BadgePlan type={restaurant.abonnement_type} />
           </div>
           <p className="mt-0.5 truncate text-xs text-stone-500">
