@@ -20,6 +20,7 @@ type CleDash =
   | "notifications_push"
   | "mon_abonnement"
   | "qr_code"
+  | "guide_utilisation"
   | "connecte"
   | "se_deconnecter"
   | "langue_dashboard"
@@ -214,6 +215,7 @@ const FR: Traductions = {
   notifications_push: "Notifications push",
   mon_abonnement: "Mon abonnement",
   qr_code: "QR code",
+  guide_utilisation: "Guide d'utilisation",
   connecte: "Connecté",
   se_deconnecter: "Se déconnecter",
   langue_dashboard: "Langue du dashboard",
@@ -405,6 +407,7 @@ const EN: Traductions = {
   notifications_push: "Push notifications",
   mon_abonnement: "My subscription",
   qr_code: "QR code",
+  guide_utilisation: "How-to guide",
   connecte: "Signed in",
   se_deconnecter: "Sign out",
   langue_dashboard: "Dashboard language",
@@ -596,6 +599,7 @@ const ES: Traductions = {
   notifications_push: "Notificaciones push",
   mon_abonnement: "Mi suscripción",
   qr_code: "Código QR",
+  guide_utilisation: "Guía de uso",
   connecte: "Conectado",
   se_deconnecter: "Cerrar sesión",
   langue_dashboard: "Idioma del panel",
@@ -787,6 +791,7 @@ const DE: Traductions = {
   notifications_push: "Push-Benachrichtigungen",
   mon_abonnement: "Mein Abonnement",
   qr_code: "QR-Code",
+  guide_utilisation: "Anleitung",
   connecte: "Angemeldet",
   se_deconnecter: "Abmelden",
   langue_dashboard: "Dashboard-Sprache",
@@ -978,6 +983,7 @@ const ZH: Traductions = {
   notifications_push: "推送通知",
   mon_abonnement: "我的订阅",
   qr_code: "二维码",
+  guide_utilisation: "使用指南",
   connecte: "已登录",
   se_deconnecter: "退出登录",
   langue_dashboard: "面板语言",
@@ -1167,6 +1173,7 @@ const AR: Traductions = {
   notifications_push: "إشعارات فورية",
   mon_abonnement: "اشتراكي",
   qr_code: "رمز QR",
+  guide_utilisation: "دليل الاستخدام",
   connecte: "متصل",
   se_deconnecter: "تسجيل الخروج",
   langue_dashboard: "لغة لوحة التحكم",
@@ -1357,6 +1364,7 @@ const RU: Traductions = {
   notifications_push: "Push-уведомления",
   mon_abonnement: "Моя подписка",
   qr_code: "QR-код",
+  guide_utilisation: "Руководство",
   connecte: "Вошёл",
   se_deconnecter: "Выйти",
   langue_dashboard: "Язык панели",

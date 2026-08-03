@@ -76,6 +76,7 @@ export function NavigationSidebar({
     { href: "#notifications", label: t("notifications_push"), icone: "🔔" },
     { href: "#abonnement", label: t("mon_abonnement"), icone: "💳" },
     { href: "#qr-code", label: t("qr_code"), icone: "📱" },
+    { href: "#guide", label: t("guide_utilisation"), icone: "🎥" },
   ];
 
   return (

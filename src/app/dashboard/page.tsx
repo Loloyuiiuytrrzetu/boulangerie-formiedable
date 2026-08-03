@@ -315,7 +315,9 @@ export default async function Dashboard() {
                 )}
               </aside>
 
-              <GuideUtilisation guides={guides} />
+              <div id="guide" className="scroll-mt-24">
+                <GuideUtilisation guides={guides} />
+              </div>
               </div>
             </div>
           </>
