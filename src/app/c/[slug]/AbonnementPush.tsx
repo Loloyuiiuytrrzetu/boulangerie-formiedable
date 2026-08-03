@@ -319,6 +319,20 @@ export function InvitationNotifications({
     "cache" | "proposer" | "abonne" | "refuse" | "loading"
   >("cache");
 
+  // Clé de masquage : le client a fermé le bandeau (croix) → on ne le lui
+  // remontre plus. Distinct du « refus » : il peut toujours activer les
+  // notifications depuis l'onglet Info quand il veut.
+  const cleMasquee = `walletiz_notif_invite_masquee_${slug}`;
+
+  function masquer() {
+    try {
+      localStorage.setItem(cleMasquee, "1");
+    } catch {
+      // ignore
+    }
+    setEtat("cache");
+  }
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     const isStandalone =
@@ -329,6 +343,8 @@ export function InvitationNotifications({
     if (!("Notification" in window)) return;
     // Le client a explicitement refusé les notifications → on ne l'embête plus.
     if (localStorage.getItem(`walletiz_notif_refus_${slug}`) === "1") return;
+    // Le client a fermé le bandeau → on ne le remontre pas.
+    if (localStorage.getItem(cleMasquee) === "1") return;
 
     if (Notification.permission === "denied") {
       setEtat("refuse");
@@ -381,10 +397,22 @@ export function InvitationNotifications({
   // "proposer" ou "loading"
   return (
     <div
-      className="rounded-2xl border p-4"
+      className="relative rounded-2xl border p-4"
       style={{ borderColor: `${couleur}55`, backgroundColor: `${couleur}0d` }}
     >
-      <p className="text-sm font-bold text-stone-900">
+      {/* Croix pour fermer le bandeau (ne plus le proposer). */}
+      <button
+        type="button"
+        onClick={masquer}
+        aria-label={t("fermer")}
+        className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full text-stone-400 transition hover:bg-stone-200/60 hover:text-stone-700"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+          <line x1="6" y1="6" x2="18" y2="18" />
+          <line x1="18" y1="6" x2="6" y2="18" />
+        </svg>
+      </button>
+      <p className="pr-8 text-sm font-bold text-stone-900">
         {t("derniere_etape_notifs")}
       </p>
       <p className="mt-1 text-xs text-stone-600">{t("activer_notifs_desc")}</p>
@@ -396,6 +424,13 @@ export function InvitationNotifications({
         style={{ backgroundColor: couleur }}
       >
         {etat === "loading" ? t("activation_en_cours") : t("recevoir_notifs")}
+      </button>
+      <button
+        type="button"
+        onClick={masquer}
+        className="mt-2 w-full py-1 text-center text-xs font-medium text-stone-500 hover:text-stone-700"
+      >
+        {t("plus_tard")}
       </button>
     </div>
   );
