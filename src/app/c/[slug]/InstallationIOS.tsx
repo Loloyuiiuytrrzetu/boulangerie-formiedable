@@ -148,11 +148,6 @@ export function BanniereInstallationIOS({
     return () => window.removeEventListener("walletiz-pwa-state", verifier);
   }, []);
 
-  function masquer() {
-    ecrireEtat("banner_ok");
-    setVisible(false);
-  }
-
   if (!visible) return null;
 
   return (
@@ -183,13 +178,6 @@ export function BanniereInstallationIOS({
                 style={{ backgroundColor: couleur }}
               >
                 {t("comment_faire")}
-              </button>
-              <button
-                type="button"
-                onClick={masquer}
-                className="rounded-lg border border-stone-300 bg-white px-3 py-1.5 text-xs font-medium text-stone-600 transition hover:bg-stone-100"
-              >
-                {t("ne_plus_afficher")}
               </button>
             </div>
           </div>
