@@ -137,7 +137,7 @@ function VitrineContenu() {
                   className="absolute inset-x-0 bottom-1 z-0 h-3 rounded-sm bg-bordeaux-100/80"
                   aria-hidden="true"
                 />
-              </span>{" "}
+              </span>
               {t("hero_titre_3")}
             </h1>
             <p className="mt-6 max-w-xl text-lg text-stone-600 sm:text-xl">
