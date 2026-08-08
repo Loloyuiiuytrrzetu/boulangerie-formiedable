@@ -32,6 +32,10 @@ import { LangueDashboardProvider } from "@/lib/langue-dashboard";
 import type { Langue } from "@/lib/i18n";
 import { tDash } from "@/lib/i18n-dashboard";
 
+// Laisse le temps aux Server Actions de cette page (envoi de notifications à
+// des milliers d'abonnés) de s'exécuter jusqu'au bout (plan Vercel Pro).
+export const maxDuration = 300;
+
 export default async function Dashboard() {
   const effectif = await utilisateurEffectif();
   if (!effectif) redirect("/login");

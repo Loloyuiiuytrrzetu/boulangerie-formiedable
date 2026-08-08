@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getWebPush, chargerTousLesAbonnes } from "@/lib/push";
+import { getWebPush, chargerTousLesAbonnes, envoyerParLots } from "@/lib/push";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+// Laisse le temps d'envoyer à des milliers d'abonnés (plan Vercel Pro).
+export const maxDuration = 300;
 
 // Endpoint appelé toutes les minutes par Vercel Cron (voir vercel.json).
 // Trouve toutes les notifications programmées dont l'échéance est passée
@@ -52,8 +54,6 @@ export async function GET(req: Request) {
     // TOUS les abonnés, sans plafond (pagination interne par lots de 1000).
     const subs = await chargerTousLesAbonnes(admin, n.restaurant_id);
 
-    let envois = 0;
-    const aSupprimer: string[] = [];
     const payload = JSON.stringify({
       titre: n.titre,
       message: n.message,
@@ -61,23 +61,8 @@ export async function GET(req: Request) {
       url: restaurant ? `${siteUrl}/c/${restaurant.slug}` : "/",
     });
 
-    await Promise.all(
-      subs.map(async (s) => {
-        try {
-          await wp!.sendNotification(
-            { endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } },
-            payload
-          );
-          envois++;
-        } catch (err: unknown) {
-          const statusCode =
-            typeof err === "object" && err !== null && "statusCode" in err
-              ? (err as { statusCode?: number }).statusCode
-              : undefined;
-          if (statusCode === 404 || statusCode === 410) aSupprimer.push(s.id);
-        }
-      })
-    );
+    // Envoi par lots (fiable jusqu'à des milliers d'abonnés).
+    const { envois, aSupprimer } = await envoyerParLots(wp!, subs, payload);
     if (aSupprimer.length > 0) {
       await admin.from("push_subscriptions").delete().in("id", aSupprimer);
     }

@@ -38,6 +38,42 @@ export type AbonnePush = {
 // tout récupéré. Indispensable pour qu'un commerce à très gros volume (plus de
 // 1000 abonnés) reçoive bien ses notifications en ENTIER, pas seulement les
 // 1000 premiers.
+// Envoie une notification à une liste d'abonnés PAR LOTS (concurrence bornée).
+// Envoyer des milliers de push en une seule fois (Promise.all sur tout) peut
+// saturer la fonction serveur et en perdre. On traite par tranches de `lot`
+// pour rester fiable même à 8000+ abonnés. Renvoie le nombre d'envois réussis
+// et les ids d'abonnements morts (404/410) à supprimer.
+export async function envoyerParLots(
+  wp: ReturnType<typeof getWebPush>,
+  subs: AbonnePush[],
+  payload: string,
+  lot = 200
+): Promise<{ envois: number; aSupprimer: string[] }> {
+  let envois = 0;
+  const aSupprimer: string[] = [];
+  for (let i = 0; i < subs.length; i += lot) {
+    const tranche = subs.slice(i, i + lot);
+    await Promise.all(
+      tranche.map(async (s) => {
+        try {
+          await wp.sendNotification(
+            { endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } },
+            payload
+          );
+          envois++;
+        } catch (err: unknown) {
+          const statusCode =
+            typeof err === "object" && err !== null && "statusCode" in err
+              ? (err as { statusCode?: number }).statusCode
+              : undefined;
+          if (statusCode === 404 || statusCode === 410) aSupprimer.push(s.id);
+        }
+      })
+    );
+  }
+  return { envois, aSupprimer };
+}
+
 export async function chargerTousLesAbonnes(
   admin: ReturnType<typeof createAdminClient>,
   restaurantId: string

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { utilisateurEffectif } from "@/lib/impersonate";
-import { getWebPush, chargerTousLesAbonnes } from "@/lib/push";
+import { getWebPush, chargerTousLesAbonnes, envoyerParLots } from "@/lib/push";
 
 async function chargerRestaurant() {
   const effectif = await utilisateurEffectif();
@@ -74,25 +74,8 @@ async function envoyerAuxAbonnes(restaurantId: string, notification: {
     url: `${siteUrl}/c/${notification.slug}`,
   });
 
-  let envois = 0;
-  const aSupprimer: string[] = [];
-  await Promise.all(
-    subs.map(async (s) => {
-      try {
-        await wp.sendNotification(
-          { endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } },
-          payload
-        );
-        envois++;
-      } catch (err: unknown) {
-        const statusCode =
-          typeof err === "object" && err !== null && "statusCode" in err
-            ? (err as { statusCode?: number }).statusCode
-            : undefined;
-        if (statusCode === 404 || statusCode === 410) aSupprimer.push(s.id);
-      }
-    })
-  );
+  // Envoi par lots (fiable jusqu'à des milliers d'abonnés).
+  const { envois, aSupprimer } = await envoyerParLots(wp, subs, payload);
   if (aSupprimer.length > 0) {
     await admin.from("push_subscriptions").delete().in("id", aSupprimer);
   }
