@@ -649,6 +649,13 @@ function VitrineContenu() {
             <Link href="/login" className="hover:text-bordeaux-700">{t("nav_connexion")}</Link>
           </div>
         </div>
+        <div className="mx-auto mt-6 flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-1 border-t border-stone-100 px-4 pt-4 text-xs text-stone-400 sm:px-6">
+          <Link href="/mentions-legales" className="hover:text-bordeaux-700">Mentions légales</Link>
+          <span>·</span>
+          <Link href="/cgv" className="hover:text-bordeaux-700">CGV</Link>
+          <span>·</span>
+          <Link href="/confidentialite" className="hover:text-bordeaux-700">Politique de confidentialité</Link>
+        </div>
       </footer>
     </main>
   );
