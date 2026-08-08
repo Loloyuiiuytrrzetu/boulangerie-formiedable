@@ -455,6 +455,77 @@ function VitrineContenu() {
           </div>
 
           <p className="mx-auto mt-6 max-w-xl text-center text-xs text-stone-400">{t("tarif_footer_note")}</p>
+
+          {/* ---- Supports de comptoir personnalisés (option) ---- */}
+          <div className="mx-auto mt-20 max-w-5xl">
+            <div className="text-center">
+              <p className="text-sm font-bold uppercase tracking-widest text-bordeaux-700">
+                {t("supports_eyebrow")}
+              </p>
+              <h3 className="mt-3 text-2xl font-extrabold text-stone-900 sm:text-3xl">
+                {t("supports_titre")}
+              </h3>
+              <p className="mx-auto mt-3 max-w-2xl text-stone-600">
+                {t("supports_intro")}
+              </p>
+            </div>
+
+            <div className="mt-10 grid gap-6 sm:grid-cols-2">
+              {/* 20€ — support personnalisé */}
+              <div className="flex flex-col overflow-hidden rounded-3xl border-2 border-stone-200 bg-white shadow-sm transition hover:border-bordeaux-300 hover:shadow-lg">
+                <div className="flex items-center justify-center bg-stone-100 p-4">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/support-personnalise.png"
+                    alt={t("support_perso_titre")}
+                    className="h-64 w-auto rounded-xl object-contain"
+                  />
+                </div>
+                <div className="flex flex-1 flex-col p-6">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <h4 className="text-lg font-bold text-stone-900">
+                      {t("support_perso_titre")}
+                    </h4>
+                    <p className="whitespace-nowrap text-2xl font-black text-bordeaux-800">
+                      20€{" "}
+                      <span className="text-xs font-medium text-stone-500">
+                        {t("support_unite")}
+                      </span>
+                    </p>
+                  </div>
+                  <p className="mt-2 text-sm text-stone-600">{t("support_desc")}</p>
+                </div>
+              </div>
+
+              {/* 25€ — support avec socle en bois */}
+              <div className="flex flex-col overflow-hidden rounded-3xl border-2 border-bordeaux-800 bg-white shadow-lg">
+                <div className="flex items-center justify-center bg-stone-100 p-4">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/support-bois.jpg"
+                    alt={t("support_bois_titre")}
+                    className="h-64 w-auto rounded-xl object-contain"
+                  />
+                </div>
+                <div className="flex flex-1 flex-col p-6">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <h4 className="text-lg font-bold text-stone-900">
+                      {t("support_bois_titre")}
+                    </h4>
+                    <p className="whitespace-nowrap text-2xl font-black text-bordeaux-800">
+                      25€{" "}
+                      <span className="text-xs font-medium text-stone-500">
+                        {t("support_unite")}
+                      </span>
+                    </p>
+                  </div>
+                  <p className="mt-2 text-sm text-stone-600">
+                    {t("support_bois_desc")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
