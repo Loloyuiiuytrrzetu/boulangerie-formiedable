@@ -64,9 +64,7 @@ export default function Confidentialite() {
       <p>
         Conformément au RGPD, toute personne dispose d&apos;un droit d&apos;accès, de rectification,
         d&apos;effacement, d&apos;opposition et de portabilité de ses données. Ces droits
-        s&apos;exercent à <a href="mailto:walletiz.fr@gmail.com">walletiz.fr@gmail.com</a>. Vous
-        pouvez également introduire une réclamation auprès de la CNIL (
-        <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer">cnil.fr</a>).
+        s&apos;exercent à <a href="mailto:walletiz.fr@gmail.com">walletiz.fr@gmail.com</a>.
       </p>
       <p>
         Un client final peut à tout moment couper les notifications depuis l&apos;onglet « Info » de
