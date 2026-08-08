@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { HeroTampons, GrapheAnime, MockupCartes, NotifsAnimees } from "./VitrineAnimations";
 import { MenuMobile } from "./MenuMobile";
+import { BoutonRdv } from "./BoutonRdv";
 import { LottieAnim } from "./LottieAnim";
 import { LangueProvider, useLangue, useTV } from "@/lib/langue";
 import { LANGUES, type Langue } from "@/lib/i18n";
@@ -14,7 +15,6 @@ import { LANGUES, type Langue } from "@/lib/i18n";
 const EMAIL = "walletiz.fr@gmail.com";
 const TEL_AFFICHE = "+590 690 98 85 38";
 const TEL_LIEN = "+590690988538";
-const CALENDLY = "https://calendly.com/walletiz-fr";
 const STRIPE_MENSUEL = "https://buy.stripe.com/4gMeVd5Plcw70LGdUUejK00";
 const STRIPE_ANNUEL = "https://buy.stripe.com/5kQ8wP5Pl67J1PKaIIejK01";
 const PRIX_SETUP = 120;
@@ -87,14 +87,9 @@ function VitrineContenu() {
             <div className="hidden md:block">
               <SelecteurLangueVitrine />
             </div>
-            <a
-              href={CALENDLY}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden rounded-lg bg-bordeaux-50 px-4 py-2 text-sm font-semibold text-bordeaux-800 transition hover:bg-bordeaux-100 sm:inline-block"
-            >
+            <BoutonRdv className="hidden rounded-lg bg-bordeaux-50 px-4 py-2 text-sm font-semibold text-bordeaux-800 transition hover:bg-bordeaux-100 sm:inline-block">
               {t("nav_prendre_rdv")}
-            </a>
+            </BoutonRdv>
             <Link
               href="/login"
               className="rounded-lg bg-bordeaux-800 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-bordeaux-700"
@@ -149,15 +144,10 @@ function VitrineContenu() {
               {t("hero_soustitre")}
             </p>
             <div className="mt-10 flex flex-col items-start gap-3 sm:flex-row">
-              <a
-                href={CALENDLY}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="anim-glow group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-bordeaux-800 px-6 py-4 text-base font-bold text-white shadow-xl transition hover:bg-bordeaux-700 sm:w-auto"
-              >
+              <BoutonRdv className="anim-glow group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-bordeaux-800 px-6 py-4 text-base font-bold text-white shadow-xl transition hover:bg-bordeaux-700 sm:w-auto">
                 {t("hero_cta_rdv")}
                 <span className="transition group-hover:translate-x-1">→</span>
-              </a>
+              </BoutonRdv>
               <Link
                 href="/login"
                 className="inline-flex w-full items-center justify-center rounded-xl border-2 border-stone-200 bg-white px-6 py-4 text-base font-semibold text-stone-700 transition hover:border-bordeaux-300 hover:text-bordeaux-700 sm:w-auto"
@@ -569,9 +559,9 @@ function VitrineContenu() {
             <h3 className="mt-3 text-2xl font-extrabold text-stone-900 sm:text-3xl">{t("sw_devis_titre")}</h3>
             <p className="mt-3 text-stone-600">{t("sw_devis_desc")}</p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <a href={CALENDLY} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-bordeaux-800 px-6 py-4 text-base font-bold text-white shadow-lg transition hover:bg-bordeaux-700 sm:w-auto">
+              <BoutonRdv className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-bordeaux-800 px-6 py-4 text-base font-bold text-white shadow-lg transition hover:bg-bordeaux-700 sm:w-auto">
                 {t("sw_devis_rdv")}<span>→</span>
-              </a>
+              </BoutonRdv>
               <a href={`mailto:${EMAIL}?subject=Custom%20website%20request`} className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-stone-200 bg-white px-6 py-4 text-base font-semibold text-stone-700 transition hover:border-bordeaux-300 hover:text-bordeaux-700 sm:w-auto">
                 {t("sw_devis_contact")}
               </a>
@@ -588,13 +578,13 @@ function VitrineContenu() {
           <p className="mx-auto mt-4 max-w-2xl text-lg text-stone-600">{t("ct_soustitre")}</p>
 
           <div className="mt-12 grid gap-4 sm:grid-cols-3">
-            <a href={CALENDLY} target="_blank" rel="noopener noreferrer" className="group rounded-2xl border-2 border-stone-200 bg-white p-6 text-left transition hover:-translate-y-1 hover:border-bordeaux-400 hover:shadow-xl">
+            <BoutonRdv className="group block h-full w-full rounded-2xl border-2 border-stone-200 bg-white p-6 text-left transition hover:-translate-y-1 hover:border-bordeaux-400 hover:shadow-xl">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-bordeaux-100 text-2xl">📅</div>
               <p className="mt-4 text-sm font-semibold uppercase tracking-wider text-stone-500">{t("ct_rdv")}</p>
               <p className="mt-1 font-bold text-stone-900">{t("ct_rdv_reserver")}</p>
               <p className="mt-2 text-sm text-stone-600">{t("ct_rdv_desc")}</p>
-              <p className="mt-3 text-sm font-semibold text-bordeaux-700 group-hover:underline">calendly.com/walletiz-fr →</p>
-            </a>
+              <p className="mt-3 text-sm font-semibold text-bordeaux-700 group-hover:underline">WhatsApp · Calendly →</p>
+            </BoutonRdv>
 
             <a href={`mailto:${EMAIL}`} className="group rounded-2xl border-2 border-stone-200 bg-white p-6 text-left transition hover:-translate-y-1 hover:border-bordeaux-400 hover:shadow-xl">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-bordeaux-100 text-2xl">✉️</div>
@@ -653,7 +643,7 @@ function VitrineContenu() {
             </span>
           </div>
           <div className="flex items-center gap-5 text-sm text-stone-500">
-            <a href={CALENDLY} target="_blank" rel="noopener noreferrer" className="hover:text-bordeaux-700">{t("ct_rdv")}</a>
+            <BoutonRdv className="hover:text-bordeaux-700">{t("ct_rdv")}</BoutonRdv>
             <a href={`mailto:${EMAIL}`} className="hover:text-bordeaux-700">{t("ct_email")}</a>
             <a href={`tel:${TEL_LIEN}`} className="hover:text-bordeaux-700">{t("ct_tel")}</a>
             <Link href="/login" className="hover:text-bordeaux-700">{t("nav_connexion")}</Link>

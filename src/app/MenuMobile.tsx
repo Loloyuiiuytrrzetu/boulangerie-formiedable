@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useLangue, useTV } from "@/lib/langue";
 import { LANGUES, type Langue } from "@/lib/i18n";
+import { BoutonRdv } from "./BoutonRdv";
 
 // Bouton hamburger visible uniquement en mobile (à droite du bouton Connexion).
 // Ouvre un panneau plein écran listant toutes les sections de la vitrine.
@@ -128,15 +129,9 @@ export function MenuMobile() {
             </nav>
 
             <div className="border-t border-white/15 p-4">
-              <a
-                href="https://calendly.com/walletiz-fr"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setOuvert(false)}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-bold text-bordeaux-800 shadow-lg transition hover:bg-stone-100"
-              >
+              <BoutonRdv className="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-bold text-bordeaux-800 shadow-lg transition hover:bg-stone-100">
                 📅 {t("nav_prendre_rdv_court")}
-              </a>
+              </BoutonRdv>
             </div>
           </div>
         </div>
