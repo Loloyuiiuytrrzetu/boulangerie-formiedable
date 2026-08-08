@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { LegalLayout, AComplter } from "../LegalLayout";
+import { LegalLayout } from "../LegalLayout";
 
 export const metadata: Metadata = {
   title: "Mentions légales — Walletiz",
@@ -11,18 +11,10 @@ export default function MentionsLegales() {
     <LegalLayout titre="Mentions légales" maj="août 2026">
       <h2>1. Éditeur du site</h2>
       <p>
-        Le site <strong>walletiz.fr</strong> et le service Walletiz sont édités par :
+        Le site <strong>walletiz.fr</strong> et le service Walletiz sont édités par
+        <strong> Walletiz</strong>. Pour toute demande, vous pouvez nous contacter :
       </p>
       <ul>
-        <li>Nom / Raison sociale : <AComplter>[à compléter — votre nom ou raison sociale]</AComplter></li>
-        <li>Statut juridique : <AComplter>[à compléter — ex. micro-entreprise / SASU / EI]</AComplter></li>
-        <li>SIREN / SIRET : <AComplter>[à compléter]</AComplter></li>
-        <li>Siège / adresse : <AComplter>[à compléter]</AComplter></li>
-        <li>
-          Numéro de TVA intracommunautaire :{" "}
-          <AComplter>[à compléter, ou « TVA non applicable, art. 293 B du CGI » si micro-entreprise]</AComplter>
-        </li>
-        <li>Directeur de la publication : Samuel Ursule</li>
         <li>E-mail : <a href="mailto:walletiz.fr@gmail.com">walletiz.fr@gmail.com</a></li>
         <li>Téléphone : +590 690 98 85 38</li>
       </ul>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { LegalLayout, AComplter } from "../LegalLayout";
+import { LegalLayout } from "../LegalLayout";
 
 export const metadata: Metadata = {
   title: "Conditions Générales — Walletiz",
@@ -12,10 +12,9 @@ export default function CGV() {
       <h2>1. Objet</h2>
       <p>
         Les présentes conditions régissent l&apos;utilisation du service <strong>Walletiz</strong>,
-        une plateforme de carte de fidélité digitale destinée aux commerces
-        (le « Service »), éditée par <AComplter>[à compléter — nom / raison sociale]</AComplter>
-        (l&apos;« Éditeur »). Toute souscription implique l&apos;acceptation des présentes
-        conditions.
+        une plateforme de carte de fidélité digitale destinée aux commerces (le « Service »),
+        éditée par <strong>Walletiz</strong> (l&apos;« Éditeur »). Toute souscription implique
+        l&apos;acceptation des présentes conditions.
       </p>
 
       <h2>2. Description du service</h2>
@@ -37,10 +36,8 @@ export default function CGV() {
         </li>
       </ul>
       <p>
-        Les prix sont indiqués{" "}
-        <AComplter>[à compléter : « hors taxes » ou « TTC, TVA non applicable art. 293 B du CGI »]</AComplter>.
-        Une période d&apos;essai gratuite peut être proposée ; à son terme, l&apos;abonnement
-        choisi démarre automatiquement.
+        Les prix sont indiqués en euros. Une période d&apos;essai gratuite peut être proposée ; à
+        son terme, l&apos;abonnement choisi démarre automatiquement.
       </p>
 
       <h2>4. Paiement</h2>
@@ -62,7 +59,7 @@ export default function CGV() {
       <p>
         Le Service s&apos;adressant à des professionnels dans le cadre de leur activité, le droit
         de rétractation de 14 jours prévu pour les consommateurs ne s&apos;applique en principe
-        pas. <AComplter>[à adapter selon votre situation — un pro peut néanmoins l&apos;accorder commercialement]</AComplter>
+        pas.
       </p>
 
       <h2>7. Obligations du Client</h2>
