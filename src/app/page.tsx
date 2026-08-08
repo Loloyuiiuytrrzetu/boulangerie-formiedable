@@ -632,6 +632,51 @@ function VitrineContenu() {
         </div>
       </section>
 
+      {/* ==================== INFORMATIONS LÉGALES ==================== */}
+      <section id="legal" className="scroll-mt-20 border-t border-stone-100 bg-stone-50 py-16">
+        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
+          <p className="text-sm font-bold uppercase tracking-widest text-bordeaux-700">
+            {t("legal_eyebrow")}
+          </p>
+          <h2 className="mt-3 text-2xl font-extrabold text-stone-900 sm:text-3xl">
+            {t("legal_titre")}
+          </h2>
+          <p className="mx-auto mt-3 max-w-2xl text-stone-600">{t("legal_intro")}</p>
+
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            <Link
+              href="/mentions-legales"
+              className="group rounded-2xl border-2 border-stone-200 bg-white p-6 text-left transition hover:-translate-y-1 hover:border-bordeaux-400 hover:shadow-lg"
+            >
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-bordeaux-100 text-xl">📄</div>
+              <p className="mt-4 font-bold text-stone-900">{t("legal_mentions")}</p>
+              <p className="mt-1 text-sm text-stone-600">{t("legal_mentions_desc")}</p>
+              <p className="mt-3 text-sm font-semibold text-bordeaux-700 group-hover:underline">{t("legal_lire")} →</p>
+            </Link>
+
+            <Link
+              href="/cgv"
+              className="group rounded-2xl border-2 border-stone-200 bg-white p-6 text-left transition hover:-translate-y-1 hover:border-bordeaux-400 hover:shadow-lg"
+            >
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-bordeaux-100 text-xl">📝</div>
+              <p className="mt-4 font-bold text-stone-900">{t("legal_cgv")}</p>
+              <p className="mt-1 text-sm text-stone-600">{t("legal_cgv_desc")}</p>
+              <p className="mt-3 text-sm font-semibold text-bordeaux-700 group-hover:underline">{t("legal_lire")} →</p>
+            </Link>
+
+            <Link
+              href="/confidentialite"
+              className="group rounded-2xl border-2 border-stone-200 bg-white p-6 text-left transition hover:-translate-y-1 hover:border-bordeaux-400 hover:shadow-lg"
+            >
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-bordeaux-100 text-xl">🔒</div>
+              <p className="mt-4 font-bold text-stone-900">{t("legal_rgpd")}</p>
+              <p className="mt-1 text-sm text-stone-600">{t("legal_rgpd_desc")}</p>
+              <p className="mt-3 text-sm font-semibold text-bordeaux-700 group-hover:underline">{t("legal_lire")} →</p>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ==================== FOOTER ==================== */}
       <footer className="border-t border-stone-200 bg-stone-50 py-10">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 sm:flex-row sm:px-6">
