@@ -18,7 +18,7 @@ const LOCALES: Record<Langue, string> = {
 };
 
 // Montant facturé selon le plan choisi.
-const PRIX: Record<"mensuel" | "annuel", number> = { mensuel: 64, annuel: 614 };
+const PRIX: Record<"mensuel" | "annuel", number> = { mensuel: 54, annuel: 518 };
 
 // Calcule la prochaine date de prélèvement à partir d'une date d'ancrage
 // (fin d'essai), en avançant d'un mois (ou d'un an) jusqu'à dépasser

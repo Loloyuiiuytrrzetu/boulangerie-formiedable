@@ -28,9 +28,9 @@ export default function CGV() {
 
       <h2>3. Tarifs</h2>
       <ul>
-        <li>Abonnement mensuel : <strong>64&nbsp;€/mois</strong>, sans engagement.</li>
-        <li>Abonnement annuel : <strong>614&nbsp;€/an</strong> (soit une remise par rapport au mensuel).</li>
-        <li>Frais de mise en place : <strong>120&nbsp;€</strong>, facturés une seule fois à l&apos;inscription.</li>
+        <li>Abonnement mensuel : <strong>54&nbsp;€/mois</strong>, sans engagement.</li>
+        <li>Abonnement annuel : <strong>518&nbsp;€/an</strong> (soit une remise par rapport au mensuel).</li>
+        <li>Frais de mise en place : <strong>20&nbsp;€</strong>, facturés une seule fois à l&apos;inscription.</li>
         <li>
           Supports de comptoir personnalisés (optionnels) : à partir de <strong>20&nbsp;€</strong> l&apos;unité.
         </li>

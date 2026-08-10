@@ -65,15 +65,15 @@ export default async function SuperAdmin() {
 
   // ---------------------------------------------------------------------------
   // REVENUS
-  // - Frais de mise en place : 120€ facturés une fois par restaurant créé
-  // - Abonnement mensuel : 64€/mois
-  // - Abonnement annuel   : 614€/an (614/12 ≈ 51,17€/mois en MRR)
+  // - Frais de mise en place : 20€ facturés une fois par restaurant créé
+  // - Abonnement mensuel : 54€/mois
+  // - Abonnement annuel   : 518€/an (518/12 ≈ 43,17€/mois en MRR)
   // Seuls les abonnements 'essai' ou 'actif' comptent dans les revenus
   // récurrents (les 'annule' ou 'expire' sont exclus).
   // ---------------------------------------------------------------------------
-  const PRIX_SETUP = 120;
-  const PRIX_MENSUEL = 64;
-  const PRIX_ANNUEL = 614;
+  const PRIX_SETUP = 20;
+  const PRIX_MENSUEL = 54;
+  const PRIX_ANNUEL = 518;
 
   const actifs = lignes.filter(
     (r) => r.abonnement_statut === "essai" || r.abonnement_statut === "actif"

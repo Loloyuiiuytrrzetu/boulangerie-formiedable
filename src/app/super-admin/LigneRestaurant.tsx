@@ -132,8 +132,8 @@ function BadgePlan({
 }) {
   if (!type) return null;
   const config = {
-    mensuel: { label: "Mensuel · 64€/mois", classes: "bg-stone-100 text-stone-700" },
-    annuel: { label: "Annuel · 614€/an", classes: "bg-bordeaux-100 text-bordeaux-800" },
+    mensuel: { label: "Mensuel · 54€/mois", classes: "bg-stone-100 text-stone-700" },
+    annuel: { label: "Annuel · 518€/an", classes: "bg-bordeaux-100 text-bordeaux-800" },
   } as const;
   const c = config[type];
   return (
