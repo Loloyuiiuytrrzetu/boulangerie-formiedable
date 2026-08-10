@@ -123,6 +123,8 @@ type CleV =
   | "tarif_setup_titre"
   | "tarif_setup_une_fois"
   | "tarif_setup_desc"
+  | "tarif_setup_offert"
+  | "tarif_setup_offert_desc"
   | "tarif_avantage_cartes"
   | "tarif_avantage_clients"
   | "tarif_avantage_notifs"
@@ -336,6 +338,8 @@ const FR: T = {
   tarif_setup_titre: "+ Frais de mise en place",
   tarif_setup_une_fois: "une fois",
   tarif_setup_desc: "Comprend : configuration complète du compte commerçant, personnalisation de la page client (logo, couleurs, image de fond), création des cartes de fidélité et des récompenses, génération du QR code prêt à imprimer, session de formation en visio si demandée, et support prioritaire les 7 premiers jours.",
+  tarif_setup_offert: "OFFERTS",
+  tarif_setup_offert_desc: "Les frais de mise en place sont offerts avec l'abonnement annuel.",
   tarif_avantage_cartes: "Cartes de fidélité illimitées",
   tarif_avantage_clients: "Clients inscrits illimités",
   tarif_avantage_notifs: "Notifications push illimitées",
@@ -545,6 +549,8 @@ const EN: T = {
   tarif_setup_titre: "+ Setup fee",
   tarif_setup_une_fois: "one time",
   tarif_setup_desc: "Includes: full merchant account setup, customer page personalization (logo, colors, background), creation of loyalty cards and rewards, QR code ready to print, video training session on request, and priority support for the first 7 days.",
+  tarif_setup_offert: "FREE",
+  tarif_setup_offert_desc: "Setup fees are waived with the annual plan.",
   tarif_avantage_cartes: "Unlimited loyalty cards",
   tarif_avantage_clients: "Unlimited registered customers",
   tarif_avantage_notifs: "Unlimited push notifications",
@@ -754,6 +760,8 @@ const ES: T = {
   tarif_setup_titre: "+ Cuota de configuración",
   tarif_setup_une_fois: "una sola vez",
   tarif_setup_desc: "Incluye: configuración completa del comercio, personalización de la página del cliente (logo, colores, fondo), creación de tarjetas y recompensas, generación del QR listo para imprimir, sesión de formación por vídeo si se pide, y soporte prioritario los primeros 7 días.",
+  tarif_setup_offert: "GRATIS",
+  tarif_setup_offert_desc: "Los gastos de instalación son gratuitos con el plan anual.",
   tarif_avantage_cartes: "Tarjetas de fidelidad ilimitadas",
   tarif_avantage_clients: "Clientes inscritos ilimitados",
   tarif_avantage_notifs: "Notificaciones push ilimitadas",
@@ -963,6 +971,8 @@ const DE: T = {
   tarif_setup_titre: "+ Einrichtungsgebühr",
   tarif_setup_une_fois: "einmalig",
   tarif_setup_desc: "Enthält: vollständige Kontoeinrichtung, Personalisierung der Kundenseite (Logo, Farben, Hintergrund), Erstellung von Treuekarten und Belohnungen, druckfertiger QR-Code, Video-Schulungssitzung auf Anfrage, und Priority-Support für die ersten 7 Tage.",
+  tarif_setup_offert: "GESCHENKT",
+  tarif_setup_offert_desc: "Die Einrichtungsgebühr entfällt beim Jahresabo.",
   tarif_avantage_cartes: "Unbegrenzte Treuekarten",
   tarif_avantage_clients: "Unbegrenzte registrierte Kunden",
   tarif_avantage_notifs: "Unbegrenzte Push-Benachrichtigungen",
@@ -1172,6 +1182,8 @@ const ZH: T = {
   tarif_setup_titre: "+ 安装费",
   tarif_setup_une_fois: "一次性",
   tarif_setup_desc: "包括:完整的商家账户设置、客户页面个性化(标志、颜色、背景图)、创建会员卡和奖励、生成可打印的二维码、如需可提供视频培训课程,以及前 7 天的优先支持。",
+  tarif_setup_offert: "免费",
+  tarif_setup_offert_desc: "选择年度方案，免收开通费用。",
   tarif_avantage_cartes: "无限会员卡",
   tarif_avantage_clients: "无限注册客户",
   tarif_avantage_notifs: "无限推送通知",
@@ -1380,6 +1392,8 @@ const AR: T = {
   tarif_setup_titre: "+ رسوم الإعداد",
   tarif_setup_une_fois: "مرة واحدة",
   tarif_setup_desc: "يشمل: إعداد كامل لحساب التاجر، تخصيص صفحة العميل (الشعار، الألوان، الخلفية)، إنشاء بطاقات الولاء والمكافآت، توليد رمز QR جاهز للطباعة، جلسة تدريبية بالفيديو عند الطلب، ودعم بأولوية للأيام السبعة الأولى.",
+  tarif_setup_offert: "مجاناً",
+  tarif_setup_offert_desc: "رسوم الإعداد مجانية مع الاشتراك السنوي.",
   tarif_avantage_cartes: "بطاقات ولاء غير محدودة",
   tarif_avantage_clients: "عملاء مسجلون غير محدودين",
   tarif_avantage_notifs: "إشعارات فورية غير محدودة",
@@ -1588,6 +1602,8 @@ const RU: T = {
   tarif_setup_titre: "+ Стоимость настройки",
   tarif_setup_une_fois: "разово",
   tarif_setup_desc: "Включает: полную настройку аккаунта, персонализацию клиентской страницы (логотип, цвета, фон), создание карт лояльности и наград, готовый к печати QR-код, видео-тренинг по запросу и приоритетную поддержку первые 7 дней.",
+  tarif_setup_offert: "БЕСПЛАТНО",
+  tarif_setup_offert_desc: "При годовой подписке плата за подключение не взимается.",
   tarif_avantage_cartes: "Неограниченные карты лояльности",
   tarif_avantage_clients: "Неограниченные клиенты",
   tarif_avantage_notifs: "Неограниченные push-уведомления",

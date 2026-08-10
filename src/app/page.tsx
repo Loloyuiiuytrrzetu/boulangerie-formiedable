@@ -419,14 +419,15 @@ function VitrineContenu() {
               </p>
               <p className="mt-2 text-xs text-stone-500">{t("tarif_annulable")}</p>
 
-              <div className="mt-6 rounded-xl border border-bordeaux-100 bg-white/70 p-4">
+              <div className="mt-6 rounded-xl border border-green-200 bg-green-50/70 p-4">
                 <div className="flex items-baseline justify-between gap-2">
                   <p className="text-sm font-bold text-stone-900">{t("tarif_setup_titre")}</p>
-                  <p className="whitespace-nowrap text-lg font-bold text-bordeaux-800">
-                    {PRIX_SETUP}€ <span className="text-xs font-medium text-stone-500">{t("tarif_setup_une_fois")}</span>
+                  <p className="whitespace-nowrap text-lg font-black text-green-700">
+                    <span className="mr-1 text-sm font-medium text-stone-400 line-through">{PRIX_SETUP}€</span>
+                    {t("tarif_setup_offert")}
                   </p>
                 </div>
-                <p className="mt-2 text-xs leading-relaxed text-stone-600">{t("tarif_setup_desc")}</p>
+                <p className="mt-2 text-xs font-medium leading-relaxed text-green-800">{t("tarif_setup_offert_desc")}</p>
               </div>
 
               <ul className="mt-6 space-y-2.5 text-sm text-stone-700">
