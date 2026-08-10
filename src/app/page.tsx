@@ -16,7 +16,7 @@ const EMAIL = "walletiz.fr@gmail.com";
 const TEL_AFFICHE = "+590 690 98 85 38";
 const TEL_LIEN = "+590690988538";
 const STRIPE_MENSUEL = "https://buy.stripe.com/eVqdR92D9cw7fGA3ggejK02";
-const STRIPE_ANNUEL = "https://buy.stripe.com/5kQ8wP5Pl67J1PKaIIejK01";
+const STRIPE_ANNUEL = "https://buy.stripe.com/bJe14nfpVfIj8e8dUUejK03";
 const PRIX_SETUP = 20;
 const PRIX_ABO = 54;
 
