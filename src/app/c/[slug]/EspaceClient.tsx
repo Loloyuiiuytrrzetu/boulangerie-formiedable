@@ -477,6 +477,101 @@ function BlocCarte({
   );
 }
 
+// --- Barre d'onglets défilable avec indice visuel de défilement ---
+// Quand il y a plus d'onglets que la largeur de l'écran, un dégradé blanc +
+// un chevron « › » apparaît sur le bord concerné pour signaler au client
+// qu'il peut faire glisser pour voir les onglets suivants (Tiktok, Info…).
+function BarreOnglets({
+  sections,
+  actifId,
+  couleur,
+  onChange,
+}: {
+  sections: Section[];
+  actifId: string;
+  couleur: string;
+  onChange: (id: string) => void;
+}) {
+  const t = useT();
+  const ref = React.useRef<HTMLDivElement>(null);
+  const [aGauche, setAGauche] = useState(false);
+  const [aDroite, setADroite] = useState(false);
+
+  const majFleches = React.useCallback(() => {
+    const el = ref.current;
+    if (!el) return;
+    const marge = 4; // tolérance pour les arrondis de pixels
+    setAGauche(el.scrollLeft > marge);
+    setADroite(el.scrollLeft + el.clientWidth < el.scrollWidth - marge);
+  }, []);
+
+  useEffect(() => {
+    majFleches();
+    const el = ref.current;
+    if (!el) return;
+    el.addEventListener("scroll", majFleches, { passive: true });
+    window.addEventListener("resize", majFleches);
+    return () => {
+      el.removeEventListener("scroll", majFleches);
+      window.removeEventListener("resize", majFleches);
+    };
+  }, [majFleches, sections.length]);
+
+  // Fait défiler pour rendre l'onglet actif visible (utile quand on tape un
+  // onglet à moitié caché sous le dégradé).
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const actif = el.querySelector<HTMLElement>(`[data-onglet="${actifId}"]`);
+    actif?.scrollIntoView({ inline: "nearest", block: "nearest", behavior: "smooth" });
+  }, [actifId]);
+
+  return (
+    <div className="relative rounded-2xl bg-white p-2 shadow-lg">
+      {/* Dégradé + chevron à gauche */}
+      {aGauche && (
+        <div className="pointer-events-none absolute inset-y-2 left-2 z-10 flex w-10 items-center rounded-l-2xl bg-gradient-to-r from-white to-transparent">
+          <span className="text-lg font-bold text-stone-400">‹</span>
+        </div>
+      )}
+      {/* Dégradé + chevron à droite */}
+      {aDroite && (
+        <div className="pointer-events-none absolute inset-y-2 right-2 z-10 flex w-10 items-center justify-end rounded-r-2xl bg-gradient-to-l from-white to-transparent">
+          <span className="animate-pulse text-lg font-bold text-stone-400">›</span>
+        </div>
+      )}
+      <div
+        ref={ref}
+        className="flex gap-1.5 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:justify-center [&::-webkit-scrollbar]:hidden"
+      >
+        {sections.map((s) => {
+          const actif = s.id === actifId;
+          return (
+            <button
+              key={s.id}
+              data-onglet={s.id}
+              onClick={() => onChange(s.id)}
+              className="shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition"
+              style={{
+                backgroundColor: actif ? couleur : "transparent",
+                color: actif ? "#fff" : "#57534E",
+              }}
+            >
+              {s.type === "cartes"
+                ? t("cartes_de_fidelite")
+                : s.type === "scan"
+                  ? t("scan")
+                  : s.type === "info"
+                    ? t("info")
+                    : (<AutoTraduit texte={s.titre} />)}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // --- Espace client complet avec onglets ---
 export function EspaceClient({
   slug,
@@ -594,33 +689,15 @@ export function EspaceClient({
         />
       )}
 
-      {/* Onglets style pilules — carrousel horizontal si trop d'onglets */}
-      <div className="rounded-2xl bg-white p-2 shadow-lg">
-        <div className="flex gap-1.5 overflow-x-auto pb-1 sm:justify-center">
-          {sectionsAffichees.map((s) => {
-            const actif = s.id === (sectionActive?.id ?? "");
-            return (
-              <button
-                key={s.id}
-                onClick={() => setOngletActif(s.id)}
-                className="shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition"
-                style={{
-                  backgroundColor: actif ? couleur : "transparent",
-                  color: actif ? "#fff" : "#57534E",
-                }}
-              >
-                {s.type === "cartes"
-                  ? t("cartes_de_fidelite")
-                  : s.type === "scan"
-                    ? t("scan")
-                    : s.type === "info"
-                      ? t("info")
-                      : (<AutoTraduit texte={s.titre} />)}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      {/* Onglets style pilules — carrousel horizontal si trop d'onglets.
+          Un dégradé + chevron sur les bords indique au client qu'il reste des
+          onglets à faire défiler (sinon tout est blanc et il ne devine pas). */}
+      <BarreOnglets
+        sections={sectionsAffichees}
+        actifId={sectionActive?.id ?? ""}
+        couleur={couleur}
+        onChange={setOngletActif}
+      />
 
 {/* Récompenses en attente : toujours visibles, indépendantes de l'onglet.
           Si plusieurs, on les affiche dans un carrousel horizontal — le client
