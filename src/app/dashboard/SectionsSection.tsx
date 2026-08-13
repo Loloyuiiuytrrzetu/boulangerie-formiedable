@@ -1,8 +1,13 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { creerSection, modifierSection, supprimerSection } from "./actions";
+import {
+  creerSection,
+  modifierSection,
+  reordonnerSections,
+  supprimerSection,
+} from "./actions";
 import type { Section } from "@/lib/types";
 import { useTDash } from "@/lib/langue-dashboard";
 import { useConfirmation } from "@/components/useConfirmation";
@@ -66,7 +71,21 @@ function ChampsSection({ section }: { section?: Partial<Section> }) {
   );
 }
 
-function BlocSection({ section }: { section: Section }) {
+function BlocSection({
+  section,
+  estPremier,
+  estDernier,
+  onMonter,
+  onDescendre,
+  reordEnCours,
+}: {
+  section: Section;
+  estPremier: boolean;
+  estDernier: boolean;
+  onMonter: () => void;
+  onDescendre: () => void;
+  reordEnCours: boolean;
+}) {
   const t = useTDash();
   const { confirmer, confirmationUI } = useConfirmation();
   const router = useRouter();
@@ -110,26 +129,52 @@ function BlocSection({ section }: { section: Section }) {
   return (
     <div className="rounded-2xl border border-stone-200 bg-white">
       {confirmationUI}
-      <button
-        type="button"
-        onClick={() => setOuvert(!ouvert)}
-        className="flex w-full items-center justify-between px-5 py-4 text-left"
-      >
-        <div>
-          <p className="font-semibold text-stone-900">
-            {section.type === "cartes"
-              ? t("cartes_de_fidelite")
-              : section.type === "info"
-                ? t("info_qr")
-                : section.titre}
-          </p>
-          <p className="text-xs text-stone-500">
-            {badgeType}
-            {!section.supprimable && ` · ${t("non_supprimable")}`}
-          </p>
+      <div className="flex items-center gap-1 px-2 py-2 sm:gap-2 sm:px-3">
+        {/* Flèches de réordonnancement : montent / descendent la section.
+            Le changement est instantané à l'écran puis sauvegardé en base. */}
+        <div className="flex shrink-0 flex-col">
+          <button
+            type="button"
+            onClick={onMonter}
+            disabled={estPremier || reordEnCours}
+            aria-label={t("monter")}
+            title={t("monter")}
+            className="flex h-6 w-8 items-center justify-center rounded text-stone-500 transition hover:bg-stone-100 hover:text-bordeaux-700 disabled:opacity-25"
+          >
+            ▲
+          </button>
+          <button
+            type="button"
+            onClick={onDescendre}
+            disabled={estDernier || reordEnCours}
+            aria-label={t("descendre")}
+            title={t("descendre")}
+            className="flex h-6 w-8 items-center justify-center rounded text-stone-500 transition hover:bg-stone-100 hover:text-bordeaux-700 disabled:opacity-25"
+          >
+            ▼
+          </button>
         </div>
-        <span className="text-stone-400">{ouvert ? "▲" : "▼"}</span>
-      </button>
+        <button
+          type="button"
+          onClick={() => setOuvert(!ouvert)}
+          className="flex min-w-0 flex-1 items-center justify-between py-2 pr-3 text-left"
+        >
+          <div className="min-w-0">
+            <p className="truncate font-semibold text-stone-900">
+              {section.type === "cartes"
+                ? t("cartes_de_fidelite")
+                : section.type === "info"
+                  ? t("info_qr")
+                  : section.titre}
+            </p>
+            <p className="truncate text-xs text-stone-500">
+              {badgeType}
+              {!section.supprimable && ` · ${t("non_supprimable")}`}
+            </p>
+          </div>
+          <span className="ml-2 shrink-0 text-stone-400">{ouvert ? "▲" : "▼"}</span>
+        </button>
+      </div>
 
       {ouvert && (
         <div className="border-t border-stone-100 px-5 py-5">
@@ -236,6 +281,35 @@ export function SectionsSection({ sections }: { sections: Section[] }) {
   const [erreur, setErreur] = useState<string | null>(null);
   const [enCours, startTransition] = useTransition();
 
+  // Ordre affiché géré localement pour un réordonnancement INSTANTANÉ (avant
+  // même la réponse serveur). On resynchronise dès que la liste venant du
+  // serveur change (création, suppression, rafraîchissement).
+  const [ordreLocal, setOrdreLocal] = useState<Section[]>(sections);
+  const [reordEnCours, startReord] = useTransition();
+  const signature = sections.map((s) => s.id).join(",");
+  useEffect(() => {
+    setOrdreLocal(sections);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signature]);
+
+  function deplacer(index: number, sens: -1 | 1) {
+    const cible = index + sens;
+    if (cible < 0 || cible >= ordreLocal.length) return;
+    const nouvel = [...ordreLocal];
+    [nouvel[index], nouvel[cible]] = [nouvel[cible], nouvel[index]];
+    setOrdreLocal(nouvel); // instantané à l'écran
+    const ids = nouvel.map((s) => s.id);
+    startReord(async () => {
+      const r = await reordonnerSections(ids);
+      if (r?.erreur) {
+        setErreur(r.erreur);
+        setOrdreLocal(sections); // on annule visuellement en cas d'échec
+      } else {
+        router.refresh();
+      }
+    });
+  }
+
   function creer(formData: FormData) {
     setErreur(null);
     startTransition(async () => {
@@ -283,8 +357,16 @@ export function SectionsSection({ sections }: { sections: Section[] }) {
         </form>
       )}
 
-      {sections.map((s) => (
-        <BlocSection key={s.id} section={s} />
+      {ordreLocal.map((s, index) => (
+        <BlocSection
+          key={s.id}
+          section={s}
+          estPremier={index === 0}
+          estDernier={index === ordreLocal.length - 1}
+          onMonter={() => deplacer(index, -1)}
+          onDescendre={() => deplacer(index, 1)}
+          reordEnCours={reordEnCours}
+        />
       ))}
     </section>
   );

@@ -830,6 +830,33 @@ export async function supprimerSection(sectionId: string) {
   return { ok: true };
 }
 
+// Réordonne les sections : `ids` est la liste complète des sections dans le
+// nouvel ordre souhaité (position 0 = tout en haut). On réécrit le champ
+// `ordre` de chacune (1, 2, 3…) pour que la page publique du commerce affiche
+// les sections dans cet ordre. Sécurisé par restaurant_id : on ne touche que
+// les sections du commerce courant.
+export async function reordonnerSections(ids: string[]) {
+  const { supabase, restaurant } = await restaurantCourant();
+  if (!restaurant) return { erreur: "Aucun commerce associé à ce compte." };
+  if (!Array.isArray(ids) || ids.length === 0) return { erreur: "Ordre invalide." };
+
+  const resultats = await Promise.all(
+    ids.map((id, index) =>
+      supabase
+        .from("sections")
+        .update({ ordre: index + 1 })
+        .eq("id", id)
+        .eq("restaurant_id", restaurant.id)
+    )
+  );
+  if (resultats.some((r) => r.error))
+    return { erreur: "Impossible d'enregistrer l'ordre des sections." };
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/c/${restaurant.slug}`);
+  return { ok: true };
+}
+
 // ============================================================
 // SOUS-COMPTE : changer le mot de passe
 // ============================================================

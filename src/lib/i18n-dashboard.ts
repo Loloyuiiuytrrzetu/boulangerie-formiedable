@@ -111,6 +111,8 @@ type CleDash =
   | "lien_url"
   | "lien_libelle"
   | "non_supprimable"
+  | "monter"
+  | "descendre"
   // Sous-compte
   | "sous_compte_desc"
   | "email_employe"
@@ -306,6 +308,8 @@ const FR: Traductions = {
   lien_url: "URL du lien (facultatif)",
   lien_libelle: "Libellé du bouton (facultatif)",
   non_supprimable: "non supprimable",
+  monter: "Monter",
+  descendre: "Descendre",
   sous_compte_desc:
     "Un employé peut avoir un accès limité qui sert uniquement à attribuer des tampons aux clients — pas à modifier votre configuration.",
   email_employe: "Email de l'employé",
@@ -498,6 +502,8 @@ const EN: Traductions = {
   lien_url: "Link URL (optional)",
   lien_libelle: "Button label (optional)",
   non_supprimable: "cannot be deleted",
+  monter: "Move up",
+  descendre: "Move down",
   sous_compte_desc:
     "An employee can have limited access to give stamps to customers only — not to change your setup.",
   email_employe: "Employee email",
@@ -690,6 +696,8 @@ const ES: Traductions = {
   lien_url: "URL del enlace (opcional)",
   lien_libelle: "Texto del botón (opcional)",
   non_supprimable: "no se puede eliminar",
+  monter: "Subir",
+  descendre: "Bajar",
   sous_compte_desc:
     "Un empleado puede tener acceso limitado solo para dar sellos a los clientes, no para modificar tu configuración.",
   email_employe: "Email del empleado",
@@ -882,6 +890,8 @@ const DE: Traductions = {
   lien_url: "Link-URL (optional)",
   lien_libelle: "Button-Beschriftung (optional)",
   non_supprimable: "nicht löschbar",
+  monter: "Nach oben",
+  descendre: "Nach unten",
   sous_compte_desc:
     "Ein Mitarbeiter kann eingeschränkten Zugang haben, nur um Kunden Stempel zu geben — nicht um Ihre Konfiguration zu ändern.",
   email_employe: "E-Mail des Mitarbeiters",
@@ -1073,6 +1083,8 @@ const ZH: Traductions = {
   lien_url: "链接 URL（可选）",
   lien_libelle: "按钮文字（可选）",
   non_supprimable: "不可删除",
+  monter: "上移",
+  descendre: "下移",
   sous_compte_desc:
     "员工可以拥有仅用于给客户发印章的有限访问权限——不能修改您的配置。",
   email_employe: "员工邮箱",
@@ -1263,6 +1275,8 @@ const AR: Traductions = {
   lien_url: "رابط URL (اختياري)",
   lien_libelle: "نص الزر (اختياري)",
   non_supprimable: "غير قابل للحذف",
+  monter: "أعلى",
+  descendre: "أسفل",
   sous_compte_desc:
     "يمكن للموظف الحصول على وصول محدود لمنح الأختام للعملاء فقط — دون تعديل الإعدادات.",
   email_employe: "بريد الموظف الإلكتروني",
@@ -1455,6 +1469,8 @@ const RU: Traductions = {
   lien_url: "URL ссылки (необязательно)",
   lien_libelle: "Текст кнопки (необязательно)",
   non_supprimable: "нельзя удалить",
+  monter: "Вверх",
+  descendre: "Вниз",
   sous_compte_desc:
     "Сотрудник может иметь ограниченный доступ только для выдачи печатей клиентам — без возможности менять настройки.",
   email_employe: "Email сотрудника",
