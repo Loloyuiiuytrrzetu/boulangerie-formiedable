@@ -531,13 +531,13 @@ function BarreOnglets({
       {/* Dégradé + chevron à gauche */}
       {aGauche && (
         <div className="pointer-events-none absolute inset-y-2 left-2 z-10 flex w-10 items-center rounded-l-2xl bg-gradient-to-r from-white to-transparent">
-          <span className="text-lg font-bold text-stone-400">‹</span>
+          <span className="text-lg font-bold" style={{ color: couleur }}>‹</span>
         </div>
       )}
       {/* Dégradé + chevron à droite */}
       {aDroite && (
         <div className="pointer-events-none absolute inset-y-2 right-2 z-10 flex w-10 items-center justify-end rounded-r-2xl bg-gradient-to-l from-white to-transparent">
-          <span className="animate-pulse text-lg font-bold text-stone-400">›</span>
+          <span className="animate-pulse text-lg font-bold" style={{ color: couleur }}>›</span>
         </div>
       )}
       <div
