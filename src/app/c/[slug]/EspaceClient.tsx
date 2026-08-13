@@ -527,7 +527,10 @@ function BarreOnglets({
   }, [actifId]);
 
   return (
-    <div className="relative rounded-2xl bg-white p-2 shadow-lg">
+    <div
+      className="relative rounded-2xl border-2 bg-white p-2 shadow-lg"
+      style={{ borderColor: couleur }}
+    >
       {/* Dégradé + chevron à gauche */}
       {aGauche && (
         <div className="pointer-events-none absolute inset-y-2 left-2 z-10 flex w-10 items-center rounded-l-2xl bg-gradient-to-r from-white to-transparent">
