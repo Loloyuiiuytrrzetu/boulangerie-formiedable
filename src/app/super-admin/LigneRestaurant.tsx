@@ -10,6 +10,29 @@ export function LigneRestaurant({ restaurant }: { restaurant: RestaurantAvecStat
   const { confirmer, confirmationUI } = useConfirmation();
   const [erreur, setErreur] = useState<string | null>(null);
   const [enCours, startTransition] = useTransition();
+  const [copie, setCopie] = useState(false);
+
+  // URL publique du commerce — à écrire sur la puce NFC (et sous le QR code).
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://walletiz.fr";
+  const lienPublic = `${base}/c/${restaurant.slug}`;
+  // Version affichée sans le protocole, plus lisible.
+  const lienAffiche = lienPublic.replace(/^https?:\/\//, "");
+
+  async function copierLien() {
+    try {
+      await navigator.clipboard.writeText(lienPublic);
+    } catch {
+      // Repli si l'API presse-papier est bloquée (contexte non sécurisé).
+      const zone = document.createElement("textarea");
+      zone.value = lienPublic;
+      document.body.appendChild(zone);
+      zone.select();
+      document.execCommand("copy");
+      document.body.removeChild(zone);
+    }
+    setCopie(true);
+    setTimeout(() => setCopie(false), 2000);
+  }
 
   // Statut EFFECTIF : un essai dont la date de fin est dépassée est en réalité
   // un abonnement payant démarré (le webhook Stripe n'a pas toujours basculé le
@@ -83,6 +106,32 @@ export function LigneRestaurant({ restaurant }: { restaurant: RestaurantAvecStat
             {restaurant.nb_clients} client{restaurant.nb_clients > 1 ? "s" : ""} ·{" "}
             {restaurant.nb_tampons} tampon{restaurant.nb_tampons > 1 ? "s" : ""}
           </p>
+
+          {/* Lien public du commerce — à écrire sur la puce NFC / sous le QR. */}
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <code className="min-w-0 truncate rounded-md bg-stone-100 px-2 py-1 text-xs text-stone-700">
+              {lienAffiche}
+            </code>
+            <button
+              onClick={copierLien}
+              type="button"
+              className={`rounded-md px-2 py-1 text-xs font-semibold transition ${
+                copie
+                  ? "bg-green-100 text-green-700"
+                  : "bg-bordeaux-50 text-bordeaux-800 hover:bg-bordeaux-100"
+              }`}
+            >
+              {copie ? "✓ Copié" : "📋 Copier le lien (NFC)"}
+            </button>
+            <a
+              href={lienPublic}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-md border border-stone-300 px-2 py-1 text-xs font-medium text-stone-600 transition hover:bg-stone-100"
+            >
+              Ouvrir
+            </a>
+          </div>
         </div>
 
         <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
