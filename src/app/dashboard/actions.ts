@@ -241,6 +241,21 @@ export async function mettreAJourConfig(formData: FormData) {
   if (!majLignes?.length)
     return { erreur: "Aucune modification enregistrée (commerce introuvable)." };
 
+  // Carte de fidélité active/désactivée — écrite À PART et de façon défensive.
+  // Une case décochée n'est pas envoyée : un marqueur de présence permet de
+  // distinguer « décochée » d'« absente du formulaire ». On l'écrit dans un
+  // update séparé dont on IGNORE l'erreur, pour que l'enregistrement de la
+  // config ne casse jamais si la colonne n'existe pas encore (migration-13
+  // pas encore appliquée).
+  if (formData.has("carte_fidelite_active_present")) {
+    const active = formData.get("carte_fidelite_active") === "on";
+    await supabase
+      .from("restaurants")
+      .update({ carte_fidelite_active: active })
+      .eq("id", restaurant.id)
+      .eq("owner_id", user.id);
+  }
+
   revalidatePath("/dashboard");
   revalidatePath(`/c/${restaurant.slug}`);
   return { ok: true };

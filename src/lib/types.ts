@@ -16,6 +16,7 @@ export type Restaurant = {
   texte_recompense: string;
   actif: boolean;
   tampon_restaurateur_only: boolean;
+  carte_fidelite_active: boolean;
   abonnement_statut: "essai" | "actif" | "annule" | "expire";
   abonnement_type: "mensuel" | "annuel" | null;
   langue: "fr" | "en" | "es" | "de" | "zh" | "ar" | "ru";

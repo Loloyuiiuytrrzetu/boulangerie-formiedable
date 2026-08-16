@@ -24,6 +24,12 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
   // tampon lui-même → la règle « 1 tampon par carte » (qui ne concerne QUE le
   // libre-service client) devient sans objet et est grisée.
   const [manuel, setManuel] = useState(restaurant.tampon_restaurateur_only === true);
+  // Carte de fidélité activée ? Si désactivée, tout ce qui touche à la
+  // fidélité disparaît côté client (carte, tampons, scan, QR) et les réglages
+  // de tampon ci-dessous n'ont plus d'effet → on les grise.
+  const [carteActive, setCarteActive] = useState(
+    restaurant.carte_fidelite_active !== false
+  );
   const [apercuLogo, setApercuLogo] = useState<string | null>(null);
   const [apercuFond, setApercuFond] = useState<string | null>(null);
   const [nomLogo, setNomLogo] = useState<string | null>(null);
@@ -200,6 +206,42 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
           description=""
         />
 
+        {/* Interrupteur principal de la carte de fidélité. */}
+        <input type="hidden" name="carte_fidelite_active_present" value="1" />
+        <div
+          className="rounded-xl border-2 p-4 transition"
+          style={{
+            borderColor: carteActive ? "#16a34a33" : "#e7e5e4",
+            backgroundColor: carteActive ? "#f0fdf433" : "#fafaf9",
+          }}
+        >
+          <label className="flex items-start gap-3">
+            <input
+              type="checkbox"
+              name="carte_fidelite_active"
+              checked={carteActive}
+              onChange={(e) => setCarteActive(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 accent-green-600"
+            />
+            <span className="text-sm text-stone-600">
+              <strong>{t("carte_fidelite_active")}</strong>
+              <br />
+              {t("carte_fidelite_active_desc")}
+            </span>
+          </label>
+          {!carteActive && (
+            <p className="mt-2 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
+              {t("carte_desactivee_note")}
+            </p>
+          )}
+        </div>
+
+        {/* Réglages de tampon : sans effet si la carte est désactivée. */}
+        <div
+          className={
+            !carteActive ? "pointer-events-none space-y-6 opacity-40" : "space-y-6"
+          }
+        >
         <div
           className={`rounded-xl border border-stone-200 bg-stone-50 p-4 transition ${
             manuel ? "opacity-55" : ""
@@ -241,6 +283,7 @@ export function ConfigForm({ restaurant }: { restaurant: Restaurant }) {
               {t("tampon_manuel_uniquement_desc")}
             </span>
           </label>
+        </div>
         </div>
 
         <div>

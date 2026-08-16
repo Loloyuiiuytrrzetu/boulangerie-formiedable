@@ -589,6 +589,7 @@ export function EspaceClient({
   restaurantId,
   vapidPublicKey,
   tamponRestaurateurOnly,
+  carteActive,
   animationCouleur,
   nomCommerce,
   identiteClient,
@@ -606,6 +607,7 @@ export function EspaceClient({
   restaurantId: string;
   vapidPublicKey: string | null;
   tamponRestaurateurOnly: boolean;
+  carteActive: boolean;
   animationCouleur: string;
   nomCommerce: string;
   identiteClient: string;
@@ -645,9 +647,18 @@ export function EspaceClient({
           },
         ];
 
-  // Onglet virtuel "Scan" toujours inséré juste après le premier onglet
-  // Cartes — le client peut y scanner lui-même le QR de caisse pour
-  // recevoir un tampon (règles habituelles : 1/jour, mode manuel respecté).
+  // Carte de fidélité désactivée par le commerce : on retire TOUT ce qui la
+  // concerne côté client — l'onglet Cartes, l'onglet Scan (virtuel), le QR
+  // code personnel (voir plus bas) et les récompenses en attente. Il ne reste
+  // que l'onglet Info et les sections personnalisées (Instagram, TikTok…).
+  const sectionsSansCarte = carteActive
+    ? sectionsBase
+    : sectionsBase.filter((s) => s.type !== "cartes");
+
+  // Onglet virtuel "Scan" inséré juste après le premier onglet Cartes — le
+  // client peut y scanner lui-même le QR de caisse pour recevoir un tampon
+  // (règles habituelles : 1/jour, mode manuel respecté). Absent si la carte
+  // de fidélité est désactivée.
   const sectionScan: Section = {
     id: "virtual-scan",
     restaurant_id: "",
@@ -660,15 +671,16 @@ export function EspaceClient({
     supprimable: false,
     created_at: "",
   };
-  const indexCartes = sectionsBase.findIndex((s) => s.type === "cartes");
-  const sectionsAffichees: Section[] =
-    indexCartes >= 0
+  const indexCartes = sectionsSansCarte.findIndex((s) => s.type === "cartes");
+  const sectionsAffichees: Section[] = !carteActive
+    ? sectionsSansCarte
+    : indexCartes >= 0
       ? [
-          ...sectionsBase.slice(0, indexCartes + 1),
+          ...sectionsSansCarte.slice(0, indexCartes + 1),
           sectionScan,
-          ...sectionsBase.slice(indexCartes + 1),
+          ...sectionsSansCarte.slice(indexCartes + 1),
         ]
-      : [sectionScan, ...sectionsBase];
+      : [sectionScan, ...sectionsSansCarte];
   const [ongletActif, setOngletActif] = useState<string>(sectionsAffichees[0].id);
   const [animationEnCours, setAnimationEnCours] = useState<string | null>(null);
 
@@ -705,7 +717,7 @@ export function EspaceClient({
 {/* Récompenses en attente : toujours visibles, indépendantes de l'onglet.
           Si plusieurs, on les affiche dans un carrousel horizontal — le client
           slide vers la gauche pour voir les suivantes. */}
-      {recompensesEnAttente.length > 0 && (
+      {carteActive && recompensesEnAttente.length > 0 && (
         <section className="space-y-3">
           <h2 className="px-1 text-lg font-extrabold text-stone-900">
             {t("mes_recompenses")} ({recompensesEnAttente.length})
@@ -749,7 +761,7 @@ export function EspaceClient({
           cartes={cartes}
           recompenses={recompenses}
           scanRecent={scanRecent}
-          qrClientDataUrl={qrClientDataUrl}
+          qrClientDataUrl={carteActive ? qrClientDataUrl : null}
           tamponRestaurateurOnly={tamponRestaurateurOnly}
           restaurantId={restaurantId}
           vapidPublicKey={vapidPublicKey}

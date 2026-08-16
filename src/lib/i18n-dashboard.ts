@@ -56,6 +56,9 @@ type CleDash =
   | "regle_libre_service_seulement"
   | "tampon_manuel_uniquement"
   | "tampon_manuel_uniquement_desc"
+  | "carte_fidelite_active"
+  | "carte_fidelite_active_desc"
+  | "carte_desactivee_note"
   | "animation_recompense"
   | "animation_recompense_desc"
   | "couleur_animation"
@@ -254,6 +257,11 @@ const FR: Traductions = {
   tampon_manuel_uniquement: "Système manuel (tampon donné uniquement par vous)",
   tampon_manuel_uniquement_desc:
     "Seul moi (ou mon sous-compte) peux attribuer les tampons. Le bouton « Prendre mon tampon » disparaît côté client.",
+  carte_fidelite_active: "Carte de fidélité activée",
+  carte_fidelite_active_desc:
+    "Décochez si ce commerce ne veut pas de carte de fidélité (par ex. uniquement gagner des abonnés Instagram/TikTok). Côté client, la carte, les tampons, l'onglet Scan et le QR code disparaissent — l'onglet Info et vos sections restent. Recochez à tout moment pour tout rétablir.",
+  carte_desactivee_note:
+    "La carte de fidélité est désactivée : les clients ne verront ni carte, ni tampons, ni QR code. Les réglages de tampon ci-dessous n'ont aucun effet tant qu'elle n'est pas réactivée.",
   animation_recompense: "Animation à la récompense",
   animation_recompense_desc:
     "L'effet qui s'affiche quand le client choisit sa récompense.",
@@ -448,6 +456,11 @@ const EN: Traductions = {
   tampon_manuel_uniquement: "Manual mode (only you give stamps)",
   tampon_manuel_uniquement_desc:
     "Only you (or your sub-account) can give stamps. The 'Get my stamp' button disappears on the customer side.",
+  carte_fidelite_active: "Loyalty card enabled",
+  carte_fidelite_active_desc:
+    "Uncheck if this business doesn't want a loyalty card (e.g. only to gain Instagram/TikTok followers). On the customer side, the card, stamps, Scan tab and QR code disappear — the Info tab and your sections stay. Re-check anytime to restore everything.",
+  carte_desactivee_note:
+    "The loyalty card is disabled: customers won't see any card, stamps or QR code. The stamp settings below have no effect until it is re-enabled.",
   animation_recompense: "Reward animation",
   animation_recompense_desc:
     "The effect that plays when the customer picks their reward.",
@@ -642,6 +655,11 @@ const ES: Traductions = {
   tampon_manuel_uniquement: "Modo manual (solo tú das los sellos)",
   tampon_manuel_uniquement_desc:
     "Solo tú (o tu subcuenta) puedes dar sellos. El botón «Obtener mi sello» desaparece del lado del cliente.",
+  carte_fidelite_active: "Tarjeta de fidelidad activada",
+  carte_fidelite_active_desc:
+    "Desmarca si este comercio no quiere tarjeta de fidelidad (por ej. solo para ganar seguidores de Instagram/TikTok). Del lado del cliente, la tarjeta, los sellos, la pestaña Escanear y el código QR desaparecen — la pestaña Info y tus secciones permanecen. Vuelve a marcarla cuando quieras para restaurar todo.",
+  carte_desactivee_note:
+    "La tarjeta de fidelidad está desactivada: los clientes no verán tarjeta, sellos ni código QR. Los ajustes de sellos de abajo no tienen efecto hasta que se reactive.",
   animation_recompense: "Animación de la recompensa",
   animation_recompense_desc:
     "El efecto que se muestra cuando el cliente elige su recompensa.",
@@ -836,6 +854,11 @@ const DE: Traductions = {
   tampon_manuel_uniquement: "Manuell (nur Sie vergeben Stempel)",
   tampon_manuel_uniquement_desc:
     "Nur Sie (oder Ihr Unterkonto) können Stempel vergeben. Die Schaltfläche « Meinen Stempel holen » verschwindet auf der Kundenseite.",
+  carte_fidelite_active: "Treuekarte aktiviert",
+  carte_fidelite_active_desc:
+    "Deaktivieren Sie dies, wenn dieses Geschäft keine Treuekarte möchte (z. B. nur um Instagram-/TikTok-Follower zu gewinnen). Auf der Kundenseite verschwinden die Karte, die Stempel, der Scan-Tab und der QR-Code — der Info-Tab und Ihre Bereiche bleiben. Jederzeit wieder aktivierbar, um alles wiederherzustellen.",
+  carte_desactivee_note:
+    "Die Treuekarte ist deaktiviert: Kunden sehen weder Karte noch Stempel oder QR-Code. Die Stempel-Einstellungen unten haben keine Wirkung, bis sie wieder aktiviert wird.",
   animation_recompense: "Belohnungs-Animation",
   animation_recompense_desc:
     "Der Effekt, der angezeigt wird, wenn der Kunde seine Belohnung wählt.",
@@ -1030,6 +1053,11 @@ const ZH: Traductions = {
   tampon_manuel_uniquement: "手动模式（仅您可发印章）",
   tampon_manuel_uniquement_desc:
     "只有您（或您的子账户）能发印章。客户端的\"获取印章\"按钮将消失。",
+  carte_fidelite_active: "启用会员卡",
+  carte_fidelite_active_desc:
+    "如果该商家不需要会员卡（例如仅用于增加 Instagram/TikTok 粉丝），请取消勾选。客户端的会员卡、印章、扫描标签和二维码将消失——信息标签和您的板块保留。随时重新勾选即可全部恢复。",
+  carte_desactivee_note:
+    "会员卡已停用：客户将看不到会员卡、印章或二维码。在重新启用之前，下方的印章设置无效。",
   animation_recompense: "奖励动画",
   animation_recompense_desc: "客户选择奖励时显示的效果。",
   couleur_animation: "动画颜色",
@@ -1222,6 +1250,11 @@ const AR: Traductions = {
   tampon_manuel_uniquement: "الوضع اليدوي (أنت فقط تمنح الأختام)",
   tampon_manuel_uniquement_desc:
     "أنت فقط (أو حسابك الفرعي) يمكنك منح الأختام. سيختفي زر «احصل على ختمي» من جانب العميل.",
+  carte_fidelite_active: "بطاقة الولاء مُفعّلة",
+  carte_fidelite_active_desc:
+    "ألغِ التحديد إذا كان هذا المتجر لا يريد بطاقة ولاء (مثلاً فقط لكسب متابعين على إنستغرام/تيك توك). من جانب العميل، تختفي البطاقة والأختام وعلامة تبويب المسح ورمز QR — تبقى علامة تبويب المعلومات وأقسامك. أعِد التحديد في أي وقت لاستعادة كل شيء.",
+  carte_desactivee_note:
+    "بطاقة الولاء مُعطّلة: لن يرى العملاء أي بطاقة أو أختام أو رمز QR. إعدادات الأختام أدناه بلا تأثير حتى إعادة تفعيلها.",
   animation_recompense: "حركة المكافأة",
   animation_recompense_desc: "التأثير الذي يظهر عندما يختار العميل مكافأته.",
   couleur_animation: "لون الحركة",
@@ -1415,6 +1448,11 @@ const RU: Traductions = {
   tampon_manuel_uniquement: "Ручной режим (только вы даёте печати)",
   tampon_manuel_uniquement_desc:
     "Только вы (или ваш субаккаунт) можете давать печати. Кнопка «Получить печать» исчезает у клиента.",
+  carte_fidelite_active: "Карта лояльности включена",
+  carte_fidelite_active_desc:
+    "Снимите галочку, если этому заведению не нужна карта лояльности (например, только чтобы набирать подписчиков в Instagram/TikTok). У клиента исчезают карта, печати, вкладка «Скан» и QR-код — вкладка «Инфо» и ваши разделы остаются. Установите галочку снова в любой момент, чтобы всё восстановить.",
+  carte_desactivee_note:
+    "Карта лояльности отключена: клиенты не увидят ни карты, ни печатей, ни QR-кода. Настройки печатей ниже не действуют, пока она не включена снова.",
   animation_recompense: "Анимация награды",
   animation_recompense_desc:
     "Эффект, который отображается, когда клиент выбирает награду.",

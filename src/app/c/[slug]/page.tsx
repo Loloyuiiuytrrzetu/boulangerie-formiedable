@@ -271,6 +271,7 @@ export default async function PageCommerce({
             restaurantId={restaurant.id}
             vapidPublicKey={getVapidPublicKey()}
             tamponRestaurateurOnly={restaurant.tampon_restaurateur_only === true}
+            carteActive={restaurant.carte_fidelite_active !== false}
             nomCommerce={restaurant.nom}
             identiteClient={client.identite ?? ""}
           />
