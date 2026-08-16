@@ -477,6 +477,38 @@ function BlocCarte({
   );
 }
 
+// --- Synchronisation temps réel de la page client ---
+// Rafraîchit automatiquement les données (tampons, récompenses, cartes) sans
+// que le client ait à recharger la page ni à fermer/rouvrir le signet :
+//   • INSTANTANÉMENT dès que la page redevient visible / reçoit le focus /
+//     retrouve le réseau — c'est le cas le plus fréquent (le client range son
+//     téléphone puis le ressort après que le commerçant a scanné) ;
+//   • et par petit sondage régulier tant que la page reste ouverte à l'écran,
+//     pour refléter un tampon donné pendant qu'il regarde sa carte.
+// router.refresh() recharge uniquement les données serveur : les composants
+// restent montés (pas de clignotement, l'état local est préservé).
+function SyncTempsReel() {
+  const router = useRouter();
+  useEffect(() => {
+    const rafraichir = () => {
+      if (document.visibilityState === "visible") router.refresh();
+    };
+    window.addEventListener("focus", rafraichir);
+    document.addEventListener("visibilitychange", rafraichir);
+    window.addEventListener("online", rafraichir);
+    // Sondage toutes les 4 s, uniquement quand la page est réellement visible
+    // (économise batterie et réseau quand le téléphone est rangé).
+    const id = setInterval(rafraichir, 4000);
+    return () => {
+      clearInterval(id);
+      window.removeEventListener("focus", rafraichir);
+      document.removeEventListener("visibilitychange", rafraichir);
+      window.removeEventListener("online", rafraichir);
+    };
+  }, [router]);
+  return null;
+}
+
 // --- Barre d'onglets défilable avec indice visuel de défilement ---
 // Quand il y a plus d'onglets que la largeur de l'écran, un dégradé blanc +
 // un chevron « › » apparaît sur le bord concerné pour signaler au client
@@ -689,6 +721,7 @@ export function EspaceClient({
 
   return (
     <div className="space-y-6">
+      <SyncTempsReel />
       <InstallationIOS couleur={couleur} nomCommerce={nomCommerce} />
       <InvitationNotifications
         slug={slug}
