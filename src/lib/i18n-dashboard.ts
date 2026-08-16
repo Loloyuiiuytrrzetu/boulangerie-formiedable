@@ -82,6 +82,7 @@ type CleDash =
   | "icone_tampon"
   | "image_tampon"
   | "recompenses"
+  | "carte_pleine_client_choisit"
   | "ajouter_recompense"
   | "texte_recompense"
   | "image_recompense"
@@ -285,6 +286,7 @@ const FR: Traductions = {
   icone_tampon: "Icône du tampon",
   image_tampon: "Image du tampon (optionnelle, remplace l'icône)",
   recompenses: "Récompenses",
+  carte_pleine_client_choisit: "Carte pleine : le client choisira sa récompense sur son téléphone.",
   ajouter_recompense: "+ Ajouter une récompense",
   texte_recompense: "Description de la récompense",
   image_recompense: "Image (facultative)",
@@ -484,6 +486,7 @@ const EN: Traductions = {
   icone_tampon: "Stamp icon",
   image_tampon: "Stamp image (optional, replaces icon)",
   recompenses: "Rewards",
+  carte_pleine_client_choisit: "Card full: the customer will choose their reward on their phone.",
   ajouter_recompense: "+ Add reward",
   texte_recompense: "Reward description",
   image_recompense: "Image (optional)",
@@ -683,6 +686,7 @@ const ES: Traductions = {
   icone_tampon: "Icono del sello",
   image_tampon: "Imagen del sello (opcional, reemplaza el icono)",
   recompenses: "Recompensas",
+  carte_pleine_client_choisit: "Tarjeta completa: el cliente elegirá su recompensa en su teléfono.",
   ajouter_recompense: "+ Añadir recompensa",
   texte_recompense: "Descripción de la recompensa",
   image_recompense: "Imagen (opcional)",
@@ -882,6 +886,7 @@ const DE: Traductions = {
   icone_tampon: "Stempelsymbol",
   image_tampon: "Stempelbild (optional, ersetzt Symbol)",
   recompenses: "Belohnungen",
+  carte_pleine_client_choisit: "Karte voll: Der Kunde wählt seine Belohnung auf seinem Handy.",
   ajouter_recompense: "+ Belohnung hinzufügen",
   texte_recompense: "Beschreibung der Belohnung",
   image_recompense: "Bild (optional)",
@@ -1080,6 +1085,7 @@ const ZH: Traductions = {
   icone_tampon: "印章图标",
   image_tampon: "印章图片（可选，替代图标）",
   recompenses: "奖励",
+  carte_pleine_client_choisit: "卡片已满：客户将在手机上选择奖励。",
   ajouter_recompense: "+ 添加奖励",
   texte_recompense: "奖励描述",
   image_recompense: "图片（可选）",
@@ -1277,6 +1283,7 @@ const AR: Traductions = {
   icone_tampon: "أيقونة الختم",
   image_tampon: "صورة الختم (اختيارية، تحل محل الأيقونة)",
   recompenses: "المكافآت",
+  carte_pleine_client_choisit: "البطاقة ممتلئة: سيختار العميل مكافأته من هاتفه.",
   ajouter_recompense: "+ إضافة مكافأة",
   texte_recompense: "وصف المكافأة",
   image_recompense: "صورة (اختيارية)",
@@ -1476,6 +1483,7 @@ const RU: Traductions = {
   icone_tampon: "Иконка печати",
   image_tampon: "Изображение печати (необязательно, заменяет иконку)",
   recompenses: "Награды",
+  carte_pleine_client_choisit: "Карта заполнена: клиент выберет награду на своём телефоне.",
   ajouter_recompense: "+ Добавить награду",
   texte_recompense: "Описание награды",
   image_recompense: "Изображение (необязательно)",

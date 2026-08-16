@@ -665,22 +665,38 @@ export async function attribuerTampons(formData: FormData) {
 
   const actuels = progression?.tampons_actuels ?? 0;
   const requis = carte.nombre_tampons_requis;
-  let nouveauxActuels = actuels + nombre;
-  let recompensesCreees = 0;
 
-  // Si dépassement, chaque tranche de "requis" crédite 1 récompense automatique
-  while (nouveauxActuels >= requis) {
-    nouveauxActuels -= requis;
-    recompensesCreees += 1;
-  }
-
-  // Récompense par défaut = 1re récompense de la carte (ou texte "Récompense")
+  // Récompenses de la carte (dans l'ordre de création).
   const { data: recompenses } = await admin
     .from("recompenses")
     .select("id, texte, image_url")
     .eq("carte_id", carte.id)
     .order("created_at", { ascending: true });
   const recompenseParDefaut = recompenses?.[0];
+  // Plusieurs récompenses possibles ? Alors le CLIENT doit choisir la sienne.
+  const choixMultiple = (recompenses?.length ?? 0) >= 2;
+
+  let nouveauxActuels: number;
+  let recompensesCreees = 0;
+  let cartePleineChoix = false;
+
+  if (choixMultiple) {
+    // On ne choisit JAMAIS à la place du client quand il y a plusieurs
+    // récompenses : on remplit la carte au maximum (pleine) et on laisse le
+    // client choisir sa récompense depuis son téléphone (bouton « Choisir ma
+    // récompense » → action choisirRecompense, qui remet la carte à zéro).
+    // Aucun crédit automatique ici.
+    nouveauxActuels = Math.min(actuels + nombre, requis);
+    cartePleineChoix = nouveauxActuels >= requis;
+  } else {
+    // 0 ou 1 récompense : il n'y a rien à choisir → crédit automatique comme
+    // avant (chaque tranche de "requis" crédite 1 récompense).
+    nouveauxActuels = actuels + nombre;
+    while (nouveauxActuels >= requis) {
+      nouveauxActuels -= requis;
+      recompensesCreees += 1;
+    }
+  }
 
   if (progression) {
     await admin
@@ -740,6 +756,9 @@ export async function attribuerTampons(formData: FormData) {
     nouveaux_actuels: nouveauxActuels,
     requis,
     recompenses_creees: recompensesCreees,
+    // Vrai quand la carte vient d'être remplie et qu'il y a plusieurs
+    // récompenses : le client choisira la sienne depuis son téléphone.
+    carte_pleine_choix: cartePleineChoix,
   };
 }
 

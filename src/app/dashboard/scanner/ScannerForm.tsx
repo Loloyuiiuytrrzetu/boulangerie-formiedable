@@ -30,6 +30,7 @@ export function ScannerForm({
     nouveaux_actuels: number;
     requis: number;
     recompenses_creees: number;
+    carte_pleine_choix: boolean;
   }>(null);
   const [enCours, startTransition] = useTransition();
   const [carteChoisie, setCarteChoisie] = useState<Carte | null>(cartes[0] ?? null);
@@ -54,6 +55,7 @@ export function ScannerForm({
           nouveaux_actuels: r.nouveaux_actuels,
           requis: r.requis,
           recompenses_creees: r.recompenses_creees,
+          carte_pleine_choix: r.carte_pleine_choix ?? false,
         });
         formRef.current?.reset();
         // Rafraîchit la liste « Derniers tampons donnés » pour que la nouvelle
@@ -121,6 +123,12 @@ export function ScannerForm({
               <>
                 <br />
                 🎁 +{succes.recompenses_creees} {t("recompenses")}
+              </>
+            )}
+            {succes.carte_pleine_choix && (
+              <>
+                <br />
+                🎁 {t("carte_pleine_client_choisit")}
               </>
             )}
           </div>
