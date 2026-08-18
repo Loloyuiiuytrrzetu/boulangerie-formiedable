@@ -123,9 +123,9 @@ export async function creerRestaurateur(formData: FormData) {
     .maybeSingle();
   if (existant) slug = `${slug}-${Math.random().toString(36).slice(2, 6)}`;
 
-  // Chaque nouveau commerce démarre avec 7 jours d'essai gratuit.
+  // Chaque nouveau commerce démarre avec 3 jours d'essai gratuit.
   const essaiFin = new Date();
-  essaiFin.setDate(essaiFin.getDate() + 7);
+  essaiFin.setDate(essaiFin.getDate() + 3);
 
   const { data: resto, error: erreurResto } = await admin
     .from("restaurants")
