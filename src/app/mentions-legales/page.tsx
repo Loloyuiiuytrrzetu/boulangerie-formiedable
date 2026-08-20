@@ -11,13 +11,15 @@ export default function MentionsLegales() {
     <LegalLayout titre="Mentions légales" maj="août 2026">
       <h2>1. Éditeur du site</h2>
       <p>
-        Le site <strong>walletiz.fr</strong> et le service Walletiz sont édités par
-        <strong> Walletiz</strong>. Pour toute demande, vous pouvez nous contacter :
+        Le site <strong>walletiz.fr</strong> et le service Walletiz sont édités par :
       </p>
       <ul>
+        <li><strong>Walletiz</strong> — Samuel Ursule</li>
+        <li>SIREN : <strong>937&nbsp;693&nbsp;737</strong></li>
         <li>E-mail : <a href="mailto:walletiz.fr@gmail.com">walletiz.fr@gmail.com</a></li>
-        <li>Téléphone : +590 690 98 85 38</li>
+        <li>Téléphone : +590&nbsp;690&nbsp;98&nbsp;85&nbsp;38</li>
       </ul>
+      <p>Directeur de la publication : Samuel Ursule.</p>
 
       <h2>2. Hébergement</h2>
       <p>Le site est hébergé par :</p>

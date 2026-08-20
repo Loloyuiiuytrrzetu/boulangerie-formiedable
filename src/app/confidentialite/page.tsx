@@ -15,6 +15,14 @@ export default function Confidentialite() {
         la loi Informatique et Libertés.
       </p>
 
+      <h2>Responsable du traitement</h2>
+      <p>
+        Le responsable du traitement des données est <strong>Walletiz</strong> (Samuel Ursule),
+        SIREN <strong>937&nbsp;693&nbsp;737</strong>. Contact :{" "}
+        <a href="mailto:walletiz.fr@gmail.com">walletiz.fr@gmail.com</a> —
+        +590&nbsp;690&nbsp;98&nbsp;85&nbsp;38.
+      </p>
+
       <h2>1. Données collectées</h2>
       <h3>Côté commerçant (Client Walletiz)</h3>
       <ul>
