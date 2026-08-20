@@ -279,8 +279,6 @@ export default async function PageCommerce({
           <FormulaireInscription
             slug={slug}
             couleur={restaurant.couleur}
-            restaurantId={restaurant.id}
-            vapidPublicKey={getVapidPublicKey()}
           />
         )}
       </div>

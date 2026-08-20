@@ -4,31 +4,27 @@ import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { inscrireClient } from "./actions";
 import { reinitialiserPromptInstallation } from "./InstallationIOS";
-import { abonnerAuxNotifications } from "@/lib/abonnement-push";
 import { useLangue, useT } from "@/lib/langue";
 import { LANGUES } from "@/lib/i18n";
 
-// Première visite : téléphone + nom + acceptation des notifications
-// (obligatoire — pour recevoir les promotions et alertes de récompenses).
-// L'inscription et l'abonnement aux notifications se font en un seul clic.
+// Première visite : téléphone + nom + langue. On NE demande PAS le
+// consentement notifications ici : sur iPhone elles ne fonctionnent qu'une
+// fois la page ajoutée à l'écran d'accueil, donc forcer la case à
+// l'inscription n'a pas de sens. Les notifications sont proposées APRÈS
+// l'inscription (bannière d'invitation + guide « ajouter à l'écran d'accueil »
+// dans l'espace client), au moment où le client peut réellement les activer.
 export function FormulaireInscription({
   slug,
   couleur,
-  restaurantId,
-  vapidPublicKey,
 }: {
   slug: string;
   couleur: string;
-  restaurantId: string;
-  vapidPublicKey: string | null;
 }) {
   const t = useT();
   const { langue, setLangue } = useLangue();
   const router = useRouter();
   const [erreur, setErreur] = useState<string | null>(null);
-  const [avertissement, setAvertissement] = useState<string | null>(null);
   const [enCours, startTransition] = useTransition();
-  const [notifs, setNotifs] = useState(true);
   const [langueChoix, setLangueChoix] = useState(langue);
 
   useEffect(() => {
@@ -43,58 +39,21 @@ export function FormulaireInscription({
   function soumettre(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setErreur(null);
-    setAvertissement(null);
     const formData = new FormData(e.currentTarget);
 
-    // On tente l'abonnement push AVANT toute action asynchrone longue,
-    // pour préserver le "user gesture" nécessaire à la popup navigateur.
-    const promesseAbonnement = notifs
-      ? abonnerAuxNotifications(restaurantId, vapidPublicKey)
-      : Promise.resolve({ statut: "refuse" as const });
-
     startTransition(async () => {
-      const resAbonnement = await promesseAbonnement;
-      if (typeof window !== "undefined") {
-        if (resAbonnement.statut === "abonne")
-          localStorage.removeItem(`walletiz_notif_refus_${slug}`);
-        else if (resAbonnement.statut === "refuse")
-          localStorage.setItem(`walletiz_notif_refus_${slug}`, "1");
-      }
-
       const resultat = await inscrireClient(slug, formData);
       if (resultat?.erreur) {
         setErreur(t(resultat.erreur as Parameters<typeof t>[0]));
         return;
       }
 
-      // S'inscrire = cocher la case notifications (obligatoire) = consentir.
-      // On efface donc TOUJOURS un éventuel ancien « refus » (cas d'un client
-      // qui s'était désinscrit puis se réinscrit) : sinon le prompt et le
-      // ré-abonnement restent bloqués et il ne reçoit plus rien.
-      if (typeof window !== "undefined" && notifs) {
-        localStorage.removeItem(`walletiz_notif_refus_${slug}`);
-      }
-
-      // Le cookie « fid_ » n'est posé que par inscrireClient ci-dessus.
-      // Le 1er abonnement push (avant le cookie) ne pouvait donc PAS être
-      // enregistré côté serveur (401). Maintenant que le cookie existe, on
-      // renvoie l'abonnement : la permission est déjà accordée, donc pas
-      // besoin d'un nouveau geste utilisateur. Sans ça, un nouvel inscrit ne
-      // reçoit jamais de notification.
-      if (notifs && resAbonnement.statut === "abonne") {
-        await abonnerAuxNotifications(restaurantId, vapidPublicKey);
-      }
-
       // Le client vient de s'inscrire → on force l'onboarding PWA à réapparaître
       // (popup « Ajouter à l'écran d'accueil »). Qu'il la passe ou non, elle
-      // reste ensuite accessible depuis l'onglet Info.
+      // reste ensuite accessible depuis l'onglet Info, et c'est là qu'il pourra
+      // activer les notifications une fois la page installée.
       reinitialiserPromptInstallation();
 
-      if (resAbonnement.statut === "ios-install") {
-        setAvertissement(t("ios_install_pour_notifs"));
-      } else if (resAbonnement.statut === "non-supporte") {
-        setAvertissement(t("notifs_impossible"));
-      }
       router.refresh();
     });
   }
@@ -175,31 +134,13 @@ export function FormulaireInscription({
           </select>
         </div>
 
-        <label className="flex items-start gap-2 rounded-xl border border-stone-200 bg-stone-50 p-3 text-sm text-stone-700">
-          <input
-            type="checkbox"
-            checked={notifs}
-            onChange={(e) => setNotifs(e.target.checked)}
-            required
-            className="mt-0.5 h-4 w-4 shrink-0 accent-stone-800"
-          />
-          <span>
-            {t("accepter_notifs")} <em>{t("accepter_notifs_obligatoire")}</em>
-          </span>
-        </label>
-
         {erreur && (
           <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{erreur}</p>
-        )}
-        {avertissement && (
-          <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
-            {avertissement}
-          </p>
         )}
 
         <button
           type="submit"
-          disabled={enCours || !notifs}
+          disabled={enCours}
           className="w-full rounded-xl px-4 py-3.5 font-semibold text-white shadow-md transition hover:opacity-90 disabled:opacity-60"
           style={{ backgroundColor: couleur }}
         >
