@@ -283,10 +283,19 @@ export function SectionsSection({ sections }: { sections: Section[] }) {
 
   // Ordre affiché géré localement pour un réordonnancement INSTANTANÉ (avant
   // même la réponse serveur). On resynchronise dès que la liste venant du
-  // serveur change (création, suppression, rafraîchissement).
+  // serveur change — non seulement l'ORDRE ou le nombre de sections, mais
+  // AUSSI le CONTENU (titre, texte, liens). Sans le contenu dans la
+  // signature, modifier une section ne rafraîchissait pas l'affichage (le
+  // titre restait figé) tant qu'un ajout/suppression ne forçait pas la
+  // resynchro — ce qui donnait l'impression que l'enregistrement était perdu.
   const [ordreLocal, setOrdreLocal] = useState<Section[]>(sections);
   const [reordEnCours, startReord] = useTransition();
-  const signature = sections.map((s) => s.id).join(",");
+  const signature = sections
+    .map(
+      (s) =>
+        `${s.id}:${s.ordre}:${s.titre}:${s.texte ?? ""}:${s.lien_url ?? ""}:${s.lien_libelle ?? ""}`
+    )
+    .join("|");
   useEffect(() => {
     setOrdreLocal(sections);
     // eslint-disable-next-line react-hooks/exhaustive-deps
