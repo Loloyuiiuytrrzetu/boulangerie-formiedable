@@ -66,24 +66,57 @@ function construireHtml(opts: {
   message: string;
   lienDesinscription: string;
   couleur: string;
+  logoUrl: string | null;
 }): string {
   const corps = echapper(opts.message).replace(/\n/g, "<br>");
   const nom = echapper(opts.nomCommerce);
-  return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#f5f5f4;">
-  <div style="max-width:560px;margin:0 auto;padding:24px 16px;font-family:Arial,Helvetica,sans-serif;">
-    <div style="background:#ffffff;border-radius:16px;border:1px solid #e7e5e4;overflow:hidden;">
-      <div style="height:6px;background:${opts.couleur};"></div>
-      <div style="padding:28px;">
-        <h1 style="margin:0 0 18px;font-size:20px;color:#1c1917;">${nom}</h1>
-        <div style="font-size:15px;line-height:1.65;color:#44403c;">${corps}</div>
-      </div>
-    </div>
-    <p style="text-align:center;font-size:12px;color:#a8a29e;margin:18px 0 0;line-height:1.6;">
-      Vous recevez cet email car vous êtes client de ${nom}.<br>
-      <a href="${opts.lienDesinscription}" style="color:#a8a29e;">Se désinscrire de ces emails</a>
-    </p>
-  </div>
+  const couleur = /^#[0-9a-fA-F]{6}$/.test(opts.couleur) ? opts.couleur : "#7A1E2E";
+  const initiale = nom.trim().charAt(0).toUpperCase() || "•";
+
+  // Médaillon : logo du commerce si disponible, sinon pastille avec l'initiale.
+  const medaillon = opts.logoUrl
+    ? `<img src="${encodeURI(opts.logoUrl)}" width="68" height="68" alt="${nom}" style="display:block;width:68px;height:68px;border-radius:16px;border:3px solid rgba(255,255,255,0.65);object-fit:cover;" />`
+    : `<div style="width:68px;height:68px;border-radius:16px;border:3px solid rgba(255,255,255,0.65);background:rgba(255,255,255,0.18);color:#ffffff;font-size:30px;font-weight:bold;line-height:68px;text-align:center;font-family:Arial,Helvetica,sans-serif;">${initiale}</div>`;
+
+  return `<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+</head>
+<body style="margin:0;padding:0;background:#f4f4f5;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f5;">
+    <tr>
+      <td align="center" style="padding:28px 14px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:18px;overflow:hidden;border:1px solid #e7e5e4;">
+          <!-- Bandeau coloré avec logo + nom -->
+          <tr>
+            <td align="center" style="background:${couleur};padding:30px 24px 26px;">
+              ${medaillon}
+              <div style="margin-top:12px;color:#ffffff;font-size:21px;font-weight:bold;font-family:Arial,Helvetica,sans-serif;letter-spacing:-0.3px;">${nom}</div>
+            </td>
+          </tr>
+          <!-- Corps du message -->
+          <tr>
+            <td style="padding:30px 30px 34px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.65;color:#292524;">
+              ${corps}
+            </td>
+          </tr>
+        </table>
+        <!-- Pied -->
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
+          <tr>
+            <td align="center" style="padding:16px 12px 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.7;color:#a8a29e;">
+              Vous recevez cet email car vous êtes client de ${nom}.<br>
+              <a href="${opts.lienDesinscription}" style="color:#a8a29e;text-decoration:underline;">Se désinscrire de ces emails</a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 </body></html>`;
 }
 
@@ -102,6 +135,7 @@ export async function envoyerEmailsParLots(opts: {
   slug: string;
   siteUrl: string;
   couleur: string;
+  logoUrl: string | null;
 }): Promise<ResultatEnvoi> {
   const key = process.env.RESEND_API_KEY;
   if (!key) {
@@ -128,6 +162,7 @@ export async function envoyerEmailsParLots(opts: {
           message: opts.message,
           lienDesinscription: lien,
           couleur: opts.couleur,
+          logoUrl: opts.logoUrl,
         }),
         reply_to: opts.replyTo || undefined,
         headers: { "List-Unsubscribe": `<${lien}>` },

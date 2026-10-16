@@ -38,7 +38,7 @@ export async function GET(req: Request) {
   for (const n of aEnvoyer) {
     const { data: restaurant } = await admin
       .from("restaurants")
-      .select("nom, slug, couleur, owner_id")
+      .select("nom, slug, couleur, owner_id, logo_url")
       .eq("id", n.restaurant_id)
       .maybeSingle();
     if (!restaurant) {
@@ -71,6 +71,7 @@ export async function GET(req: Request) {
           slug: restaurant.slug,
           siteUrl,
           couleur: restaurant.couleur ?? "#7A1E2E",
+          logoUrl: restaurant.logo_url ?? null,
         });
         envois = res.envois;
       } catch {

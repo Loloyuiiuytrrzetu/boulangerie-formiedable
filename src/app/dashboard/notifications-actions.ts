@@ -71,6 +71,7 @@ type InfoCommerce = {
   slug: string;
   couleur: string;
   owner_id: string;
+  logo_url: string | null;
 };
 
 async function envoyerAuxClients(
@@ -92,6 +93,7 @@ async function envoyerAuxClients(
     slug: restaurant.slug,
     siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://walletiz.fr",
     couleur: restaurant.couleur ?? "#7A1E2E",
+    logoUrl: restaurant.logo_url ?? null,
   });
   return envois;
 }
