@@ -147,7 +147,7 @@ export default async function DetailRestaurant({
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-stone-100 text-left text-xs text-stone-400">
-                    <th className="px-6 py-2 font-medium">Téléphone</th>
+                    <th className="px-6 py-2 font-medium">Email / Téléphone</th>
                     <th className="px-6 py-2 font-medium">Tampons en cours</th>
                     <th className="px-6 py-2 font-medium">Total</th>
                     <th className="px-6 py-2 font-medium">Récompenses</th>
@@ -157,7 +157,7 @@ export default async function DetailRestaurant({
                 <tbody className="divide-y divide-stone-50">
                   {clients.slice(0, 50).map((c) => (
                     <tr key={c.id}>
-                      <td className="px-6 py-2.5 font-mono">{c.numero_telephone}</td>
+                      <td className="px-6 py-2.5 font-mono">{c.email ?? c.numero_telephone ?? "—"}</td>
                       <td className="px-6 py-2.5">
                         {c.tampons_actuels} / {restaurant.nombre_tampons_requis}
                       </td>

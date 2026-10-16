@@ -66,7 +66,9 @@ export type CarteClient = {
 export type ClientFidelite = {
   id: string;
   restaurant_id: string;
-  numero_telephone: string;
+  numero_telephone: string | null;
+  email: string | null;
+  emails_actif: boolean;
   identite: string | null;
   tampons_actuels: number;
   tampons_total: number;
@@ -82,7 +84,9 @@ export type ClientFidelite = {
 export type ClientListe = {
   id: string;
   identite: string | null;
-  numero_telephone: string;
+  numero_telephone: string | null;
+  email: string | null;
+  emails_actif: boolean;
   tampons_total: number;
   date_dernier_tampon: string | null;
   notifications_push_actif: boolean;

@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getWebPush, chargerTousLesAbonnes, envoyerParLots } from "@/lib/push";
+import { chargerClientsEmail, envoyerEmailsParLots } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-// Laisse le temps d'envoyer à des milliers d'abonnés (plan Vercel Pro).
+// Laisse le temps d'envoyer à des milliers de clients (plan Vercel Pro).
 export const maxDuration = 300;
 
 // Endpoint appelé toutes les minutes par Vercel Cron (voir vercel.json).
-// Trouve toutes les notifications programmées dont l'échéance est passée
-// et non encore envoyées, puis les expédie à tous les abonnés du commerce.
+// Trouve tous les emails programmés dont l'échéance est passée et non encore
+// envoyés, puis les expédie à tous les clients du commerce.
 export async function GET(req: Request) {
   const authHeader = req.headers.get("authorization");
   const secret = process.env.CRON_SECRET;
@@ -32,40 +32,52 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: true, expediees: 0 });
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
-  let wp;
-  try {
-    wp = getWebPush();
-  } catch (e) {
-    return NextResponse.json(
-      { erreur: e instanceof Error ? e.message : "Config manquante." },
-      { status: 500 }
-    );
-  }
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://walletiz.fr";
 
   let total = 0;
   for (const n of aEnvoyer) {
     const { data: restaurant } = await admin
       .from("restaurants")
-      .select("logo_url, slug")
+      .select("nom, slug, couleur, owner_id")
       .eq("id", n.restaurant_id)
       .maybeSingle();
-
-    // TOUS les abonnés, sans plafond (pagination interne par lots de 1000).
-    const subs = await chargerTousLesAbonnes(admin, n.restaurant_id);
-
-    const payload = JSON.stringify({
-      titre: n.titre,
-      message: n.message,
-      icon: restaurant?.logo_url ?? undefined,
-      url: restaurant ? `${siteUrl}/c/${restaurant.slug}` : "/",
-    });
-
-    // Envoi par lots (fiable jusqu'à des milliers d'abonnés).
-    const { envois, aSupprimer } = await envoyerParLots(wp!, subs, payload);
-    if (aSupprimer.length > 0) {
-      await admin.from("push_subscriptions").delete().in("id", aSupprimer);
+    if (!restaurant) {
+      await admin
+        .from("notifications_push")
+        .update({ envoyee_at: new Date().toISOString(), nb_envois: 0 })
+        .eq("id", n.id);
+      continue;
     }
+
+    // Email principal du commerce (reply-to).
+    let replyTo: string | null = null;
+    try {
+      const { data } = await admin.auth.admin.getUserById(restaurant.owner_id);
+      replyTo = data.user?.email ?? null;
+    } catch {
+      replyTo = null;
+    }
+
+    const clients = await chargerClientsEmail(admin, n.restaurant_id);
+    let envois = 0;
+    if (clients.length > 0) {
+      try {
+        const res = await envoyerEmailsParLots({
+          clients,
+          sujet: n.titre || restaurant.nom,
+          nomCommerce: restaurant.nom,
+          message: n.message,
+          replyTo,
+          slug: restaurant.slug,
+          siteUrl,
+          couleur: restaurant.couleur ?? "#7A1E2E",
+        });
+        envois = res.envois;
+      } catch {
+        envois = 0;
+      }
+    }
+
     await admin
       .from("notifications_push")
       .update({ envoyee_at: new Date().toISOString(), nb_envois: envois })

@@ -13,7 +13,6 @@ import type {
 } from "@/lib/types";
 import { EspaceClient, type CarteAffichee } from "./EspaceClient";
 import { FormulaireInscription } from "./FormulaireInscription";
-import { getVapidPublicKey } from "@/lib/push";
 import { assurerSectionsParDefaut } from "@/lib/sections";
 import { LangueProvider } from "@/lib/langue";
 import { LangueSourceProvider } from "@/lib/auto-traduction";
@@ -265,11 +264,8 @@ export default async function PageCommerce({
               image_url: r.image_url,
             }))}
             recompensesEnAttente={recompensesEnAttente}
-            notificationsActives={client.notifications_push_actif}
             scanRecent={scanRecent}
             qrClientDataUrl={qrClientDataUrl}
-            restaurantId={restaurant.id}
-            vapidPublicKey={getVapidPublicKey()}
             tamponRestaurateurOnly={restaurant.tampon_restaurateur_only === true}
             carteActive={restaurant.carte_fidelite_active !== false}
             nomCommerce={restaurant.nom}

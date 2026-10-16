@@ -27,7 +27,6 @@ import { GuideUtilisation } from "./GuideUtilisation";
 import { assurerSectionsParDefaut } from "@/lib/sections";
 import { NotificationsPushSection, type NotificationPush } from "./NotificationsPushSection";
 import { AbonnementSection } from "./AbonnementSection";
-import { getVapidPublicKey } from "@/lib/push";
 import { LangueDashboardProvider } from "@/lib/langue-dashboard";
 import type { Langue } from "@/lib/i18n";
 import { tDash } from "@/lib/i18n-dashboard";
@@ -147,7 +146,7 @@ export default async function Dashboard() {
     const { data: resPremiersClients } = await supabase
       .from("clients_fidelite")
       .select(
-        "id, identite, numero_telephone, tampons_total, date_dernier_tampon, notifications_push_actif, created_at"
+        "id, identite, numero_telephone, email, emails_actif, tampons_total, date_dernier_tampon, notifications_push_actif, created_at"
       )
       .eq("restaurant_id", restaurant.id)
       .order("created_at", { ascending: false })
@@ -290,7 +289,6 @@ export default async function Dashboard() {
                   <NotificationsPushSection
                     notifications={notificationsPush}
                     timezone={restaurant.timezone ?? "Europe/Paris"}
-                    pushConfigure={Boolean(getVapidPublicKey())}
                   />
                 </div>
                 <div id="abonnement" className="scroll-mt-24">

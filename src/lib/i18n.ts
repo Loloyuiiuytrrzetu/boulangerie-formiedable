@@ -19,6 +19,9 @@ export const LANGUES_RTL: Langue[] = ["ar"];
 type Cle =
   | "bienvenue"
   | "telephone"
+  | "email"
+  | "email_placeholder"
+  | "err_email_invalide"
   | "telephone_placeholder"
   | "nom_prenom"
   | "nom_prenom_placeholder"
@@ -135,6 +138,8 @@ const FR: Traductions = {
   bienvenue: "Bienvenue !",
   telephone: "Numéro de téléphone",
   telephone_placeholder: "06 12 34 56 78",
+  email: "Adresse email",
+  email_placeholder: "exemple@email.com",
   nom_prenom: "Nom et prénom",
   nom_prenom_placeholder: "Nom Prénom (ou juste l'un des deux)",
   accepter_notifs:
@@ -205,7 +210,7 @@ const FR: Traductions = {
   info: "Info",
   ajoutez_a_ecran: "Ajoutez {nom} à votre écran d'accueil",
   pour_recevoir_promotions:
-    "Pour recevoir nos promotions et alertes de récompenses par notification, ajoutez cette page comme une application (2 clics suffisent).",
+    "Retrouvez votre carte de fidélité en un geste : ajoutez cette page à votre écran d'accueil (2 clics suffisent).",
   etape_1_partager: "Cliquez sur le bouton partager de Safari ou Chrome",
   etape_2_en_voir_plus: "Faites défiler ou appuyez sur **« En voir plus »**",
   etape_3_ajouter_ecran:
@@ -225,7 +230,7 @@ const FR: Traductions = {
   expire_le: "Carte expirée le",
   ajouter_a_ecran_titre: "Ajoutez {nom} à votre écran d'accueil",
   ajouter_a_ecran_desc_court:
-    "Pour recevoir nos promotions et alertes de récompenses par notification.",
+    "Pour retrouver votre carte de fidélité en un geste.",
   comment_faire: "Comment faire ?",
   installer_app: "Ajouter à l'écran d'accueil",
   android_install_comment: "Pour l'installer sur Android :",
@@ -237,6 +242,7 @@ const FR: Traductions = {
   notifs_statut_off: "Désactivées",
   err_commerce_introuvable: "Commerce introuvable.",
   err_tel_invalide: "Numéro de téléphone invalide (format attendu : 06 12 34 56 78).",
+  err_email_invalide: "Adresse email invalide.",
   err_nom_requis: "Entrez au moins un nom ou un prénom.",
   err_creation_carte: "Impossible de créer votre carte. Réessayez.",
   err_carte_introuvable_tel: "Carte introuvable. Entrez votre numéro de téléphone.",
@@ -266,6 +272,8 @@ const EN: Traductions = {
   bienvenue: "Welcome!",
   telephone: "Phone number",
   telephone_placeholder: "+44 20 7946 0958",
+  email: "Email address",
+  email_placeholder: "name@email.com",
   nom_prenom: "First and last name",
   nom_prenom_placeholder: "First Last (or just one of them)",
   accepter_notifs:
@@ -336,7 +344,7 @@ const EN: Traductions = {
   info: "Info",
   ajoutez_a_ecran: "Add {nom} to your home screen",
   pour_recevoir_promotions:
-    "To receive our promotions and reward alerts by notification, add this page as an app (2 clicks are enough).",
+    "Find your loyalty card in one tap: add this page to your home screen (2 clicks are enough).",
   etape_1_partager: "Tap the share button in Safari or Chrome",
   etape_2_en_voir_plus: "Tap **\"See More\"**",
   etape_3_ajouter_ecran: "Tap “Add to Home Screen”. If you can't find it, tap “Show More” first — you'll find the “Add to Home Screen” button there",
@@ -355,7 +363,7 @@ const EN: Traductions = {
   expire_le: "Card expired on",
   ajouter_a_ecran_titre: "Add {nom} to your home screen",
   ajouter_a_ecran_desc_court:
-    "To receive our promotions and reward alerts by notification.",
+    "To find your loyalty card in one tap.",
   comment_faire: "How to?",
   installer_app: "Add to Home Screen",
   android_install_comment: "To install it on Android:",
@@ -367,6 +375,7 @@ const EN: Traductions = {
   notifs_statut_off: "Off",
   err_commerce_introuvable: "Business not found.",
   err_tel_invalide: "Invalid phone number (expected format: 06 12 34 56 78).",
+  err_email_invalide: "Invalid email address.",
   err_nom_requis: "Enter at least a first or last name.",
   err_creation_carte: "Could not create your card. Please try again.",
   err_carte_introuvable_tel: "Card not found. Enter your phone number.",
@@ -396,6 +405,8 @@ const ES: Traductions = {
   bienvenue: "¡Bienvenido!",
   telephone: "Número de teléfono",
   telephone_placeholder: "+34 612 345 678",
+  email: "Correo electrónico",
+  email_placeholder: "nombre@email.com",
   nom_prenom: "Nombre y apellido",
   nom_prenom_placeholder: "Nombre Apellido (o solo uno)",
   accepter_notifs:
@@ -498,6 +509,7 @@ const ES: Traductions = {
   notifs_statut_off: "Desactivadas",
   err_commerce_introuvable: "Comercio no encontrado.",
   err_tel_invalide: "Número de teléfono no válido (formato esperado: 06 12 34 56 78).",
+  err_email_invalide: "Correo electrónico no válido.",
   err_nom_requis: "Introduce al menos un nombre o apellido.",
   err_creation_carte: "No se pudo crear tu tarjeta. Inténtalo de nuevo.",
   err_carte_introuvable_tel: "Tarjeta no encontrada. Introduce tu número de teléfono.",
@@ -527,6 +539,8 @@ const DE: Traductions = {
   bienvenue: "Willkommen!",
   telephone: "Telefonnummer",
   telephone_placeholder: "+49 30 12345678",
+  email: "E-Mail-Adresse",
+  email_placeholder: "name@email.com",
   nom_prenom: "Vor- und Nachname",
   nom_prenom_placeholder: "Vorname Nachname (oder nur einer)",
   accepter_notifs:
@@ -630,6 +644,7 @@ const DE: Traductions = {
   notifs_statut_off: "Aus",
   err_commerce_introuvable: "Geschäft nicht gefunden.",
   err_tel_invalide: "Ungültige Telefonnummer (erwartetes Format: 06 12 34 56 78).",
+  err_email_invalide: "Ungültige E-Mail-Adresse.",
   err_nom_requis: "Geben Sie mindestens einen Vor- oder Nachnamen ein.",
   err_creation_carte: "Ihre Karte konnte nicht erstellt werden. Bitte erneut versuchen.",
   err_carte_introuvable_tel: "Karte nicht gefunden. Geben Sie Ihre Telefonnummer ein.",
@@ -659,6 +674,8 @@ const ZH: Traductions = {
   bienvenue: "欢迎！",
   telephone: "电话号码",
   telephone_placeholder: "+86 138 0000 0000",
+  email: "电子邮件地址",
+  email_placeholder: "name@email.com",
   nom_prenom: "姓和名",
   nom_prenom_placeholder: "姓 名（或其中之一）",
   accepter_notifs: "我同意接收此商家的促销和活动通知。",
@@ -747,6 +764,7 @@ const ZH: Traductions = {
   notifs_statut_off: "已关闭",
   err_commerce_introuvable: "未找到商家。",
   err_tel_invalide: "电话号码无效（格式示例：06 12 34 56 78）。",
+  err_email_invalide: "电子邮件地址无效。",
   err_nom_requis: "请至少输入姓或名。",
   err_creation_carte: "无法创建您的卡片，请重试。",
   err_carte_introuvable_tel: "未找到卡片。请输入您的电话号码。",
@@ -776,6 +794,8 @@ const AR: Traductions = {
   bienvenue: "مرحباً!",
   telephone: "رقم الهاتف",
   telephone_placeholder: "+966 50 123 4567",
+  email: "البريد الإلكتروني",
+  email_placeholder: "name@email.com",
   nom_prenom: "الاسم الأول واسم العائلة",
   nom_prenom_placeholder: "الاسم الأول العائلة (أو أحدهما فقط)",
   accepter_notifs: "أوافق على تلقي إشعارات العروض والفعاليات من هذا المتجر.",
@@ -871,6 +891,7 @@ const AR: Traductions = {
   notifs_statut_off: "مُعطّلة",
   err_commerce_introuvable: "المتجر غير موجود.",
   err_tel_invalide: "رقم هاتف غير صالح (الصيغة المتوقعة: 06 12 34 56 78).",
+  err_email_invalide: "عنوان البريد الإلكتروني غير صالح.",
   err_nom_requis: "أدخل الاسم الأول أو اسم العائلة على الأقل.",
   err_creation_carte: "تعذّر إنشاء بطاقتك. حاول مرة أخرى.",
   err_carte_introuvable_tel: "البطاقة غير موجودة. أدخل رقم هاتفك.",
@@ -900,6 +921,8 @@ const RU: Traductions = {
   bienvenue: "Добро пожаловать!",
   telephone: "Номер телефона",
   telephone_placeholder: "+7 900 000 00 00",
+  email: "Электронная почта",
+  email_placeholder: "name@email.com",
   nom_prenom: "Имя и фамилия",
   nom_prenom_placeholder: "Имя Фамилия (или только одно из них)",
   accepter_notifs:
@@ -1000,6 +1023,7 @@ const RU: Traductions = {
   notifs_statut_off: "Выключены",
   err_commerce_introuvable: "Заведение не найдено.",
   err_tel_invalide: "Неверный номер телефона (формат: 06 12 34 56 78).",
+  err_email_invalide: "Неверный адрес электронной почты.",
   err_nom_requis: "Введите хотя бы имя или фамилию.",
   err_creation_carte: "Не удалось создать карту. Попробуйте ещё раз.",
   err_carte_introuvable_tel: "Карта не найдена. Введите номер телефона.",

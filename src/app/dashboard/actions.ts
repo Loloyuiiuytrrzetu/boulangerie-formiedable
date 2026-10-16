@@ -100,7 +100,7 @@ export async function listerClients(page: number) {
   const { data, count, error } = await supabase
     .from("clients_fidelite")
     .select(
-      "id, identite, numero_telephone, tampons_total, date_dernier_tampon, notifications_push_actif, created_at",
+      "id, identite, numero_telephone, email, emails_actif, tampons_total, date_dernier_tampon, notifications_push_actif, created_at",
       { count: "exact" }
     )
     .eq("restaurant_id", restaurant.id)
@@ -620,26 +620,33 @@ export async function attribuerTampons(formData: FormData) {
   const { restaurant } = await restaurantAcces();
   if (!restaurant) return { erreur: "Accès non autorisé." };
 
-  const telephoneBrut = String(formData.get("telephone") ?? "").trim();
+  const identifiantBrut = String(formData.get("telephone") ?? "").trim();
   const carteId = String(formData.get("carte_id") ?? "");
   const nombre = parseInt(String(formData.get("nombre") ?? "1"), 10);
 
-  if (!telephoneBrut) return { erreur: "Entrez un numéro de téléphone." };
+  if (!identifiantBrut) return { erreur: "Entrez l'email (ou le téléphone) du client." };
   if (!Number.isInteger(nombre) || nombre < 1 || nombre > 20)
     return { erreur: "Nombre de tampons entre 1 et 20." };
   if (!carteId) return { erreur: "Choisissez une carte." };
 
-  // Normalisation FR (mais on accepte aussi une correspondance approchée)
-  const propre = telephoneBrut.replace(/[\s.\-()]/g, "");
   const admin = createAdminClient();
 
-  const { data: client } = await admin
+  // Le client est identifié par son email (nouveaux clients) OU son numéro de
+  // téléphone (anciens clients). On reconnaît l'un de l'autre à la présence
+  // d'un « @ », ce qui évite toute ambiguïté de filtre.
+  let requete = admin
     .from("clients_fidelite")
     .select("*")
-    .eq("restaurant_id", restaurant.id)
-    .eq("numero_telephone", propre.startsWith("+33") ? "0" + propre.slice(3) : propre)
-    .maybeSingle();
-  if (!client) return { erreur: "Aucun client trouvé avec ce numéro." };
+    .eq("restaurant_id", restaurant.id);
+  if (identifiantBrut.includes("@")) {
+    requete = requete.eq("email", identifiantBrut.toLowerCase());
+  } else {
+    const propre = identifiantBrut.replace(/[\s.\-()]/g, "");
+    const tel = propre.startsWith("+33") ? "0" + propre.slice(3) : propre;
+    requete = requete.eq("numero_telephone", tel);
+  }
+  const { data: client } = await requete.maybeSingle();
+  if (!client) return { erreur: "Aucun client trouvé." };
 
   const { data: carte } = await admin
     .from("cartes")

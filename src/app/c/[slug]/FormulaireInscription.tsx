@@ -67,19 +67,19 @@ export function FormulaireInscription({
       <form onSubmit={soumettre} className="mt-5 space-y-4">
         <div>
           <label
-            htmlFor="telephone"
+            htmlFor="email"
             className="mb-1.5 block text-sm font-medium text-stone-700"
           >
-            {t("telephone")}
+            {t("email")}
           </label>
           <input
-            id="telephone"
-            name="telephone"
-            type="tel"
+            id="email"
+            name="email"
+            type="email"
             required
-            inputMode="tel"
-            autoComplete="tel"
-            placeholder={t("telephone_placeholder")}
+            inputMode="email"
+            autoComplete="email"
+            placeholder={t("email_placeholder")}
             className="w-full rounded-xl border border-stone-300 px-4 py-3 text-lg tracking-wide outline-none transition focus:ring-2"
             style={{ caretColor: couleur }}
           />

@@ -41,3 +41,14 @@ export function normaliserTelephone(brut: string): string | null {
   if (!/^0[1-9]\d{8}$/.test(n)) return null;
   return n;
 }
+
+// Normalise et valide une adresse email. Retourne l'email en minuscules
+// (trimmé) si valide, sinon null.
+export function validerEmail(brut: string): string | null {
+  const e = brut.trim().toLowerCase();
+  if (e.length < 5 || e.length > 254) return null;
+  // Validation volontairement simple et robuste (une arobase, un point
+  // après, pas d'espace).
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return null;
+  return e;
+}

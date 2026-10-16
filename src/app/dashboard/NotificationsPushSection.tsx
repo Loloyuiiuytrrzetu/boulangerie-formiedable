@@ -50,11 +50,9 @@ function nowLocaleForInput(timezone: string): string {
 export function NotificationsPushSection({
   notifications,
   timezone,
-  pushConfigure,
 }: {
   notifications: NotificationPush[];
   timezone: string;
-  pushConfigure: boolean;
 }) {
   const t = useTDash();
   const [ongletActif, setOngletActif] = useState<"immediat" | "programme">("immediat");
@@ -79,7 +77,7 @@ export function NotificationsPushSection({
     try {
       const res = await envoyerNotificationMaintenant(formData);
       if (res?.erreur) setMsgImmediat("❌ " + res.erreur);
-      else setMsgImmediat(`✅ Notification envoyée à ${res?.envois ?? 0} abonné(s).`);
+      else setMsgImmediat(`✅ ${t("email_envoye_a")} ${res?.envois ?? 0} ${t("clients_label")}.`);
     } finally {
       envoiEnCoursRef.current = false;
       setEnCours(false);
@@ -104,7 +102,7 @@ export function NotificationsPushSection({
   return (
     <section className="space-y-6 rounded-2xl border border-stone-200 bg-white p-6">
       <div>
-        <h2 className="text-lg font-bold text-stone-900">🔔 {t("notifications_push")}</h2>
+        <h2 className="text-lg font-bold text-stone-900">📧 {t("notifications_push")}</h2>
         <p className="mt-1 text-sm text-stone-600">
           {t("notifications_push_desc")}
         </p>
@@ -139,12 +137,21 @@ export function NotificationsPushSection({
       {ongletActif === "immediat" ? (
         <form action={submitImmediat} className="space-y-3">
           <div>
+            <label className="text-xs font-semibold text-stone-600">{t("objet_email")}</label>
+            <input
+              name="objet"
+              maxLength={150}
+              placeholder={t("objet_email_placeholder")}
+              className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:border-bordeaux-500 focus:outline-none"
+            />
+          </div>
+          <div>
             <label className="text-xs font-semibold text-stone-600">{t("corps_notif")}</label>
             <textarea
               name="message"
               required
-              maxLength={300}
-              rows={3}
+              maxLength={2000}
+              rows={4}
               placeholder=""
               className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:border-bordeaux-500 focus:outline-none"
             />
@@ -161,12 +168,21 @@ export function NotificationsPushSection({
       ) : (
         <form action={submitProgramme} className="space-y-3">
           <div>
+            <label className="text-xs font-semibold text-stone-600">{t("objet_email")}</label>
+            <input
+              name="objet"
+              maxLength={150}
+              placeholder={t("objet_email_placeholder")}
+              className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:border-bordeaux-500 focus:outline-none"
+            />
+          </div>
+          <div>
             <label className="text-xs font-semibold text-stone-600">{t("corps_notif")}</label>
             <textarea
               name="message"
               required
-              maxLength={300}
-              rows={3}
+              maxLength={2000}
+              rows={4}
               className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:border-bordeaux-500 focus:outline-none"
             />
           </div>
@@ -259,7 +275,7 @@ function HistoriqueEnvoyees({
         </div>
         <p className="mt-0.5 truncate text-xs text-stone-600">{n.message}</p>
         <p className="mt-1 text-xs text-stone-500">
-          Envoyée à {n.nb_envois} abonné{n.nb_envois > 1 ? "s" : ""}
+          Envoyé à {n.nb_envois} client{n.nb_envois > 1 ? "s" : ""}
         </p>
       </div>
     );
@@ -294,7 +310,7 @@ function HistoriqueEnvoyees({
           </div>
           <p className="mt-0.5 truncate text-xs text-stone-600">{dernier.message}</p>
           <p className="mt-1 text-xs text-stone-500">
-            Envoyée à {dernier.nb_envois} abonné{dernier.nb_envois > 1 ? "s" : ""}
+            Envoyé à {dernier.nb_envois} client{dernier.nb_envois > 1 ? "s" : ""}
           </p>
         </div>
       </button>

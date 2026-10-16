@@ -144,7 +144,7 @@ export function ClientsSection({
             {/* En-têtes (cachés en très petit écran) */}
             <div className="hidden bg-stone-50 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-stone-500 sm:grid sm:grid-cols-[1.4fr_1.2fr_0.7fr_1fr_auto] sm:gap-3">
               <span>{t("col_nom")}</span>
-              <span>{t("col_telephone")}</span>
+              <span>{t("col_email")}</span>
               <span className="text-center">{t("col_tampons")}</span>
               <span>{t("col_derniere_visite")}</span>
               <span className="w-6" />
@@ -164,7 +164,9 @@ export function ClientsSection({
                     )}
                   </span>
                   <span className="truncate text-stone-600">
-                    {c.numero_telephone}
+                    {c.email || c.numero_telephone || (
+                      <span className="italic text-stone-400">—</span>
+                    )}
                   </span>
                   <span className="text-stone-700 sm:text-center">
                     <span className="sm:hidden">{t("col_tampons")}: </span>
@@ -179,12 +181,12 @@ export function ClientsSection({
                   <span
                     className="justify-self-end text-base"
                     title={
-                      c.notifications_push_actif
+                      c.email && c.emails_actif
                         ? t("notifs_actives_client")
                         : t("notifs_inactives_client")
                     }
                   >
-                    {c.notifications_push_actif ? "🔔" : "🔕"}
+                    {c.email && c.emails_actif ? "📧" : "—"}
                   </span>
                 </li>
               ))}

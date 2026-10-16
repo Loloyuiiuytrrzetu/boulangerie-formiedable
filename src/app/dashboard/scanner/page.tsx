@@ -65,11 +65,16 @@ export default async function Scanner({
   if (tokenClient) {
     const { data: cli } = await admin
       .from("clients_fidelite")
-      .select("numero_telephone, identite, restaurant_id")
+      .select("numero_telephone, email, identite, restaurant_id")
       .eq("token_public", tokenClient)
       .maybeSingle();
     if (cli && cli.restaurant_id === restaurant.id) {
-      clientPrecharge = { telephone: cli.numero_telephone, identite: cli.identite };
+      // Identifiant transmis au formulaire : l'email en priorité (nouveaux
+      // clients), sinon le numéro (anciens clients).
+      clientPrecharge = {
+        telephone: cli.email ?? cli.numero_telephone ?? "",
+        identite: cli.identite,
+      };
     }
   }
 
@@ -96,15 +101,15 @@ export default async function Scanner({
       clientIds.length
         ? admin
             .from("clients_fidelite")
-            .select("id, identite, numero_telephone")
+            .select("id, identite, numero_telephone, email")
             .in("id", clientIds)
-        : Promise.resolve({ data: [] as { id: string; identite: string | null; numero_telephone: string }[] }),
+        : Promise.resolve({ data: [] as { id: string; identite: string | null; numero_telephone: string | null; email: string | null }[] }),
       carteIds.length
         ? admin.from("cartes").select("id, titre").in("id", carteIds)
         : Promise.resolve({ data: [] as { id: string; titre: string }[] }),
     ]);
     const mapClient = new Map(
-      ((resClients.data as { id: string; identite: string | null; numero_telephone: string }[]) ?? []).map((c) => [c.id, c])
+      ((resClients.data as { id: string; identite: string | null; numero_telephone: string | null; email: string | null }[]) ?? []).map((c) => [c.id, c])
     );
     const mapCarte = new Map(
       ((resCartes.data as { id: string; titre: string }[]) ?? []).map((c) => [c.id, c])
@@ -115,7 +120,7 @@ export default async function Scanner({
       recents.push({
         id: h.id,
         identite: cli?.identite ?? null,
-        telephone: cli?.numero_telephone ?? null,
+        telephone: cli?.email ?? cli?.numero_telephone ?? null,
         carteTitre: carte?.titre ?? null,
         nombre: h.nombre,
         created_at: h.created_at,

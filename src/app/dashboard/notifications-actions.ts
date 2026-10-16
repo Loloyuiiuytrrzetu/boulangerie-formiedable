@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { utilisateurEffectif } from "@/lib/impersonate";
-import { getWebPush, chargerTousLesAbonnes, envoyerParLots } from "@/lib/push";
+import { chargerClientsEmail, envoyerEmailsParLots } from "@/lib/email";
 
 async function chargerRestaurant() {
   const effectif = await utilisateurEffectif();
@@ -12,18 +12,30 @@ async function chargerRestaurant() {
   const admin = createAdminClient();
   const { data: restaurant } = await admin
     .from("restaurants")
-    .select("id, nom, logo_url, timezone, slug")
+    .select("id, nom, logo_url, timezone, slug, couleur, owner_id")
     .eq("owner_id", effectif.userId)
     .maybeSingle();
   return { admin, restaurant };
+}
+
+// Email PRINCIPAL du commerce (le compte propriétaire, pas le sous-compte) :
+// c'est l'adresse à laquelle les clients répondent (reply-to).
+async function emailPrincipal(
+  admin: ReturnType<typeof createAdminClient>,
+  ownerId: string
+): Promise<string | null> {
+  try {
+    const { data } = await admin.auth.admin.getUserById(ownerId);
+    return data.user?.email ?? null;
+  } catch {
+    return null;
+  }
 }
 
 // Convertit un input datetime-local (heure murale locale du fuseau du
 // commerce) en instant UTC. Ex : 2026-07-11T16:00 en Guadeloupe (-04:00)
 // → 2026-07-11T20:00:00Z.
 function localeVersUtc(dateLocale: string, timezone: string): Date {
-  // On construit une date "naïve" en supposant UTC puis on calcule le
-  // décalage réel du fuseau à cet instant pour corriger.
   const [datePart, timePart] = dateLocale.split("T");
   const [y, m, d] = datePart.split("-").map(Number);
   const [hh, mm] = (timePart ?? "00:00").split(":").map(Number);
@@ -53,32 +65,34 @@ function localeVersUtc(dateLocale: string, timezone: string): Date {
   return new Date(naive - offset);
 }
 
-async function envoyerAuxAbonnes(restaurantId: string, notification: {
-  titre: string;
-  message: string;
-  logoUrl: string | null;
+type InfoCommerce = {
+  id: string;
+  nom: string;
   slug: string;
-}) {
+  couleur: string;
+  owner_id: string;
+};
+
+async function envoyerAuxClients(
+  restaurant: InfoCommerce,
+  sujet: string,
+  message: string
+): Promise<number> {
   const admin = createAdminClient();
-  // TOUS les abonnés, sans plafond (pagination interne par lots de 1000).
-  const subs = await chargerTousLesAbonnes(admin, restaurantId);
+  const clients = await chargerClientsEmail(admin, restaurant.id);
+  if (clients.length === 0) return 0;
 
-  if (subs.length === 0) return 0;
-
-  const wp = getWebPush();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
-  const payload = JSON.stringify({
-    titre: notification.titre,
-    message: notification.message,
-    icon: notification.logoUrl ?? undefined,
-    url: `${siteUrl}/c/${notification.slug}`,
+  const replyTo = await emailPrincipal(admin, restaurant.owner_id);
+  const { envois } = await envoyerEmailsParLots({
+    clients,
+    sujet,
+    nomCommerce: restaurant.nom,
+    message,
+    replyTo,
+    slug: restaurant.slug,
+    siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://walletiz.fr",
+    couleur: restaurant.couleur ?? "#7A1E2E",
   });
-
-  // Envoi par lots (fiable jusqu'à des milliers d'abonnés).
-  const { envois, aSupprimer } = await envoyerParLots(wp, subs, payload);
-  if (aSupprimer.length > 0) {
-    await admin.from("push_subscriptions").delete().in("id", aSupprimer);
-  }
   return envois;
 }
 
@@ -88,14 +102,16 @@ export async function envoyerNotificationMaintenant(formData: FormData) {
 
   const message = String(formData.get("message") ?? "").trim();
   if (!message) return { erreur: "Message obligatoire." };
-  if (message.length > 300) return { erreur: "Message trop long (300 caractères max)." };
-  const titre = restaurant.nom;
+  if (message.length > 2000) return { erreur: "Message trop long (2000 caractères max)." };
+  // Objet de l'email (optionnel). Par défaut : le nom du commerce.
+  const objet = String(formData.get("objet") ?? "").trim().slice(0, 150);
+  const sujet = objet || restaurant.nom;
 
   const { data: notif, error } = await admin
     .from("notifications_push")
     .insert({
       restaurant_id: restaurant.id,
-      titre,
+      titre: sujet,
       message,
       envoyee_at: new Date().toISOString(),
     })
@@ -105,12 +121,7 @@ export async function envoyerNotificationMaintenant(formData: FormData) {
 
   let envois = 0;
   try {
-    envois = await envoyerAuxAbonnes(restaurant.id, {
-      titre,
-      message,
-      logoUrl: restaurant.logo_url,
-      slug: restaurant.slug,
-    });
+    envois = await envoyerAuxClients(restaurant as InfoCommerce, sujet, message);
     await admin
       .from("notifications_push")
       .update({ nb_envois: envois })
@@ -131,8 +142,9 @@ export async function programmerNotification(formData: FormData) {
   const dateLocale = String(formData.get("date_locale") ?? "").trim();
   if (!message || !dateLocale)
     return { erreur: "Message et date obligatoires." };
-  if (message.length > 300) return { erreur: "Message trop long (300 caractères max)." };
-  const titre = restaurant.nom;
+  if (message.length > 2000) return { erreur: "Message trop long (2000 caractères max)." };
+  const objet = String(formData.get("objet") ?? "").trim().slice(0, 150);
+  const sujet = objet || restaurant.nom;
 
   const timezone = restaurant.timezone ?? "Europe/Paris";
   const dateUtc = localeVersUtc(dateLocale, timezone);
@@ -142,11 +154,11 @@ export async function programmerNotification(formData: FormData) {
 
   const { error } = await admin.from("notifications_push").insert({
     restaurant_id: restaurant.id,
-    titre,
+    titre: sujet,
     message,
     date_programmee: dateUtc.toISOString(),
   });
-  if (error) return { erreur: "Impossible de programmer la notification." };
+  if (error) return { erreur: "Impossible de programmer l'email." };
 
   revalidatePath("/dashboard");
   return { ok: true };

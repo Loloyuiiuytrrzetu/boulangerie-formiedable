@@ -22,7 +22,7 @@ export default function CGV() {
       <ul>
         <li>créer une ou plusieurs cartes de fidélité digitales ;</li>
         <li>attribuer des tampons à ses clients via un QR code ;</li>
-        <li>envoyer des notifications push à ses clients abonnés ;</li>
+        <li>envoyer des emails d&apos;information à ses clients ;</li>
         <li>consulter des statistiques et gérer sa base de clients.</li>
       </ul>
 

@@ -489,34 +489,27 @@ export function GrapheAnime() {
   );
 }
 
-// Téléphone qui reçoit des notifications push — iPhone complet.
+// Téléphone qui reçoit des emails du commerce — iPhone complet.
 export function NotifsAnimees() {
   const tv = useTV();
-  const { langue } = useLangue();
-  const dateLock = new Intl.DateTimeFormat(langue, {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-  }).format(new Date(2024, 6, 14));
   return (
     <IPhoneFrame>
-      {/* Écran verrouillé sombre */}
-      <div className="bg-gradient-to-b from-stone-800 to-stone-900 pb-10">
-        {/* Barre de statut blanche (lock screen) */}
-        <div className="flex items-center justify-between px-6 pt-3 pb-1 text-[11px] font-semibold text-white">
+      {/* Boîte mail claire */}
+      <div className="bg-stone-50 pb-10">
+        {/* Barre de statut */}
+        <div className="flex items-center justify-between px-6 pt-3 pb-1 text-[11px] font-semibold text-stone-500">
           <span>9:41</span>
-          <span className="flex items-center gap-1 opacity-80">
+          <span className="flex items-center gap-1 opacity-70">
             <span>▂▄▆</span>
-            <span>􀛨</span>
-            <span>􀛩</span>
           </span>
         </div>
 
-        <div className="mt-8 px-4 pb-4">
-          <p className="text-center text-xs font-medium text-white/70">
-            {dateLock}
-          </p>
-          <p className="text-center text-6xl font-thin text-white">14:30</p>
+        {/* En-tête boîte de réception */}
+        <div className="flex items-center gap-2 px-4 pt-4 pb-3">
+          <span className="text-2xl">📧</span>
+          <span className="text-base font-extrabold text-stone-800">
+            Pâtir Boulangerie
+          </span>
         </div>
 
         <div className="space-y-2 px-3">

@@ -31,10 +31,9 @@ export default function Confidentialite() {
       </ul>
       <h3>Côté client final du commerce</h3>
       <ul>
-        <li>numéro de téléphone ;</li>
+        <li>adresse email ;</li>
         <li>prénom / nom (si renseigné) ;</li>
-        <li>historique de fidélité (tampons, récompenses) ;</li>
-        <li>abonnement aux notifications (le cas échéant).</li>
+        <li>historique de fidélité (tampons, récompenses).</li>
       </ul>
 
       <h2>2. Finalités et bases légales</h2>
@@ -44,8 +43,9 @@ export default function Confidentialite() {
           exécution du contrat / intérêt légitime du commerce ;
         </li>
         <li>
-          <strong>Envoyer des notifications push</strong> (promotions, alertes de récompense) —
-          fondé sur le <strong>consentement</strong> du client final ;
+          <strong>Envoyer des emails d&apos;information</strong> (promotions, alertes de récompense) —
+          fondé sur le <strong>consentement</strong> du client final, avec un lien de
+          désinscription dans chaque email ;
         </li>
         <li><strong>Gérer l&apos;abonnement et la facturation</strong> — exécution du contrat.</li>
       </ul>
@@ -75,8 +75,8 @@ export default function Confidentialite() {
         s&apos;exercent à <a href="mailto:walletiz.fr@gmail.com">walletiz.fr@gmail.com</a>.
       </p>
       <p>
-        Un client final peut à tout moment couper les notifications depuis l&apos;onglet « Info » de
-        sa carte, ou se désinscrire pour supprimer ses données.
+        Un client final peut à tout moment se désinscrire des emails via le lien présent au bas de
+        chaque email, ou supprimer entièrement ses données depuis l&apos;onglet « Info » de sa carte.
       </p>
 
       <h2>6. Cookies</h2>

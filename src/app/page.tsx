@@ -268,18 +268,7 @@ function VitrineContenu() {
             <ul className="mt-8 space-y-3 text-stone-700">
               <li className="flex items-start gap-3"><span className="mt-0.5 text-bordeaux-700">✓</span><span><strong>{t("np_bullet_1_bold")}</strong>{t("np_bullet_1")}</span></li>
               <li className="flex items-start gap-3"><span className="mt-0.5 text-bordeaux-700">✓</span><span><strong>{t("np_bullet_2_bold")}</strong>{t("np_bullet_2")}</span></li>
-              <li className="flex items-start gap-3">
-                <span className="mt-0.5 text-bordeaux-700">📱</span>
-                <span>
-                  <strong>{t("np_iphone_intro_bold")}</strong>{t("np_iphone_intro")}
-                  <ol className="mt-2 ml-1 list-decimal space-y-1 pl-4 text-sm text-stone-600">
-                    <li><strong>{t("np_iphone_etape_1_bold")}</strong> — {t("np_iphone_etape_1")}</li>
-                    <li>{t("np_iphone_etape_2_bold")}</li>
-                    <li>{t("np_iphone_etape_3")} <strong>{t("np_iphone_etape_3_bold")}</strong></li>
-                  </ol>
-                  <span className="mt-2 block text-xs text-stone-500">{t("np_iphone_final")}</span>
-                </span>
-              </li>
+              <li className="flex items-start gap-3"><span className="mt-0.5 text-bordeaux-700">✓</span><span><strong>{t("np_bullet_3_bold")}</strong>{t("np_bullet_3")}</span></li>
             </ul>
           </div>
           <div className="flex items-center justify-center"><NotifsAnimees /></div>

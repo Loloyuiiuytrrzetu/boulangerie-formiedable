@@ -61,15 +61,15 @@ export async function listerTamponsRecents(page: number) {
       clientIds.length
         ? admin
             .from("clients_fidelite")
-            .select("id, identite, numero_telephone")
+            .select("id, identite, numero_telephone, email")
             .in("id", clientIds)
-        : Promise.resolve({ data: [] as { id: string; identite: string | null; numero_telephone: string }[] }),
+        : Promise.resolve({ data: [] as { id: string; identite: string | null; numero_telephone: string | null; email: string | null }[] }),
       carteIds.length
         ? admin.from("cartes").select("id, titre").in("id", carteIds)
         : Promise.resolve({ data: [] as { id: string; titre: string }[] }),
     ]);
     const mapClient = new Map(
-      ((resClients.data as { id: string; identite: string | null; numero_telephone: string }[]) ?? []).map((c) => [c.id, c])
+      ((resClients.data as { id: string; identite: string | null; numero_telephone: string | null; email: string | null }[]) ?? []).map((c) => [c.id, c])
     );
     const mapCarte = new Map(
       ((resCartes.data as { id: string; titre: string }[]) ?? []).map((c) => [c.id, c])
@@ -80,7 +80,7 @@ export async function listerTamponsRecents(page: number) {
       tampons.push({
         id: h.id,
         identite: cli?.identite ?? null,
-        telephone: cli?.numero_telephone ?? null,
+        telephone: cli?.email ?? cli?.numero_telephone ?? null,
         carteTitre: carte?.titre ?? null,
         nombre: h.nombre,
         created_at: h.created_at,

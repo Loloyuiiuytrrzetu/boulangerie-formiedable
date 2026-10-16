@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { dateDuJour, genererToken, normaliserTelephone } from "@/lib/utils";
+import { dateDuJour, genererToken, validerEmail } from "@/lib/utils";
 import type { Carte, CarteClient, ClientFidelite, Recompense, Restaurant } from "@/lib/types";
 
 // Toutes ces actions concernent des clients NON authentifiés :
@@ -47,14 +47,13 @@ async function chargerClientViaCookie(
   return data;
 }
 
-// --- Première visite : création de la fiche avec le numéro de téléphone ---
+// --- Première visite : création de la fiche avec l'adresse email ---
 export async function inscrireClient(slug: string, formData: FormData) {
   const restaurant = await chargerRestaurant(slug);
   if (!restaurant) return { erreur: "err_commerce_introuvable" };
 
-  const telephone = normaliserTelephone(String(formData.get("telephone") ?? ""));
-  if (!telephone)
-    return { erreur: "err_tel_invalide" };
+  const email = validerEmail(String(formData.get("email") ?? ""));
+  if (!email) return { erreur: "err_email_invalide" };
   const identite = String(formData.get("identite") ?? "").trim().slice(0, 80);
   if (!identite) return { erreur: "err_nom_requis" };
 
@@ -64,17 +63,24 @@ export async function inscrireClient(slug: string, formData: FormData) {
     .from("clients_fidelite")
     .select("*")
     .eq("restaurant_id", restaurant.id)
-    .eq("numero_telephone", telephone)
+    .eq("email", email)
     .maybeSingle<ClientFidelite>();
 
   let token: string;
   if (existant) {
     token = existant.token_cookie;
+    // S'il s'était désinscrit des emails puis se réinscrit, on réactive.
+    if (existant.emails_actif === false) {
+      await admin
+        .from("clients_fidelite")
+        .update({ emails_actif: true })
+        .eq("id", existant.id);
+    }
   } else {
     token = genererToken();
     const { error } = await admin.from("clients_fidelite").insert({
       restaurant_id: restaurant.id,
-      numero_telephone: telephone,
+      email,
       identite,
       token_cookie: token,
     });
