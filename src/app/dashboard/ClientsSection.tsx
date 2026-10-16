@@ -142,19 +142,18 @@ export function ClientsSection({
             onTouchEnd={surTouchEnd}
           >
             {/* En-têtes (cachés en très petit écran) */}
-            <div className="hidden bg-stone-50 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-stone-500 sm:grid sm:grid-cols-[1.4fr_1.2fr_0.7fr_1fr_auto] sm:gap-3">
+            <div className="hidden bg-stone-50 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-stone-500 sm:grid sm:grid-cols-[1.4fr_1.4fr_0.7fr_1fr] sm:gap-3">
               <span>{t("col_nom")}</span>
               <span>{t("col_email")}</span>
               <span className="text-center">{t("col_tampons")}</span>
               <span>{t("col_derniere_visite")}</span>
-              <span className="w-6" />
             </div>
 
             <ul className={`divide-y divide-stone-100 ${enCours ? "opacity-50" : ""}`}>
               {clients.map((c) => (
                 <li
                   key={c.id}
-                  className="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 px-4 py-3 text-sm sm:grid-cols-[1.4fr_1.2fr_0.7fr_1fr_auto]"
+                  className="grid grid-cols-1 gap-x-3 gap-y-1 px-4 py-3 text-sm sm:grid-cols-[1.4fr_1.4fr_0.7fr_1fr] sm:items-center"
                 >
                   <span className="min-w-0 truncate font-semibold text-stone-900">
                     {c.identite?.trim() || (
@@ -177,16 +176,6 @@ export function ClientsSection({
                   <span className="text-stone-500">
                     <span className="sm:hidden">{t("col_derniere_visite")}: </span>
                     {formaterDate(c.date_dernier_tampon)}
-                  </span>
-                  <span
-                    className="justify-self-end text-base"
-                    title={
-                      c.email && c.emails_actif
-                        ? t("notifs_actives_client")
-                        : t("notifs_inactives_client")
-                    }
-                  >
-                    {c.email && c.emails_actif ? "📧" : "—"}
                   </span>
                 </li>
               ))}
