@@ -73,44 +73,48 @@ function construireHtml(opts: {
   const couleur = /^#[0-9a-fA-F]{6}$/.test(opts.couleur) ? opts.couleur : "#7A1E2E";
   const initiale = nom.trim().charAt(0).toUpperCase() || "•";
 
-  // Médaillon : logo du commerce si disponible, sinon pastille avec l'initiale.
+  // Médaillon : logo du commerce (si dispo) ou pastille avec l'initiale.
+  // Un contour à la couleur du commerce : petit accent qui survit à
+  // l'inversion « mode sombre » de certaines applis mail.
   const medaillon = opts.logoUrl
-    ? `<img src="${encodeURI(opts.logoUrl)}" width="68" height="68" alt="${nom}" style="display:block;width:68px;height:68px;border-radius:16px;border:3px solid rgba(255,255,255,0.65);object-fit:cover;" />`
-    : `<div style="width:68px;height:68px;border-radius:16px;border:3px solid rgba(255,255,255,0.65);background:rgba(255,255,255,0.18);color:#ffffff;font-size:30px;font-weight:bold;line-height:68px;text-align:center;font-family:Arial,Helvetica,sans-serif;">${initiale}</div>`;
+    ? `<img src="${encodeURI(opts.logoUrl)}" width="76" height="76" alt="${nom}" style="display:block;width:76px;height:76px;border-radius:18px;border:3px solid ${couleur};object-fit:cover;" />`
+    : `<div style="width:76px;height:76px;border-radius:18px;border:3px solid ${couleur};background:${couleur};color:#ffffff;font-size:34px;font-weight:bold;line-height:76px;text-align:center;font-family:Arial,Helvetica,sans-serif;">${initiale}</div>`;
 
+  // Design volontairement SUR UN SEUL FOND : pas de grand bloc coloré. Ainsi,
+  // quand une appli mail force le mode sombre et inverse les couleurs, le
+  // rendu reste propre et uniforme (le logo, une image, n'est jamais inversé).
   return `<!doctype html>
 <html lang="fr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="color-scheme" content="light">
-<meta name="supported-color-schemes" content="light">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
 </head>
-<body style="margin:0;padding:0;background:#f4f4f5;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f5;">
+<body style="margin:0;padding:0;background:#ffffff;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;">
     <tr>
-      <td align="center" style="padding:28px 14px;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:18px;overflow:hidden;border:1px solid #e7e5e4;">
-          <!-- Bandeau coloré avec logo + nom -->
+      <td align="center" style="padding:30px 18px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:500px;">
+          <!-- En-tête : logo + nom + fin trait d'accent -->
           <tr>
-            <td align="center" style="background:${couleur};padding:30px 24px 26px;">
+            <td align="center" style="padding:4px 8px 22px;">
               ${medaillon}
-              <div style="margin-top:12px;color:#ffffff;font-size:21px;font-weight:bold;font-family:Arial,Helvetica,sans-serif;letter-spacing:-0.3px;">${nom}</div>
+              <div style="margin-top:14px;font-size:21px;font-weight:bold;color:#1c1917;font-family:Arial,Helvetica,sans-serif;letter-spacing:-0.3px;">${nom}</div>
+              <div style="width:46px;height:3px;background:${couleur};border-radius:2px;margin:14px auto 0;line-height:3px;font-size:0;">&nbsp;</div>
             </td>
           </tr>
           <!-- Corps du message -->
           <tr>
-            <td style="padding:30px 30px 34px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.65;color:#292524;">
+            <td style="padding:6px 14px 10px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.7;color:#292524;">
               ${corps}
             </td>
           </tr>
-        </table>
-        <!-- Pied -->
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
+          <!-- Pied -->
           <tr>
-            <td align="center" style="padding:16px 12px 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.7;color:#a8a29e;">
+            <td align="center" style="padding:26px 14px 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.7;color:#9c9690;">
               Vous recevez cet email car vous êtes client de ${nom}.<br>
-              <a href="${opts.lienDesinscription}" style="color:#a8a29e;text-decoration:underline;">Se désinscrire de ces emails</a>
+              <a href="${opts.lienDesinscription}" style="color:#9c9690;text-decoration:underline;">Se désinscrire de ces emails</a>
             </td>
           </tr>
         </table>
