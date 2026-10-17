@@ -39,17 +39,20 @@ export async function generateMetadata({
 
   if (!restaurant) return { title: "Commerce introuvable" };
 
+  // Icônes servies par walletiz.fr au bon format (voir /c/[slug]/icone).
+  // « v » change quand le logo change → l'icône n'est jamais périmée.
+  const v = encodeURIComponent(restaurant.logo_url?.split("/").pop() ?? "0");
+  const icone = (s: number) => `/c/${slug}/icone?s=${s}&v=${v}`;
+
   return {
     title: restaurant.nom,
     description: `Carte de fidélité ${restaurant.nom}`,
     manifest: `/c/${slug}/manifest.webmanifest`,
-    icons: restaurant.logo_url
-      ? {
-          icon: restaurant.logo_url,
-          apple: restaurant.logo_url,
-          shortcut: restaurant.logo_url,
-        }
-      : undefined,
+    icons: {
+      icon: [{ url: icone(192), sizes: "192x192", type: "image/png" }],
+      apple: [{ url: icone(180), sizes: "180x180", type: "image/png" }],
+      shortcut: icone(192),
+    },
     appleWebApp: {
       capable: true,
       title: restaurant.nom,

@@ -24,14 +24,15 @@ export async function GET(
     return NextResponse.json({ error: "not found" }, { status: 404 });
   }
 
-  const icone = restaurant.logo_url ?? undefined;
-  const icons = icone
-    ? [
-        { src: icone, sizes: "192x192", type: "image/png", purpose: "any" },
-        { src: icone, sizes: "512x512", type: "image/png", purpose: "any" },
-        { src: icone, sizes: "192x192", type: "image/png", purpose: "maskable" },
-      ]
-    : [];
+  // Icônes générées par walletiz.fr au format exact (voir /c/[slug]/icone) :
+  // légères, carrées et de même origine, donc acceptées par iOS et Android.
+  const v = encodeURIComponent(restaurant.logo_url?.split("/").pop() ?? "0");
+  const icone = (s: number) => `/c/${slug}/icone?s=${s}&v=${v}`;
+  const icons = [
+    { src: icone(192), sizes: "192x192", type: "image/png", purpose: "any" },
+    { src: icone(512), sizes: "512x512", type: "image/png", purpose: "any" },
+    { src: icone(512), sizes: "512x512", type: "image/png", purpose: "maskable" },
+  ];
 
   // start_url ABSOLU sur le domaine canonique : évite qu'au lancement l'app
   // suive une redirection (ex. walletiz.fr → www.walletiz.fr) qui ferait
